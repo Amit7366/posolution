@@ -27,14 +27,14 @@ export default function MobileSidebar({ role }: { role: "admin" | "user" }) {
 ${open ? "translate-x-0" : "-translate-x-full"}
 `}
       >
-        <div className="flex justify-between items-center p-4 border-b dark:border-gray-800">
-          <span className="font-bold">POS Dashboard</span>
-          <button onClick={() => setOpen(false)}>
+        
+          <button onClick={() => setOpen(false)} className="absolute right-3 top-5">
             <X />
           </button>
-        </div>
+       
 
-        <Sidebar role={role} />
+        <Sidebar role={role} variant="mobile" />
+
       </div>
     </>
   );

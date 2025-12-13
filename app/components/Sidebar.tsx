@@ -6,7 +6,13 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { sidebarMenus } from "../lib/menus";
 
-export default function Sidebar({ role }: { role: "admin" | "user" }) {
+export default function Sidebar({
+  role,
+  variant = "desktop",
+}: {
+  role: "admin" | "user";
+  variant?: "desktop" | "mobile";
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState<string | null>(null);
 
@@ -15,7 +21,11 @@ export default function Sidebar({ role }: { role: "admin" | "user" }) {
   };
 
   return (
-    <aside className="hidden md:flex w-64 flex-col border-r bg-white dark:bg-gray-900 dark:border-gray-800">
+    <aside
+      className={`fixed w-64 h-screen flex-col border-r bg-white dark:bg-gray-900 dark:border-gray-800
+  ${variant === "desktop" ? "hidden md:flex" : "flex"}
+`}
+    >
       {/* HEADER */}
       <div className="p-4 font-semibold text-lg border-b bg-white dark:bg-gray-900 dark:text-white">
         POS Dashboard

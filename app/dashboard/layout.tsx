@@ -11,7 +11,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar role={role} />
       <MobileSidebar role={role} />
 
-      <main className="flex-1">
+      <main className="flex-1 w-full md:ml-64">
         <DashboardNavbar />
         <div className="p-4">{children}</div>
       </main>

@@ -28,7 +28,7 @@ export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Welcome Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">
             Welcome, Admin
@@ -66,7 +66,7 @@ export default function DashboardPage() {
       )}
 
       {/* Top Stats Cards */}
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         {/* Total Sales */}
         <div className="rounded-xl p-5 bg-orange-500 text-white shadow-sm">
           <div className="flex items-center gap-3 text-white/90">
@@ -122,7 +122,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom Cards */}
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         {/* Profit */}
         <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
           <h3 className="text-xl font-semibold">$8,458,798</h3>

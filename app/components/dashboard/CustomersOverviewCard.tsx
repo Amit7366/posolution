@@ -29,7 +29,7 @@ export default function CustomersOverviewCard() {
         </button>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex flex-col md:flex-row items-center justify-between mt-4">
         <div className="w-40 h-40">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

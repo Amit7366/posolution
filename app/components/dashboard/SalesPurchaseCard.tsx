@@ -42,7 +42,7 @@ export default function SalesPurchaseCard() {
   return (
     <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 w-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-center justify-center md:justify-between">
         <div className="flex items-center gap-2">
           <ShoppingBag size={20} className="text-orange-500" />
           <h2 className="font-semibold text-gray-900 dark:text-gray-200">
@@ -51,7 +51,7 @@ export default function SalesPurchaseCard() {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {FILTERS.map((f) => (
             <button
               key={f}

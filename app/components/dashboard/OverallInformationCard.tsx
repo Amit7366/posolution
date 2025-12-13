@@ -9,7 +9,7 @@ export default function OverallInformationCard() {
         Overall Information
       </h2>
 
-      <div className="grid grid-cols-3 gap-3 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
         <div className="border p-4 rounded-xl text-center">
           <Truck className="mx-auto text-blue-500" />
           <p>Suppliers</p>
