@@ -234,8 +234,8 @@ export default function ProductList() {
           </table>
         </div>
 
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col md:flex-row items-center justify-between mt-4">
+          <div className="flex flex-col md:flex-row items-center gap-3">
             <div className="text-sm text-slate-600 dark:text-slate-300">Row Per Page</div>
             <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }} className="border px-2 py-1 rounded text-sm bg-white dark:bg-slate-700 dark:border-slate-600">
               {[5,10,20,50].map(n => <option key={n} value={n}>{n}</option>)}
@@ -247,7 +247,7 @@ export default function ProductList() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row items-center gap-3">
             <div className="text-sm text-slate-600 dark:text-slate-300">{(page-1)*perPage + 1} - {Math.min(page*perPage, total)} of {total}</div>
 
             <nav className="inline-flex items-center gap-1">
