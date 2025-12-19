@@ -239,7 +239,7 @@ function SubCategoryModal({
         className="input"
       >
         <option value="">Select</option>
-        {CATEGORIES.map((c) => (
+        {SUB_CATEGORIES.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
           </option>
