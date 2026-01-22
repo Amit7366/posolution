@@ -125,18 +125,18 @@ export const sidebarMenus: MenuItem[] = [
     link: "/dashboard/stock",
     role: "admin",
   },
-  {
-    title: "Stock Adjustment",
-    icon: RefreshCcw,
-    link: "/dashboard/stock/adjustment",
-    role: "admin",
-  },
-  {
-    title: "Stock Transfer",
-    icon: ArrowLeftRight,
-    link: "/dashboard/stock/transfer",
-    role: "admin",
-  },
+  // {
+  //   title: "Stock Adjustment",
+  //   icon: RefreshCcw,
+  //   link: "/dashboard/stock/adjustment",
+  //   role: "admin",
+  // },
+  // {
+  //   title: "Stock Transfer",
+  //   icon: ArrowLeftRight,
+  //   link: "/dashboard/stock/transfer",
+  //   role: "admin",
+  // },
 
   // SALES
   {
@@ -158,27 +158,27 @@ export const sidebarMenus: MenuItem[] = [
         link: "/dashboard/sales/return",
         role: "admin",
       },
-      {
-        title: "Quotation",
-        icon: FileSignature,
-        link: "/dashboard/sales/quotation",
-        role: "admin",
-      },
+      // {
+      //   title: "Quotation",
+      //   icon: FileSignature,
+      //   link: "/dashboard/sales/quotation",
+      //   role: "admin",
+      // },
     ],
   },
 
-  // ACCOUNT
-  {
-    section: "Account",
-    title: "Profile",
-    icon: Users,
-    link: "/dashboard/profile",
-    role: "admin",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    link: "/dashboard/settings",
-    role: "admin",
-  },
+  // // ACCOUNT
+  // {
+  //   section: "Account",
+  //   title: "Profile",
+  //   icon: Users,
+  //   link: "/dashboard/profile",
+  //   role: "admin",
+  // },
+  // {
+  //   title: "Settings",
+  //   icon: Settings,
+  //   link: "/dashboard/settings",
+  //   role: "admin",
+  // },
 ];
