@@ -1,11 +1,11 @@
-import { ThemeProvider } from "./components/ThemeProvider";
+import { Providers } from "./providers";
 import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-gray-50 dark:bg-gray-900">
-        <ThemeProvider>{children}</ThemeProvider>
+      <body>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
