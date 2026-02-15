@@ -6,16 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sun, Moon } from "lucide-react";
 
 export default function HomePage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [dark, setDark] = useState(true);
 
-  useEffect(() => {
-    if (dark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [dark]);
 
   return (
     <main className="px-6 md:px-16 py-24">
@@ -34,7 +25,15 @@ export default function HomePage() {
             </button>
           </Link>
           <Link href="#features">
-            <button className="px-8 py-4 rounded-2xl border border-slate-300 dark:border-slate-700 text-lg">
+            <button
+              className="
+    px-8 py-4 rounded-2xl text-lg
+    border border-slate-300 dark:border-yellow-400
+    bg-transparent dark:bg-yellow-400
+    text-slate-900 dark:text-black
+    transition-colors duration-300
+  "
+            >
               Learn More
             </button>
           </Link>

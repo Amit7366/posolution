@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -23,15 +22,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider>
-          <Navbar />
-          <div className="pt-24 px-6">
-            <PageTransition>{children}</PageTransition>
-          </div>
-        </ThemeProvider>
-      </body>
-    </html>
+    <>
+      <Navbar />
+      <div className="pt-24 px-6">{children}</div>
+    </>
   );
 }

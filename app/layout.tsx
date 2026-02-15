@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import PageTransition from "@/components/PageTransition";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "BrandName - Premium SaaS Platform",
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-       <PageTransition>{children}</PageTransition>
+        <ThemeProvider >
+          <PageTransition>{children}</PageTransition>
+        </ThemeProvider>
       </body>
     </html>
   );
