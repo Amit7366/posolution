@@ -1,5 +1,7 @@
-import "./globals.css";
+
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
+import { ThemeProvider } from "@/components/theme-provider";
 import PageTransition from "@/components/PageTransition";
 
 export const metadata: Metadata = {
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -23,7 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-       <PageTransition>{children}</PageTransition>
+        <ThemeProvider>
+          <Navbar />
+          <div className="pt-24 px-6">
+            <PageTransition>{children}</PageTransition>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
