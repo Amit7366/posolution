@@ -1,25 +1,22 @@
-import { jwtDecode } from 'jwt-decode';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { jwtDecode } from "jwt-decode";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 type Role = keyof typeof roleBasedPrivateRoutes;
 
-// 🔧 Renamed and expanded to cover all public routes
+// Public routes that don't require auth
 const publicRoutes = [
-  '/',
-  '/login',
-  '/register',
-  '/about',
-  '/our-plan',
-  '/blog',
-  '/contact',
+  "/",
+  "/login",
+  "/register",
+  "/about",
+  "/our-plan",
+  "/blog",
+  "/contact",
 ];
 
-const commonPrivateRoutes = [
-  '/dashboard',
-  '/dashboard/change-password',
-  '/doctors',
-];
+// Any path that starts with /dashboard is protected
+const commonPrivateRoutes = ["/dashboard"];
 
 const roleBasedPrivateRoutes = {
   USER: [/^\/dashboard\/user/],
@@ -28,26 +25,26 @@ const roleBasedPrivateRoutes = {
   SUPER_ADMIN: [/^\/dashboard\/super-admin/],
 };
 
-export function proxy(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get('accessToken')?.value;
+  const accessToken = request.cookies.get("accessToken")?.value;
 
-  // 🔧 Allow public routes without token
+  // Allow public routes without token
   if (!accessToken) {
     const isPublic = publicRoutes.some((route) => pathname === route);
     if (isPublic) {
       return NextResponse.next();
-    } else {
-      return NextResponse.redirect(new URL('/login', request.url));
     }
+    // Not public and no token → send to login
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // ✅ Redirect logged-in users away from public auth pages
-  if (accessToken && ['/login', '/register'].includes(pathname)) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  // Redirect logged-in users away from auth pages
+  if (["/login", "/register"].includes(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // ✅ Allow access to common private routes
+  // Allow access to /dashboard and any nested routes when logged in
   if (
     commonPrivateRoutes.includes(pathname) ||
     commonPrivateRoutes.some((route) => pathname.startsWith(route))
@@ -55,12 +52,12 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ✅ Role-based access
+  // Optional: role-based access if you need it
   let decodedData: any = null;
   try {
     decodedData = jwtDecode(accessToken);
-  } catch (e) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  } catch {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const role = decodedData?.role;
@@ -71,21 +68,19 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // ❌ No match — redirect to homepage
-  return NextResponse.redirect(new URL('/', request.url));
+  // Fallback: redirect unknown private paths to home
+  return NextResponse.redirect(new URL("/", request.url));
 }
 
-// 🔧 Updated matcher to include your public and protected routes
 export const config = {
   matcher: [
-    '/',
-    '/login',
-    '/register',
-    '/about',
-    '/our-plan',
-    '/blog',
-    '/contact',
-    '/dashboard/:path*',
-    '/doctors/:path*',
+    "/",
+    "/login",
+    "/register",
+    "/about",
+    "/our-plan",
+    "/blog",
+    "/contact",
+    "/dashboard/:path*",
   ],
 };
