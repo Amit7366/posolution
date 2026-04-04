@@ -1,18 +1,25 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Minimum 6 characters"),
-});
-export const registerSchema = z
-  .object({
-    name: z.string().min(2, "Name is required"),
-    userName: z.string().min(3, "Username is required"),
-    email: z.string().email("Invalid email"),
-    password: z.string().min(6, "Minimum 6 characters"),
-    confirmPassword: z.string().min(6),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match",
+type TFn = (key: string, vars?: Record<string, string | number>) => string;
+
+export function createLoginSchema(t: TFn) {
+  return z.object({
+    email: z.string().email(t("auth.validation.invalidEmail")),
+    password: z.string().min(6, t("auth.validation.minPassword6")),
   });
+}
+
+export function createRegisterSchema(t: TFn) {
+  return z
+    .object({
+      name: z.string().min(2, t("auth.validation.nameMin2")),
+      userName: z.string().min(3, t("auth.validation.usernameMin3")),
+      email: z.string().email(t("auth.validation.invalidEmail")),
+      password: z.string().min(6, t("auth.validation.minPassword6")),
+      confirmPassword: z.string().min(6, t("auth.validation.minPassword6")),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      path: ["confirmPassword"],
+      message: t("auth.validation.passwordsMismatch"),
+    });
+}

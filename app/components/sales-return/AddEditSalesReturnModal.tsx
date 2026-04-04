@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-
-
-import { Search, Plus, Trash2 } from "lucide-react";
-import { PaymentStatus, ReturnStatus, SalesReturn, SalesReturnLine } from "@/app/types/sales-return";
-import { customers, products } from "@/app/lib/sales-return/data";
+import { Search, Trash2 } from "lucide-react";
+import type { SalesReturn, SalesReturnLine } from "@/app/types/sales-return";
 import Modal from "../ui/Modal";
 import { formatMoney } from "@/app/lib/cx";
+import { useLazyGetProductsQuery, useCreateSalesReturnMutation, useUpdateSalesReturnMutation } from "@/redux/api/baseApi";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import { toast } from "sonner";
 
 type Mode = "add" | "edit";
 
@@ -16,7 +16,7 @@ type Props = {
   mode: Mode;
   initial?: SalesReturn | null;
   onClose: () => void;
-  onSubmit: (payload: SalesReturn) => void;
+  onSuccess?: () => void;
 };
 
 function uid(prefix = "id") {
@@ -30,45 +30,74 @@ function computeLineSubtotal(line: Omit<SalesReturnLine, "subtotal">) {
   return Math.max(0, afterDiscount + tax);
 }
 
-export default function AddEditSalesReturnModal({
-  open,
-  mode,
-  initial,
-  onClose,
-  onSubmit,
-}: Props) {
+function getQueryErrorMessage(error: unknown): string | null {
+  if (!error) return null;
+  if (typeof error === "object" && error !== null && "data" in error) {
+    const d = (error as { data?: { message?: string } }).data;
+    if (d?.message) return String(d.message);
+  }
+  return null;
+}
+
+const PLACEHOLDER_IMG = "https://cdn-icons-png.flaticon.com/512/732/732228.png";
+
+export default function AddEditSalesReturnModal({ open, mode, initial, onClose, onSuccess }: Props) {
+  const { t } = useTranslation();
   const isEdit = mode === "edit";
 
-  // form
-  const [customerId, setCustomerId] = useState(customers[0]?.id ?? "");
+  const [triggerSearch, { data: searchResult, isFetching }] = useLazyGetProductsQuery();
+  const [createReturn, { isLoading: creating }] = useCreateSalesReturnMutation();
+  const [updateReturn, { isLoading: updating }] = useUpdateSalesReturnMutation();
+
+  const [customerName, setCustomerName] = useState("");
   const [date, setDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
+  const [refundDueDate, setRefundDueDate] = useState("");
   const [reference, setReference] = useState("");
-  const [status, setStatus] = useState<ReturnStatus>("Pending");
+  const [returnStatusUi, setReturnStatusUi] = useState<"Pending" | "Received">("Pending");
+  const [paymentApi, setPaymentApi] = useState<"unpaid" | "paid">("unpaid");
+  const [paidInput, setPaidInput] = useState(0);
 
   const [productQuery, setProductQuery] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
   const [lines, setLines] = useState<SalesReturnLine[]>([]);
 
-  const [orderTax, setOrderTax] = useState<number>(0);
-  const [discount, setDiscount] = useState<number>(0);
-  const [shipping, setShipping] = useState<number>(0);
+  const [orderTax, setOrderTax] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [shipping, setShipping] = useState(0);
 
-  // load initial
+  useEffect(() => {
+    const tmr = setTimeout(() => setDebouncedQ(productQuery.trim()), 350);
+    return () => clearTimeout(tmr);
+  }, [productQuery]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (debouncedQ.length < 2) return;
+    void triggerSearch({ page: 1, limit: 12, search: debouncedQ });
+  }, [open, debouncedQ, triggerSearch]);
+
+  const productHits = useMemo(() => {
+    const raw = (searchResult as { data?: unknown[] } | undefined)?.data;
+    return Array.isArray(raw) ? raw : [];
+  }, [searchResult]);
+
   useEffect(() => {
     if (!open) return;
 
     if (isEdit && initial) {
-      setCustomerId(initial.customer.id);
+      setCustomerName(initial.customer.name);
       setDate(initial.date);
       setReference(initial.reference);
-      setStatus(initial.status);
-
+      setReturnStatusUi(initial.status);
+      setPaymentApi(initial.paymentStatus === "Paid" ? "paid" : "unpaid");
+      setPaidInput(initial.paid);
+      setRefundDueDate(initial.refundDueDate ?? "");
       setLines(
         initial.lines.map((l) => ({
           ...l,
           subtotal: computeLineSubtotal(l),
         }))
       );
-
       setOrderTax(initial.orderTax ?? 0);
       setDiscount(initial.discount ?? 0);
       setShipping(initial.shipping ?? 0);
@@ -76,11 +105,13 @@ export default function AddEditSalesReturnModal({
       return;
     }
 
-    // add defaults
-    setCustomerId(customers[0]?.id ?? "");
+    setCustomerName("");
     setDate(new Date().toISOString().slice(0, 10));
+    setRefundDueDate("");
     setReference(`${Math.floor(100000 + Math.random() * 900000)}`);
-    setStatus("Pending");
+    setReturnStatusUi("Pending");
+    setPaymentApi("unpaid");
+    setPaidInput(0);
     setLines([]);
     setOrderTax(0);
     setDiscount(0);
@@ -88,33 +119,20 @@ export default function AddEditSalesReturnModal({
     setProductQuery("");
   }, [open, isEdit, initial]);
 
-  const filteredProducts = useMemo(() => {
-    const q = productQuery.trim().toLowerCase();
-    if (!q) return [];
-    return products
-      .filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.code.toLowerCase().includes(q) ||
-          p.sku.toLowerCase().includes(q)
-      )
-      .slice(0, 8);
-  }, [productQuery]);
-
-  const addProduct = (productId: string) => {
-    const p = products.find((x) => x.id === productId);
-    if (!p) return;
+  const addProduct = (p: Record<string, unknown>) => {
+    const id = String(p._id ?? "");
+    if (!id) return;
+    const price = Number(p.price) || 0;
+    const stock = Number(p.quantity) || 0;
+    const imgs = p.images as string[] | undefined;
+    const image = Array.isArray(imgs) && imgs[0] ? String(imgs[0]) : PLACEHOLDER_IMG;
 
     setLines((prev) => {
-      // if already exists -> increase qty
-      const idx = prev.findIndex((l) => l.productId === p.id);
+      const idx = prev.findIndex((l) => l.productId === id);
       if (idx >= 0) {
         const clone = [...prev];
         const cur = clone[idx];
-        const next = {
-          ...cur,
-          qty: cur.qty + 1,
-        };
+        const next = { ...cur, qty: cur.qty + 1 };
         next.subtotal = computeLineSubtotal(next);
         clone[idx] = next;
         return clone;
@@ -122,14 +140,14 @@ export default function AddEditSalesReturnModal({
 
       const line: SalesReturnLine = {
         id: uid("line"),
-        productId: p.id,
-        name: p.name,
-        price: p.price,
-        stock: p.stock,
+        productId: id,
+        name: String(p.name ?? ""),
+        price,
+        stock,
         qty: 1,
         discount: 0,
         taxPct: 0,
-        subtotal: p.price,
+        subtotal: price,
       };
       return [line, ...prev];
     });
@@ -157,91 +175,96 @@ export default function AddEditSalesReturnModal({
 
   const grandTotal = useMemo(() => {
     const base = subTotal;
-    const t = Math.max(0, orderTax);
+    const ot = Math.max(0, orderTax);
     const d = Math.max(0, discount);
     const s = Math.max(0, shipping);
-    return Math.max(0, base + t - d + s);
+    return Math.max(0, base + ot - d + s);
   }, [subTotal, orderTax, discount, shipping]);
 
-  const customer = useMemo(
-    () => customers.find((c) => c.id === customerId) ?? customers[0],
-    [customerId]
-  );
+  const saving = creating || updating;
 
-  const paymentStatus: PaymentStatus = useMemo(() => {
-    // simple rule (you can replace with your real logic)
-    if (grandTotal <= 0) return "Paid";
-    if (status === "Pending") return "Unpaid";
-    return "Paid";
-  }, [grandTotal, status]);
+  const handleSubmit = async () => {
+    if (!customerName.trim()) {
+      toast.error(t("dash.salesReturn.errCustomer"));
+      return;
+    }
+    if (!reference.trim()) {
+      toast.error(t("dash.salesReturn.errReference"));
+      return;
+    }
+    if (!lines.length) {
+      toast.error(t("dash.salesReturn.errLines"));
+      return;
+    }
 
-  const handleSubmit = () => {
-    if (!customer) return;
-
-    const payload: SalesReturn = {
-      id: isEdit && initial ? initial.id : uid("sr"),
-      productName: lines[0]?.name ?? "—",
-      productImage:
-        products.find((p) => p.id === lines[0]?.productId)?.image ?? undefined,
-      date,
-      customer,
-      status,
-      total: grandTotal,
-      paid: paymentStatus === "Paid" ? grandTotal : 0,
-      due: paymentStatus === "Paid" ? 0 : grandTotal,
-      paymentStatus,
-      reference,
-      lines,
+    const body: Record<string, unknown> = {
+      reference: reference.trim(),
+      customerName: customerName.trim(),
+      returnDate: date,
+      refundDueDate: refundDueDate.trim() || null,
+      items: lines.map((l) => ({
+        productId: l.productId,
+        qty: l.qty,
+        unitPrice: l.price,
+        discount: l.discount,
+        taxPct: l.taxPct,
+      })),
       orderTax,
       discount,
       shipping,
+      paid: Math.max(0, paidInput),
+      returnStatus: returnStatusUi === "Received" ? "received" : "pending",
+      paymentStatus: paymentApi,
     };
 
-    onSubmit(payload);
+    try {
+      if (isEdit && initial) {
+        await updateReturn({ id: initial.id, body }).unwrap();
+        toast.success(t("dash.salesReturn.updatedOk"));
+      } else {
+        await createReturn(body).unwrap();
+        toast.success(t("dash.salesReturn.createdOk"));
+      }
+      onSuccess?.();
+      onClose();
+    } catch (e: unknown) {
+      toast.error(getQueryErrorMessage(e) || t("dash.salesReturn.saveFail"));
+    }
+  };
+
+  const lineImage = (productId: string) => {
+    const hit = lines.find((l) => l.productId === productId);
+    const fromSearch = productHits.find((x) => String((x as Record<string, unknown>)._id) === productId) as
+      | Record<string, unknown>
+      | undefined;
+    const imgs = fromSearch?.images as string[] | undefined;
+    if (Array.isArray(imgs) && imgs[0]) return String(imgs[0]);
+    return PLACEHOLDER_IMG;
   };
 
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title={isEdit ? "Edit Sales Return" : "Add Sales Return"}
+      title={isEdit ? t("dash.salesReturn.editModalTitle") : t("dash.salesReturn.addModalTitle")}
       widthClassName="max-w-6xl"
     >
-      {/* top row */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* Customer */}
         <div>
           <label className="mb-2 block text-sm font-medium text-white">
-            Customer Name <span className="text-red-500">*</span>
+            {t("dash.salesReturn.customerNameLabel")} <span className="text-red-500">*</span>
           </label>
-
-          <div className="flex items-center gap-2">
-            <select
-              value={customerId}
-              onChange={(e) => setCustomerId(e.target.value)}
-              className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
-            >
-              {customers.map((c) => (
-                <option key={c.id} value={c.id} className="bg-[#0b0f14]">
-                  {c.name}
-                </option>
-              ))}
-            </select>
-
-            <button
-              type="button"
-              className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-black/30 text-white hover:bg-white/5"
-              title="Add customer (demo)"
-            >
-              <Plus size={18} />
-            </button>
-          </div>
+          <input
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            placeholder={t("dash.salesReturn.customerNamePh")}
+          />
         </div>
 
-        {/* Date */}
         <div>
           <label className="mb-2 block text-sm font-medium text-white">
-            Date <span className="text-red-500">*</span>
+            {t("dash.salesReturn.colDate")} <span className="text-red-500">*</span>
           </label>
           <input
             value={date}
@@ -251,80 +274,119 @@ export default function AddEditSalesReturnModal({
           />
         </div>
 
-        {/* Reference */}
         <div>
           <label className="mb-2 block text-sm font-medium text-white">
-            Reference <span className="text-red-500">*</span>
+            {t("dash.salesReturn.referenceLabel")} <span className="text-red-500">*</span>
           </label>
           <input
             value={reference}
             onChange={(e) => setReference(e.target.value)}
-            placeholder="Reference"
+            placeholder={t("dash.salesReturn.referencePh")}
             className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/20"
           />
         </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.refundDueLabel")}</label>
+          <input
+            value={refundDueDate}
+            onChange={(e) => setRefundDueDate(e.target.value)}
+            type="date"
+            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.paidAmountLabel")}</label>
+          <input
+            type="number"
+            min={0}
+            step="0.01"
+            value={paidInput}
+            onChange={(e) => setPaidInput(Math.max(0, parseFloat(e.target.value) || 0))}
+            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.paymentStatusApi")}</label>
+          <select
+            value={paymentApi}
+            onChange={(e) => setPaymentApi(e.target.value as "unpaid" | "paid")}
+            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+          >
+            <option className="bg-[#0b0f14]" value="unpaid">
+              {t("dash.invoices.unpaid")}
+            </option>
+            <option className="bg-[#0b0f14]" value="paid">
+              {t("dash.invoices.paid")}
+            </option>
+          </select>
+        </div>
       </div>
 
-      {/* Product search */}
       <div className="mt-5">
         <label className="mb-2 block text-sm font-medium text-white">
-          Product <span className="text-red-500">*</span>
+          {t("dash.salesReturn.colProduct")} <span className="text-red-500">*</span>
         </label>
-
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50" size={18} />
           <input
             value={productQuery}
             onChange={(e) => setProductQuery(e.target.value)}
-            placeholder="Please type product code and select"
+            placeholder={t("dash.salesReturn.searchProductsPh")}
             className="h-11 w-full rounded-lg border border-white/10 bg-black/30 pl-10 pr-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/20"
           />
-
-          {!!filteredProducts.length && (
-            <div className="absolute z-10 mt-2 w-full overflow-hidden rounded-lg border border-white/10 bg-[#0b0f14] shadow-[0_20px_60px_rgba(0,0,0,.65)]">
-              {filteredProducts.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => addProduct(p.id)}
-                  className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left hover:bg-white/5"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 overflow-hidden rounded bg-white/10">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={p.image} alt="" className="h-full w-full object-cover" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-white">{p.name}</div>
-                      <div className="text-xs text-white/50">
-                        SKU: {p.sku} • Code: {p.code} • Stock: {p.stock}
+          {isFetching ? (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-orange-400">…</span>
+          ) : null}
+          {debouncedQ.length >= 2 && productHits.length > 0 && (
+            <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-white/10 bg-[#0b0f14] shadow-[0_20px_60px_rgba(0,0,0,.65)]">
+              {productHits.map((raw) => {
+                const p = raw as Record<string, unknown>;
+                const imgs = p.images as string[] | undefined;
+                const img = Array.isArray(imgs) && imgs[0] ? String(imgs[0]) : PLACEHOLDER_IMG;
+                return (
+                  <button
+                    key={String(p._id)}
+                    type="button"
+                    onClick={() => addProduct(p)}
+                    className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left hover:bg-white/5"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 overflow-hidden rounded bg-white/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img} alt="" className="h-full w-full object-cover" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-white">{String(p.name ?? "")}</div>
+                        <div className="text-xs text-white/50">
+                          SKU: {String(p.sku ?? "—")} · {t("dash.invoices.stock")} {String(p.quantity ?? 0)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-sm text-white/70">{formatMoney(p.price)}</div>
-                </button>
-              ))}
+                    <div className="text-sm text-white/70">{formatMoney(Number(p.price) || 0)}</div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
       </div>
 
-      {/* Lines table */}
       <div className="mt-4 rounded-xl border border-white/10 bg-black/25">
         <div className="grid grid-cols-7 gap-0 border-b border-white/10 bg-[#1b222c] px-4 py-3 text-sm text-white/80">
-          <div className="col-span-2">Product Name</div>
-          <div>Net Unit Price($)</div>
-          <div>Stock</div>
+          <div className="col-span-2">{t("dash.salesReturn.colProduct")}</div>
+          <div>{t("dash.salesReturn.netUnitPrice")}</div>
+          <div>{t("dash.invoices.stock")}</div>
           <div>QTY</div>
-          <div>Discount($)</div>
-          <div className="text-right">Subtotal ($)</div>
+          <div>{t("dash.invoiceDetail.discount")} ($)</div>
+          <div className="text-right">{t("dash.invoiceDetail.total")} ($)</div>
         </div>
 
         <div className="max-h-[300px] overflow-auto">
           {lines.length === 0 ? (
-            <div className="px-4 py-10 text-center text-sm text-white/40">
-              No products selected yet.
-            </div>
+            <div className="px-4 py-10 text-center text-sm text-white/40">{t("dash.salesReturn.noLines")}</div>
           ) : (
             lines.map((l) => (
               <div
@@ -334,11 +396,7 @@ export default function AddEditSalesReturnModal({
                 <div className="col-span-2 flex items-center gap-3">
                   <div className="h-10 w-10 overflow-hidden rounded bg-white/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={products.find((p) => p.id === l.productId)?.image}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
+                    <img src={lineImage(l.productId)} alt="" className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0">
                     <div className="truncate font-medium text-white">{l.name}</div>
@@ -398,7 +456,7 @@ export default function AddEditSalesReturnModal({
                     type="button"
                     onClick={() => removeLine(l.id)}
                     className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-red-400 hover:bg-white/5"
-                    title="Remove"
+                    title={t("dash.common.delete")}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -408,33 +466,24 @@ export default function AddEditSalesReturnModal({
           )}
         </div>
 
-        {/* floating totals panel (like screenshot) */}
-        <div className="relative">
-          <div className="pointer-events-none absolute right-4 top-[-160px] hidden w-[520px] rounded-lg border border-white/10 bg-black/40 lg:block">
-            <div className="grid grid-cols-2 divide-x divide-white/10">
-              <div className="divide-y divide-white/10 text-sm text-white/50">
-                <div className="px-4 py-3">Order Tax</div>
-                <div className="px-4 py-3">Discount</div>
-                <div className="px-4 py-3">Shipping</div>
-                <div className="px-4 py-3">Grand Total</div>
-              </div>
-              <div className="divide-y divide-white/10 text-right text-sm text-white/80">
-                <div className="px-4 py-3">{formatMoney(orderTax)}</div>
-                <div className="px-4 py-3">{formatMoney(discount)}</div>
-                <div className="px-4 py-3">{formatMoney(shipping)}</div>
-                <div className="px-4 py-3">{formatMoney(grandTotal)}</div>
-              </div>
-            </div>
+        <div className="border-t border-white/10 p-4 text-sm text-white/70">
+          <div className="flex flex-wrap justify-end gap-6">
+            <span>
+              {t("dash.invoiceDetail.subTotal")}: <strong className="text-white">{formatMoney(subTotal)}</strong>
+            </span>
+            <span>
+              {t("dash.invoiceDetail.totalAmount")}: <strong className="text-orange-300">{formatMoney(grandTotal)}</strong>
+            </span>
           </div>
+          {returnStatusUi === "Received" ? (
+            <p className="mt-2 text-xs text-amber-200/90">{t("dash.salesReturn.receivedStockHint")}</p>
+          ) : null}
         </div>
       </div>
 
-      {/* bottom row inputs */}
       <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-4">
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">
-            Order Tax <span className="text-red-500">*</span>
-          </label>
+          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.orderTax")}</label>
           <input
             type="number"
             value={orderTax}
@@ -442,11 +491,8 @@ export default function AddEditSalesReturnModal({
             className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
           />
         </div>
-
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">
-            Discount <span className="text-red-500">*</span>
-          </label>
+          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.orderDiscount")}</label>
           <input
             type="number"
             value={discount}
@@ -454,11 +500,8 @@ export default function AddEditSalesReturnModal({
             className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
           />
         </div>
-
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">
-            Shipping <span className="text-red-500">*</span>
-          </label>
+          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.shipping")}</label>
           <input
             type="number"
             value={shipping}
@@ -466,39 +509,38 @@ export default function AddEditSalesReturnModal({
             className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
           />
         </div>
-
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">
-            Status <span className="text-red-500">*</span>
-          </label>
+          <label className="mb-2 block text-sm font-medium text-white">{t("dash.common.status")}</label>
           <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as ReturnStatus)}
+            value={returnStatusUi}
+            onChange={(e) => setReturnStatusUi(e.target.value as "Pending" | "Received")}
             className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
           >
             <option className="bg-[#0b0f14]" value="Pending">
-              Pending
+              {t("dash.salesReturn.pending")}
             </option>
             <option className="bg-[#0b0f14]" value="Received">
-              Received
+              {t("dash.salesReturn.received")}
             </option>
           </select>
         </div>
       </div>
 
-      {/* actions */}
       <div className="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
         <button
+          type="button"
           onClick={onClose}
           className="h-10 rounded-lg bg-[#0b2a44] px-6 text-sm font-semibold text-white hover:opacity-95"
         >
-          Cancel
+          {t("dash.common.cancel")}
         </button>
         <button
-          onClick={handleSubmit}
-          className="h-10 rounded-lg bg-[#ffa24a] px-6 text-sm font-semibold text-white hover:brightness-110"
+          type="button"
+          disabled={saving}
+          onClick={() => void handleSubmit()}
+          className="h-10 rounded-lg bg-[#ffa24a] px-6 text-sm font-semibold text-white hover:brightness-110 disabled:opacity-50"
         >
-          {isEdit ? "Save Changes" : "Submit"}
+          {saving ? t("dash.common.saving") : isEdit ? t("dash.common.save") : t("dash.salesReturn.submit")}
         </button>
       </div>
     </Modal>

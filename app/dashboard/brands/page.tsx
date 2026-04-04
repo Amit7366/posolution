@@ -5,33 +5,86 @@ import { BrandTable } from "@/app/components/dashboard/brands/BrandTable";
 import { BrandToolbar, SortOrder, StatusFilter } from "@/app/components/dashboard/brands/BrandToolbar";
 import { cn } from "@/app/lib/cn";
 import { exportBrandsToCSV, exportBrandsToXLS } from "@/app/lib/export";
-import { todayYmd } from "@/app/lib/format";
 import { Brand } from "@/app/types/brand";
-import React, { useMemo, useState } from "react";
+import { uploadImageToCloudinary } from "@/lib/upload-image";
+import {
+  useCreateBrandMutation,
+  useDeleteBrandMutation,
+  useGetBrandsQuery,
+  useUpdateBrandMutation,
+} from "@/redux/api/baseApi";
+import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
-
-
-function uid() {
-  return Math.random().toString(36).slice(2, 10);
+function getQueryErrorMessage(error: unknown): string | null {
+  if (!error) return null;
+  if (typeof error === "object" && error !== null && "data" in error) {
+    const d = (error as { data?: { message?: string } }).data;
+    if (d?.message) return String(d.message);
+  }
+  if (typeof error === "object" && error !== null && "error" in error) {
+    return String((error as { error: string }).error);
+  }
+  return null;
 }
 
-const seedBrands: Brand[] = [
-  { id: "1", name: "Lenovo", createdAt: "2024-12-24", status: "Active", logoUrl: "https://logo.clearbit.com/lenovo.com" },
-  { id: "2", name: "Beats", createdAt: "2024-12-10", status: "Active", logoUrl: "https://logo.clearbit.com/beatsbydre.com" },
-  { id: "3", name: "Nike", createdAt: "2024-11-27", status: "Active", logoUrl: "https://logo.clearbit.com/nike.com" },
-  { id: "4", name: "Apple", createdAt: "2024-11-18", status: "Active", logoUrl: "https://logo.clearbit.com/apple.com" },
-  { id: "5", name: "Amazon", createdAt: "2024-11-06", status: "Active", logoUrl: "https://logo.clearbit.com/amazon.com" },
-  { id: "6", name: "Woodmart", createdAt: "2024-10-25", status: "Active" },
-  { id: "7", name: "Dior", createdAt: "2024-10-14", status: "Active", logoUrl: "https://logo.clearbit.com/dior.com" },
-  { id: "8", name: "Lava", createdAt: "2024-10-03", status: "Active" },
-  { id: "9", name: "Nilkamal", createdAt: "2024-09-20", status: "Active" },
-  { id: "10", name: "The North Face", createdAt: "2024-09-10", status: "Active", logoUrl: "https://logo.clearbit.com/thenorthface.com" },
-];
+function toastMutationError(e: unknown, fallback: string) {
+  const data = (e as { data?: { message?: string; errorSources?: { path: string; message: string }[] } })
+    ?.data;
+  const msg = data?.message;
+  const details = data?.errorSources?.length
+    ? data.errorSources.map((s) => `${s.path}: ${s.message}`).join(", ")
+    : undefined;
+  toast.error(details ? `${msg ?? fallback} (${details})` : msg ?? fallback);
+}
+
+function generateSlug(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function mapApiRow(row: Record<string, unknown>): Brand {
+  const rawId = row._id;
+  const id =
+    typeof rawId === "object" && rawId !== null && "toString" in rawId
+      ? String((rawId as { toString(): string }).toString())
+      : String(rawId ?? "");
+  const status: Brand["status"] = row.status === "inactive" ? "Inactive" : "Active";
+  let createdAt = "";
+  if (typeof row.createdAt === "string") createdAt = row.createdAt;
+  else if (row.createdAt instanceof Date) createdAt = row.createdAt.toISOString();
+  return {
+    id,
+    slug: typeof row.slug === "string" ? row.slug : undefined,
+    name: String(row.name ?? ""),
+    createdAt,
+    status,
+    logoUrl:
+      typeof row.imageUrl === "string" && row.imageUrl.trim()
+        ? String(row.imageUrl)
+        : undefined,
+  };
+}
+
+async function dataUrlToUploadedUrl(dataUrl?: string): Promise<string | undefined> {
+  if (!dataUrl) return undefined;
+  if (!dataUrl.startsWith("data:")) return dataUrl;
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  const ext = blob.type.includes("png") ? "png" : "jpg";
+  const file = new File([blob], `brand.${ext}`, { type: blob.type || "image/jpeg" });
+  return uploadImageToCloudinary(file);
+}
 
 export default function BrandsPage() {
-  const [brands, setBrands] = useState<Brand[]>(seedBrands);
-
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [sort, setSort] = useState<SortOrder>("Latest");
 
@@ -40,42 +93,61 @@ export default function BrandsPage() {
 
   const [selected, setSelected] = useState<Record<string, boolean>>({});
 
-  // modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
   const [editing, setEditing] = useState<Brand | null>(null);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    let list = brands.filter((b) => (q ? b.name.toLowerCase().includes(q) : true));
-    if (statusFilter !== "All") list = list.filter((b) => b.status === statusFilter);
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query.trim()), 400);
+    return () => clearTimeout(t);
+  }, [query]);
 
-    list.sort((a, b) => {
-      const ta = new Date(a.createdAt).getTime();
-      const tb = new Date(b.createdAt).getTime();
-      return sort === "Latest" ? tb - ta : ta - tb;
-    });
+  const statusParam =
+    statusFilter === "All" ? undefined : statusFilter === "Active" ? "active" : "inactive";
 
-    return list;
-  }, [brands, query, statusFilter, sort]);
+  const {
+    data: listPayload,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useGetBrandsQuery({
+    page,
+    limit: rowsPerPage,
+    search: debouncedQuery,
+    ...(statusParam ? { status: statusParam } : {}),
+    sortBy: "createdAt",
+    sortOrder: sort === "Latest" ? "desc" : "asc",
+  });
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-  const safePage = Math.min(page, totalPages);
+  const total = listPayload?.meta?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
 
-  const paged = useMemo(() => {
-    const start = (safePage - 1) * rowsPerPage;
-    return filtered.slice(start, start + rowsPerPage);
-  }, [filtered, rowsPerPage, safePage]);
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  const brands = useMemo(() => {
+    const raw = listPayload?.data;
+    if (!Array.isArray(raw)) return [];
+    return raw.map((r) => mapApiRow(r as Record<string, unknown>));
+  }, [listPayload]);
+
+  const [createBrand, { isLoading: creating }] = useCreateBrandMutation();
+  const [updateBrand, { isLoading: updating }] = useUpdateBrandMutation();
+  const [deleteBrand] = useDeleteBrandMutation();
+  const submitting = creating || updating;
 
   const selectedCount = useMemo(() => Object.values(selected).filter(Boolean).length, [selected]);
 
-  const allOnPageSelected = paged.length > 0 && paged.every((b) => selected[b.id]);
-  const someOnPageSelected = paged.some((b) => selected[b.id]) && !allOnPageSelected;
+  const allOnPageSelected = brands.length > 0 && brands.every((b) => selected[b.id]);
+  const someOnPageSelected = brands.some((b) => selected[b.id]) && !allOnPageSelected;
 
   function toggleAllOnPage() {
     const next = { ...selected };
     const target = !allOnPageSelected;
-    for (const b of paged) next[b.id] = target;
+    for (const b of brands) next[b.id] = target;
     setSelected(next);
   }
 
@@ -83,24 +155,36 @@ export default function BrandsPage() {
     setSelected((prev) => ({ ...prev, [id]: !prev[id] }));
   }
 
-  function deleteOne(id: string) {
-    setBrands((prev) => prev.filter((b) => b.id !== id));
-    setSelected((prev) => {
-      const copy = { ...prev };
-      delete copy[id];
-      return copy;
-    });
+  async function deleteOne(id: string) {
+    if (!confirm(t("dash.brands.deleteOne"))) return;
+    try {
+      await deleteBrand(id).unwrap();
+      toast.success(t("dash.brands.deleted"));
+      setSelected((prev) => {
+        const copy = { ...prev };
+        delete copy[id];
+        return copy;
+      });
+      refetch();
+    } catch (e) {
+      toastMutationError(e, t("dash.brands.deleteFailed"));
+    }
   }
 
-  function bulkDelete() {
-    const ids = new Set(Object.entries(selected).filter(([, v]) => v).map(([k]) => k));
-    if (ids.size === 0) return;
-
-    // You can replace confirm() with your own nice confirm modal later.
-    if (!confirm(`Delete ${ids.size} selected brand(s)?`)) return;
-
-    setBrands((prev) => prev.filter((b) => !ids.has(b.id)));
-    setSelected({});
+  async function bulkDelete() {
+    const ids = Object.entries(selected)
+      .filter(([, v]) => v)
+      .map(([k]) => k);
+    if (ids.length === 0) return;
+    if (!confirm(t("dash.brands.bulkDelete", { count: ids.length }))) return;
+    try {
+      await Promise.all(ids.map((id) => deleteBrand(id).unwrap()));
+      toast.success(t("dash.brands.deletedMany"));
+      setSelected({});
+      refetch();
+    } catch (e) {
+      toastMutationError(e, t("dash.brands.bulkDeleteFailed"));
+    }
   }
 
   function openAdd() {
@@ -115,94 +199,100 @@ export default function BrandsPage() {
     setModalOpen(true);
   }
 
-  function submitModal(payload: { name: string; status: boolean; logoDataUrl?: string }) {
-    if (modalMode === "add") {
-      const newBrand: Brand = {
-        id: uid(),
-        name: payload.name,
-        createdAt: todayYmd(),
-        status: payload.status ? "Active" : "Inactive",
-        logoUrl: payload.logoDataUrl,
-      };
-      setBrands((prev) => [newBrand, ...prev]);
-      setModalOpen(false);
+  async function submitModal(payload: { name: string; status: boolean; logoDataUrl?: string }) {
+    const slug = generateSlug(payload.name);
+    if (slug.length < 2) {
+      toast.error(t("dash.brands.slugError"));
       return;
     }
 
-    // edit
-    if (!editing) return;
+    let imageUrl: string | undefined;
+    try {
+      imageUrl = await dataUrlToUploadedUrl(payload.logoDataUrl);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("dash.brands.imageUploadFailed"));
+      return;
+    }
 
-    setBrands((prev) =>
-      prev.map((b) =>
-        b.id === editing.id
-          ? {
-              ...b,
-              name: payload.name,
-              status: payload.status ? "Active" : "Inactive",
-              // if user picked a new image it replaces
-              logoUrl: payload.logoDataUrl,
-            }
-          : b
-      )
-    );
-    setModalOpen(false);
+    const body: Record<string, unknown> = {
+      name: payload.name.trim(),
+      slug,
+      status: payload.status ? "active" : "inactive",
+    };
+    if (imageUrl) body.imageUrl = imageUrl;
+
+    try {
+      if (modalMode === "add") {
+        await createBrand(body).unwrap();
+        toast.success(t("dash.brands.created"));
+      } else if (editing) {
+        await updateBrand({ id: editing.id, body }).unwrap();
+        toast.success(t("dash.brands.updated"));
+      }
+      setModalOpen(false);
+      refetch();
+    } catch (e) {
+      toastMutationError(e, modalMode === "add" ? t("dash.brands.createFailed") : t("dash.brands.updateFailed"));
+    }
   }
 
   function refresh() {
-    // in real app, re-fetch from server (SWR/React Query). For demo:
     setQuery("");
     setStatusFilter("All");
     setSort("Latest");
     setRowsPerPage(10);
     setPage(1);
     setSelected({});
+    void refetch();
   }
 
-  // export actions
   function exportPDF() {
-    // Print-style PDF: open print dialog
     window.print();
   }
 
   function exportXLS() {
-    exportBrandsToXLS(filtered, "brands.xls");
+    exportBrandsToXLS(brands, "brands.xls");
   }
 
   function exportCSV() {
-    exportBrandsToCSV(filtered, "brands.csv");
+    exportBrandsToCSV(brands, "brands.csv");
   }
+
+  const errMsg = isError ? (getQueryErrorMessage(error) ?? t("dash.brands.failedLoad")) : null;
 
   return (
     <div className="min-h-screen bg-[#0b0f14] text-slate-100">
       <div className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(60%_40%_at_50%_0%,rgba(249,115,22,0.18),transparent_60%)]" />
 
       <div className="relative mx-auto w-full max-w-[1600px] px-6 py-7">
-        {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">Brand</h1>
-            <p className="mt-1 text-sm text-slate-400">Manage your brands</p>
+            <h1 className="text-xl font-semibold tracking-tight">{t("dash.brands.title")}</h1>
+            <p className="mt-1 text-sm text-slate-400">{t("dash.brands.manage")}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={exportPDF}
               className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
-              title="Export PDF (Print)"
+              title={t("dash.common.exportPdf")}
+              type="button"
             >
               <PdfIcon />
             </button>
             <button
               onClick={exportXLS}
               className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
-              title="Export XLS"
+              title={t("dash.common.exportXls")}
+              type="button"
             >
               <XlsIcon />
             </button>
             <button
               onClick={exportCSV}
               className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
-              title="Export CSV"
+              title={t("dash.common.exportCsv")}
+              type="button"
             >
               <CsvIcon />
             </button>
@@ -210,7 +300,8 @@ export default function BrandsPage() {
             <button
               onClick={refresh}
               className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
-              title="Refresh"
+              title={t("dash.common.refresh")}
+              type="button"
             >
               <RefreshIcon />
             </button>
@@ -218,15 +309,25 @@ export default function BrandsPage() {
             <button
               onClick={openAdd}
               className="ml-2 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_-12px_rgba(249,115,22,0.8)] transition hover:bg-orange-400 active:translate-y-[1px]"
+              type="button"
             >
               <PlusIcon />
-              Add Brand
+              {t("dash.brands.add")}
             </button>
           </div>
         </div>
 
-        {/* Card */}
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
+        {errMsg ? (
+          <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {errMsg}
+          </div>
+        ) : null}
+
+        <div className="relative mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
+          {isLoading || isFetching ? (
+            <div className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-[#0b0f14]/40" />
+          ) : null}
+
           <BrandToolbar
             query={query}
             onQueryChange={(v) => {
@@ -252,7 +353,7 @@ export default function BrandsPage() {
           />
 
           <BrandTable
-            brands={paged}
+            brands={brands}
             selected={selected}
             onToggleAll={toggleAllOnPage}
             allSelected={allOnPageSelected}
@@ -262,10 +363,9 @@ export default function BrandsPage() {
             onDelete={deleteOne}
           />
 
-          {/* Footer / pagination */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4">
-            <div className="flex items-center gap-2 text-sm text-slate-400">
-              <span>Row Per Page</span>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-400">
+              <span>{t("dash.common.rowPerPage")}</span>
               <select
                 value={rowsPerPage}
                 onChange={(e) => {
@@ -280,22 +380,27 @@ export default function BrandsPage() {
                   </option>
                 ))}
               </select>
-              <span>Entries</span>
+              <span>{t("dash.common.entries")}</span>
+              <span className="text-slate-500">{total > 0 ? t("dash.common.totalCount", { count: total }) : ""}</span>
             </div>
 
             <div className="flex items-center gap-2">
-              <PageNavButton disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} title="Previous">
+              <PageNavButton
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                title={t("dash.common.previous")}
+              >
                 <ChevronLeftIcon />
               </PageNavButton>
 
               <span className="grid h-8 w-8 place-items-center rounded-full bg-orange-500 text-sm font-semibold text-white shadow-[0_12px_26px_-14px_rgba(249,115,22,0.9)]">
-                {safePage}
+                {page}
               </span>
 
               <PageNavButton
-                disabled={safePage >= totalPages}
+                disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                title="Next"
+                title={t("dash.common.next")}
               >
                 <ChevronRightIcon />
               </PageNavButton>
@@ -310,6 +415,7 @@ export default function BrandsPage() {
         initial={editing}
         onClose={() => setModalOpen(false)}
         onSubmit={submitModal}
+        submitting={submitting}
       />
     </div>
   );
@@ -342,7 +448,6 @@ function PageNavButton({
   );
 }
 
-/* icons */
 function PlusIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">

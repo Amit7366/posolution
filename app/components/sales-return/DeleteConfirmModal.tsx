@@ -1,19 +1,22 @@
 "use client";
 
-
 import { Trash2 } from "lucide-react";
 import Modal from "../ui/Modal";
 
 export default function DeleteConfirmModal({
   open,
-  title = "Delete Sales Return",
-  message = "Are you sure you want to delete sales return?",
+  title,
+  message,
+  cancelLabel,
+  confirmLabel,
   onClose,
   onConfirm,
 }: {
   open: boolean;
-  title?: string;
-  message?: string;
+  title: string;
+  message: string;
+  cancelLabel: string;
+  confirmLabel: string;
   onClose: () => void;
   onConfirm: () => void;
 }) {
@@ -31,13 +34,13 @@ export default function DeleteConfirmModal({
             onClick={onClose}
             className="h-10 rounded-lg bg-[#0b2a44] px-8 text-sm font-semibold text-white hover:opacity-95"
           >
-            Cancel
+            {cancelLabel}
           </button>
           <button
             onClick={onConfirm}
             className="h-10 rounded-lg bg-[#ffa24a] px-8 text-sm font-semibold text-white hover:brightness-110"
           >
-            Yes Delete
+            {confirmLabel}
           </button>
         </div>
       </div>

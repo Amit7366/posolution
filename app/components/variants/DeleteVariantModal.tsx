@@ -8,11 +8,13 @@ export function DeleteVariantModal({
   variantName,
   onClose,
   onConfirm,
+  deleting = false,
 }: {
   open: boolean;
   variantName?: string;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
+  deleting?: boolean;
 }) {
   return (
     <Modal
@@ -26,7 +28,7 @@ export function DeleteVariantModal({
             Cancel
           </Button>
           <Button variant="primary" onClick={onConfirm}>
-            Yes Delete
+            {deleting ? "Deleting…" : "Yes Delete"}
           </Button>
         </>
       }

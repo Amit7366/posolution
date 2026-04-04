@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { loginSchema } from "@/schemas/auth";
+import { createLoginSchema } from "@/schemas/auth";
 import { loginUser } from "@/services/actions/auth.services";
 import { setCredentials } from "@/redux/slices/authSlice";
 import type { AppDispatch } from "@/redux/store";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 type LoginData = {
   email: string;
@@ -16,10 +17,13 @@ type LoginData = {
 };
 
 export default function LoginForm() {
+  const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const loginSchema = useMemo(() => createLoginSchema(t), [t]);
 
   const {
     register,
@@ -37,7 +41,7 @@ export default function LoginForm() {
       dispatch(setCredentials({ accessToken, user }));
       router.replace("/dashboard");
     } catch (error: unknown) {
-      setServerError(error instanceof Error ? error.message : "Login failed");
+      setServerError(error instanceof Error ? error.message : t("auth.loginForm.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -52,11 +56,11 @@ export default function LoginForm() {
       {/* Email */}
       <div>
         <label className="text-xs font-medium text-neutral-400">
-          Email address
+          {t("auth.loginForm.emailLabel")}
         </label>
         <input
           {...register("email")}
-          placeholder="you@example.com"
+          placeholder={t("auth.loginForm.emailPlaceholder")}
           className="mt-2 w-full rounded-lg bg-neutral-800 border border-neutral-700 px-4 py-3 text-sm text-white placeholder-neutral-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
         />
         {errors.email && (
@@ -69,7 +73,7 @@ export default function LoginForm() {
       {/* Password */}
       <div>
         <label className="text-xs font-medium text-neutral-400">
-          Password
+          {t("auth.loginForm.passwordLabel")}
         </label>
         <input
           type="password"
@@ -96,11 +100,11 @@ export default function LoginForm() {
         disabled={submitting}
         className="w-full rounded-lg bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {submitting ? "Signing in..." : "Sign in"}
+        {submitting ? t("auth.loginForm.signingIn") : t("auth.loginForm.signIn")}
       </button>
 
       <p className="text-center text-xs text-neutral-500 hover:text-neutral-300 cursor-pointer">
-        Forgot password?
+        {t("auth.loginForm.forgotPassword")}
       </p>
     </form>
   );

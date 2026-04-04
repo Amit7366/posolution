@@ -2,18 +2,35 @@
 import DashboardNavbar from "../components/DashboardNavbar";
 import MobileSidebar from "../components/MobileSidebar";
 import Sidebar from "../components/Sidebar";
+import { cookies } from "next/headers";
+import { jwtDecode } from "jwt-decode";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const role: "admin" | "user" = "admin";
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  let role: "admin" | "user" = "admin";
+  if (accessToken) {
+    try {
+      const decoded: any = jwtDecode(accessToken);
+      if (decoded?.role === "user") role = "user";
+    } catch {
+      // Default to admin if the token is malformed.
+    }
+  }
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-gray-900">
+    <div className="flex min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <Sidebar role={role} />
       <MobileSidebar role={role} />
 
-      <main className="flex-1 w-full md:ml-64">
+      <main className="min-w-0 flex-1 md:ml-64">
         <DashboardNavbar />
-        <div className="p-4">{children}</div>
+        <div className="min-h-[calc(100vh-3.5rem)] bg-gray-50 p-4 dark:bg-gray-950">{children}</div>
       </main>
     </div>
   );

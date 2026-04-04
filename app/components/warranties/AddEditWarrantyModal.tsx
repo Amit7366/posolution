@@ -25,14 +25,15 @@ export function AddEditWarrantyModal({
     period: WarrantyPeriod;
     description: string;
     status: boolean;
-  }) => void;
+  }) => void | Promise<void>;
 }) {
   const [name, setName] = useState("");
   const [duration, setDuration] = useState<number>(1);
   const [period, setPeriod] = useState<WarrantyPeriod | "">("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState(false); // screenshot shows toggle off by default
+  const [status, setStatus] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const title = mode === "add" ? "Add Warranty" : "Edit Warranty";
   const submitLabel = mode === "add" ? "Add Warranty" : "Save Changes";
@@ -40,6 +41,7 @@ export function AddEditWarrantyModal({
   useEffect(() => {
     if (!open) return;
     setError(null);
+    setBusy(false);
 
     if (mode === "edit" && initial) {
       setName(initial.name);
@@ -50,9 +52,9 @@ export function AddEditWarrantyModal({
     } else {
       setName("");
       setDuration(1);
-      setPeriod("");
+      setPeriod("Month");
       setDescription("");
-      setStatus(false);
+      setStatus(true);
     }
   }, [open, mode, initial]);
 
@@ -60,20 +62,29 @@ export function AddEditWarrantyModal({
     return name.trim().length > 0 && description.trim().length > 0 && duration > 0 && period !== "";
   }, [name, description, duration, period]);
 
-  function submit() {
+  async function submit() {
     if (!name.trim()) return setError("Warranty is required.");
     if (!duration || duration <= 0) return setError("Duration must be greater than 0.");
     if (!period) return setError("Period is required.");
     if (!description.trim()) return setError("Description is required.");
 
     setError(null);
-    onSubmit({
-      name: name.trim(),
-      duration: Number(duration),
-      period: period as WarrantyPeriod,
-      description: description.trim(),
-      status,
-    });
+    setBusy(true);
+    try {
+      await Promise.resolve(
+        onSubmit({
+          name: name.trim(),
+          duration: Number(duration),
+          period: period as WarrantyPeriod,
+          description: description.trim(),
+          status,
+        })
+      );
+    } catch {
+      setError("Request failed. Try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -85,11 +96,11 @@ export function AddEditWarrantyModal({
       className="max-w-[760px]"
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} disabled={busy}>
             Cancel
           </Button>
-          <Button variant="primary" disabled={!canSubmit} onClick={submit}>
-            {submitLabel}
+          <Button variant="primary" disabled={!canSubmit || busy} onClick={() => void submit()}>
+            {busy ? "Saving…" : submitLabel}
           </Button>
         </>
       }
@@ -131,6 +142,8 @@ export function AddEditWarrantyModal({
               className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
             >
               <option value="">Select</option>
+              <option value="Day">Day</option>
+              <option value="Week">Week</option>
               <option value="Month">Month</option>
               <option value="Year">Year</option>
             </select>
@@ -150,8 +163,8 @@ export function AddEditWarrantyModal({
         </div>
 
         <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-          <div className="text-sm font-medium text-slate-200">Status</div>
-          <Toggle value={status} onChange={setStatus} ariaLabel="Warranty status" />
+          <div className="text-sm font-medium text-slate-200">Active status</div>
+          <Toggle value={status} onChange={setStatus} ariaLabel="Warranty active status" />
         </div>
 
         {error && <p className="text-sm text-red-300">{error}</p>}

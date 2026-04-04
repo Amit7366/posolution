@@ -3,18 +3,25 @@
 import React from "react";
 import { Modal } from "../ui/Modal";
 import { Button } from "../ui/Button";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export function DeleteUnitModal({
   open,
   unitName,
   onClose,
   onConfirm,
+  deleting = false,
 }: {
   open: boolean;
   unitName?: string;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
+  deleting?: boolean;
 }) {
+  const { t } = useTranslation();
+  const body = unitName
+    ? t("dash.units.deletePromptNamed", { name: unitName })
+    : t("dash.units.deletePromptPlain");
   return (
     <Modal
       open={open}
@@ -23,10 +30,14 @@ export function DeleteUnitModal({
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t("dash.common.cancel")}
           </Button>
-          <Button variant="primary" onClick={onConfirm}>
-            Yes Delete
+          <Button
+            variant="primary"
+            disabled={deleting}
+            onClick={() => void onConfirm()}
+          >
+            {deleting ? t("dash.common.deleting") : t("dash.units.yesDelete")}
           </Button>
         </>
       }
@@ -35,10 +46,8 @@ export function DeleteUnitModal({
         <div className="grid h-12 w-12 place-items-center rounded-full bg-red-500/15 text-red-300">
           <TrashIcon />
         </div>
-        <h3 className="text-2xl font-semibold text-slate-100">Delete Unit</h3>
-        <p className="text-sm text-slate-300">
-          Are you sure you want to delete unit{unitName ? ` “${unitName}”` : ""}?
-        </p>
+        <h3 className="text-2xl font-semibold text-slate-100">{t("dash.units.deleteTitle")}</h3>
+        <p className="text-sm text-slate-300">{body}</p>
       </div>
     </Modal>
   );

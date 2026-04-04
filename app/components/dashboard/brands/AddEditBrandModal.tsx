@@ -1,6 +1,7 @@
 "use client";
 
 import { Brand } from "@/app/types/brand";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Modal } from "../ui/Modal";
 import { Button } from "../ui/Button";
@@ -14,13 +15,16 @@ export function AddEditBrandModal({
   initial,
   onClose,
   onSubmit,
+  submitting = false,
 }: {
   open: boolean;
   mode: Mode;
   initial?: Brand | null;
   onClose: () => void;
-  onSubmit: (payload: { name: string; status: boolean; logoDataUrl?: string }) => void;
+  onSubmit: (payload: { name: string; status: boolean; logoDataUrl?: string }) => void | Promise<void>;
+  submitting?: boolean;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [status, setStatus] = useState(true);
   const [logoDataUrl, setLogoDataUrl] = useState<string | undefined>(undefined);
@@ -28,8 +32,8 @@ export function AddEditBrandModal({
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const title = mode === "add" ? "Add Brand" : "Edit Brand";
-  const submitLabel = mode === "add" ? "Add Brand" : "Save Changes";
+  const title = mode === "add" ? t("dash.brands.modalAdd") : t("dash.brands.modalEdit");
+  const submitLabel = mode === "add" ? t("dash.brands.modalAdd") : t("dash.common.saveChanges");
 
   const canSubmit = useMemo(() => name.trim().length > 0, [name]);
 
@@ -57,13 +61,13 @@ export function AddEditBrandModal({
     if (!file) return;
 
     if (!["image/png", "image/jpeg"].includes(file.type)) {
-      setError("Only PNG or JPEG is allowed.");
+      setError(t("dash.brands.fileTypeError"));
       e.currentTarget.value = "";
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      setError("File too large. Max 2MB.");
+      setError(t("dash.brands.fileTooLarge"));
       e.currentTarget.value = "";
       return;
     }
@@ -74,13 +78,13 @@ export function AddEditBrandModal({
     reader.readAsDataURL(file);
   }
 
-  function submit() {
+  async function submit() {
     if (!canSubmit) {
-      setError("Brand name is required.");
+      setError(t("dash.brands.brandNameRequired"));
       return;
     }
     setError(null);
-    onSubmit({ name: name.trim(), status, logoDataUrl });
+    await onSubmit({ name: name.trim(), status, logoDataUrl });
   }
 
   return (
@@ -92,44 +96,42 @@ export function AddEditBrandModal({
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t("dash.common.cancel")}
           </Button>
-          <Button variant="primary" disabled={!canSubmit} onClick={submit}>
-            {submitLabel}
+          <Button variant="primary" disabled={!canSubmit || submitting} onClick={() => void submit()}>
+            {submitting ? t("dash.common.saving") : submitLabel}
           </Button>
         </>
       }
     >
       <div className="grid gap-6 md:grid-cols-[220px_1fr]">
-        {/* image */}
         <div className="flex flex-col gap-3">
           <div className="relative grid h-[170px] w-full place-items-center rounded-xl border border-dashed border-white/20 bg-white/[0.02]">
             {logoDataUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={logoDataUrl} alt="Brand logo" className="h-full w-full rounded-xl object-contain p-3" />
+              <img src={logoDataUrl} alt={t("dash.brands.logoAlt")} className="h-full w-full rounded-xl object-contain p-3" />
             ) : (
               <div className="flex flex-col items-center gap-2 text-slate-400">
                 <div className="grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-white/[0.03]">
                   <PlusIcon />
                 </div>
-                <div className="text-sm font-medium">Add Image</div>
+                <div className="text-sm font-medium">{t("dash.brands.addImage")}</div>
               </div>
             )}
           </div>
 
           <Button variant="primary" onClick={handlePickFile} className="rounded-lg">
-            Upload Image
+            {t("dash.brands.uploadImage")}
           </Button>
-          <p className="text-xs text-slate-400">JPEG, PNG up to 2 MB</p>
+          <p className="text-xs text-slate-400">{t("dash.brands.jpegHint2mb")}</p>
 
           <input ref={fileRef} type="file" accept="image/png,image/jpeg" className="hidden" onChange={handleFileChange} />
         </div>
 
-        {/* form */}
         <div className="space-y-5">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-200">
-              Brand <span className="text-orange-400">*</span>
+              {t("dash.brands.brandFieldStar")} <span className="text-orange-400">*</span>
             </label>
             <input
               name="brand"
@@ -141,8 +143,8 @@ export function AddEditBrandModal({
           </div>
 
           <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-            <div className="text-sm font-medium text-slate-200">Status</div>
-            <Toggle value={status} onChange={setStatus} ariaLabel="Brand status" />
+            <div className="text-sm font-medium text-slate-200">{t("dash.common.status")}</div>
+            <Toggle value={status} onChange={setStatus} ariaLabel={t("dash.common.status")} />
           </div>
         </div>
       </div>

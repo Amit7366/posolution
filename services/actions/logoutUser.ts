@@ -4,13 +4,22 @@ import { AppDispatch } from "@/redux/store";
 import { logout } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
 import { persistor } from "@/redux/persistor";
-import Cookies from "js-cookie";
+import { authKey } from "@/constants/authKey";
+import { removeFromLocalStorage } from "@/utils/local-storage";
 
-export const logoutUser = async (dispatch: AppDispatch, redirect?: () => void) => {
+export const logoutUser = async (
+  dispatch: AppDispatch,
+  redirect?: () => void
+) => {
   try {
-    // Remove token from localStorage or cookies
-    // deleteFromLocalStorage("accessToken");
-    // Cookies.remove("accessToken");
+    // Clear httpOnly cookies via Next server route.
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }).catch(() => null);
+
+    // Clear client-side token copies.
+    removeFromLocalStorage(authKey);
 
     // Purge Redux persist store (if used)
     await persistor.purge();
@@ -18,8 +27,7 @@ export const logoutUser = async (dispatch: AppDispatch, redirect?: () => void) =
     // Dispatch Redux logout
     dispatch(logout());
 
-    // Feedback
-    toast.success("লগ আউট সফল!");
+    toast.success("Logged out successfully.");
 
     // Redirect (optional)
     if (redirect) redirect();

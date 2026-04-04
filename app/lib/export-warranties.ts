@@ -1,5 +1,5 @@
+import { warrantyLabel } from "./warranty-api";
 import { Warranty } from "../types/warranty";
-
 
 function downloadBlob(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
@@ -19,8 +19,7 @@ function csvEscape(v: string) {
 }
 
 function displayDuration(w: Warranty) {
-  const unit = w.period + (w.duration === 1 ? "" : "s");
-  return `${w.duration} ${unit}`;
+  return warrantyLabel(w);
 }
 
 export function exportWarrantiesToCSV(rows: Warranty[], filename = "warranties.csv") {

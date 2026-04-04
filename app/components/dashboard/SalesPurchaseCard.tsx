@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import {
   BarChart,
   Bar,
@@ -10,52 +11,58 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ShoppingBag } from "lucide-react";
+import type { DashboardChartPoint } from "@/app/types/dashboard-summary";
 
 const FILTERS = ["1D", "1W", "1M", "3M", "6M", "1Y"] as const;
-type FilterType = (typeof FILTERS)[number];
+export type SalesChartRange = (typeof FILTERS)[number];
 
-const chartData: Record<FilterType, any[]> = {
-  "1D": [
-    { time: "2 am", sales: 12, purchase: 45 },
-    { time: "4 am", sales: 16, purchase: 38 },
-    { time: "6 am", sales: 10, purchase: 35 },
-    { time: "8 am", sales: 18, purchase: 48 },
-    { time: "10 am", sales: 22, purchase: 60 },
-    { time: "12 pm", sales: 10, purchase: 30 },
-    { time: "14 pm", sales: 8, purchase: 25 },
-    { time: "16 pm", sales: 15, purchase: 38 },
-    { time: "18 pm", sales: 30, purchase: 70 },
-    { time: "20 pm", sales: 12, purchase: 33 },
-    { time: "22 pm", sales: 20, purchase: 55 },
-    { time: "24 pm", sales: 14, purchase: 28 },
-  ],
-  "1W": [],
-  "1M": [],
-  "3M": [],
-  "6M": [],
-  "1Y": [],
+type Props = {
+  chartPoints: DashboardChartPoint[];
+  selected: SalesChartRange;
+  onSelect: (r: SalesChartRange) => void;
+  isLoading?: boolean;
 };
 
-export default function SalesPurchaseCard() {
-  const [selected, setSelected] = useState<FilterType>("1D");
+export default function SalesPurchaseCard({
+  chartPoints,
+  selected,
+  onSelect,
+  isLoading,
+}: Props) {
+  const { t } = useTranslation();
+
+  const { purchaseSum, salesSum } = useMemo(() => {
+    let p = 0;
+    let s = 0;
+    for (const pt of chartPoints) {
+      p += pt.purchase;
+      s += pt.sales;
+    }
+    return { purchaseSum: p, salesSum: s };
+  }, [chartPoints]);
+
+  const fmtCompact = (n: number) => {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+    return String(Math.round(n));
+  };
 
   return (
     <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 w-full">
-      {/* Header */}
       <div className="flex flex-col md:flex-row items-center justify-center md:justify-between">
         <div className="flex items-center gap-2">
           <ShoppingBag size={20} className="text-orange-500" />
           <h2 className="font-semibold text-gray-900 dark:text-gray-200">
-            Sales & Purchase
+            {t("dash.widgets.salesPurchase")}
           </h2>
         </div>
 
-        {/* Filters */}
         <div className="flex flex-wrap gap-2">
           {FILTERS.map((f) => (
             <button
               key={f}
-              onClick={() => setSelected(f)}
+              type="button"
+              onClick={() => onSelect(f)}
               className={`px-3 py-1 text-sm rounded-md border transition ${
                 selected === f
                   ? "bg-orange-500 text-white"
@@ -68,36 +75,44 @@ export default function SalesPurchaseCard() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="flex gap-4 mt-4">
         <div className="text-sm">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-orange-300 rounded-full" />
-            Total Purchase
+            {t("dash.widgets.totalPurchase")}
           </div>
-          <p className="text-xl font-bold">3K</p>
+          <p className="text-xl font-bold">{isLoading ? "…" : fmtCompact(purchaseSum)}</p>
         </div>
 
         <div className="text-sm">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-orange-500 rounded-full" />
-            Total Sales
+            {t("dash.widgets.totalSalesLabel")}
           </div>
-          <p className="text-xl font-bold">1K</p>
+          <p className="text-xl font-bold">{isLoading ? "…" : fmtCompact(salesSum)}</p>
         </div>
       </div>
 
-      {/* Chart Area */}
       <div className="w-full h-64 mt-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData[selected]}>
-            <XAxis dataKey="time" stroke="#aaa" />
-            <YAxis stroke="#aaa" />
-            <Tooltip cursor={{ fill: "#f2f2f2" }} />
-            <Bar dataKey="purchase" stackId="a" fill="#fed7aa" />
-            <Bar dataKey="sales" stackId="a" fill="#fb923c" />
-          </BarChart>
-        </ResponsiveContainer>
+        {isLoading ? (
+          <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+            …
+          </div>
+        ) : chartPoints.length === 0 ? (
+          <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+            {t("dash.dashboard.noChartData")}
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartPoints}>
+              <XAxis dataKey="label" stroke="#aaa" tick={{ fontSize: 10 }} />
+              <YAxis stroke="#aaa" tick={{ fontSize: 10 }} />
+              <Tooltip cursor={{ fill: "#f2f2f2" }} />
+              <Bar dataKey="purchase" stackId="a" fill="#fed7aa" />
+              <Bar dataKey="sales" stackId="a" fill="#fb923c" />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

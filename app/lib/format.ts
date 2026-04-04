@@ -1,6 +1,13 @@
 export function formatDate(isoYmd: string) {
-  const d = new Date(`${isoYmd}T00:00:00`);
-  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  const d = new Date(
+    isoYmd.includes("T") ? isoYmd : `${isoYmd}T00:00:00`
+  );
+  if (Number.isNaN(d.getTime())) return isoYmd;
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 export function todayYmd() {

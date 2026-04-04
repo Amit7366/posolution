@@ -6,6 +6,8 @@ import { Checkbox } from "../ui/Checkbox";
 import { formatDate } from "@/app/lib/format";
 import { cn } from "@/app/lib/cn";
 
+type TFn = (key: string, vars?: Record<string, string | number>) => string;
+
 export function UnitTable({
   units,
   selected,
@@ -16,6 +18,7 @@ export function UnitTable({
   onEdit,
   onAskDelete,
   onOpenSettings,
+  t,
 }: {
   units: Unit[];
   selected: Record<string, boolean>;
@@ -25,7 +28,8 @@ export function UnitTable({
   onToggleOne: (id: string) => void;
   onEdit: (u: Unit) => void;
   onAskDelete: (u: Unit) => void;
-  onOpenSettings: () => void; // gear button
+  onOpenSettings: () => void;
+  t: TFn;
 }) {
   return (
     <div className="relative">
@@ -33,7 +37,7 @@ export function UnitTable({
       <button
         type="button"
         onClick={onOpenSettings}
-        title="Settings"
+        title={t("dash.common.settings")}
         className="absolute right-3 top-4 z-10 grid h-12 w-12 place-items-center rounded-full bg-orange-500 text-white shadow-[0_18px_40px_-22px_rgba(249,115,22,0.95)] transition hover:bg-orange-400 active:translate-y-[1px]"
       >
         <GearIcon />
@@ -44,13 +48,18 @@ export function UnitTable({
           <thead>
             <tr className="text-left text-sm text-slate-300">
               <th className="w-12 px-5 py-4">
-                <Checkbox checked={allSelected} indeterminate={someSelected} onChange={onToggleAll} ariaLabel="Select all" />
+                <Checkbox
+                  checked={allSelected}
+                  indeterminate={someSelected}
+                  onChange={onToggleAll}
+                  ariaLabel={t("dash.common.selectAll")}
+                />
               </th>
-              <th className="px-5 py-4 font-semibold text-slate-100">Unit</th>
-              <th className="px-5 py-4 font-semibold text-slate-100">Short name</th>
-              <th className="px-5 py-4 font-semibold text-slate-100">No of Products</th>
-              <th className="px-5 py-4 font-semibold text-slate-100">Created Date</th>
-              <th className="px-5 py-4 font-semibold text-slate-100">Status</th>
+              <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.units.colUnit")}</th>
+              <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.common.shortName")}</th>
+              <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.common.noOfProducts")}</th>
+              <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.common.createdDate")}</th>
+              <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.common.status")}</th>
               <th className="w-40 px-5 py-4 text-right font-semibold text-slate-100"></th>
             </tr>
           </thead>
@@ -59,21 +68,25 @@ export function UnitTable({
             {units.map((u) => (
               <tr key={u.id} className="group hover:bg-white/[0.03]">
                 <td className="px-5 py-4">
-                  <Checkbox checked={!!selected[u.id]} onChange={() => onToggleOne(u.id)} ariaLabel={`Select ${u.unit}`} />
+                  <Checkbox
+                    checked={!!selected[u.id]}
+                    onChange={() => onToggleOne(u.id)}
+                    ariaLabel={`${t("dash.common.selectRow")} ${u.unit}`}
+                  />
                 </td>
                 <td className="px-5 py-4 text-sm font-semibold text-slate-100">{u.unit}</td>
                 <td className="px-5 py-4 text-sm text-slate-300">{u.shortName}</td>
                 <td className="px-5 py-4 text-sm text-slate-300">{u.productsCount}</td>
                 <td className="px-5 py-4 text-sm text-slate-300">{formatDate(u.createdAt)}</td>
                 <td className="px-5 py-4">
-                  <StatusPill status={u.status} />
+                  <StatusPill status={u.status} t={t} />
                 </td>
                 <td className="px-5 py-4">
                   <div className="flex justify-end gap-2">
-                    <ActionButton title="Edit" onClick={() => onEdit(u)}>
+                    <ActionButton title={t("dash.common.edit")} onClick={() => onEdit(u)}>
                       <EditIcon />
                     </ActionButton>
-                    <ActionButton title="Delete" onClick={() => onAskDelete(u)}>
+                    <ActionButton title={t("dash.common.delete")} onClick={() => onAskDelete(u)}>
                       <TrashIcon />
                     </ActionButton>
                   </div>
@@ -84,7 +97,7 @@ export function UnitTable({
             {units.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-5 py-14 text-center text-sm text-slate-400">
-                  No units found.
+                  {t("dash.units.noUnitsFound")}
                 </td>
               </tr>
             )}
@@ -116,8 +129,15 @@ function ActionButton({
   );
 }
 
-function StatusPill({ status }: { status: "Active" | "Inactive" }) {
+function StatusPill({
+  status,
+  t,
+}: {
+  status: "Active" | "Inactive";
+  t: TFn;
+}) {
   const isActive = status === "Active";
+  const label = isActive ? t("dash.common.active") : t("dash.common.inactive");
   return (
     <span
       className={cn(
@@ -126,7 +146,7 @@ function StatusPill({ status }: { status: "Active" | "Inactive" }) {
       )}
     >
       <span className={cn("h-2 w-2 rounded-full", isActive ? "bg-emerald-400" : "bg-slate-400")} />
-      {status}
+      {label}
     </span>
   );
 }

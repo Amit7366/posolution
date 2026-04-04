@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const SOHOJ_BASE_URL = "https://sohoj-server.vercel.app/api/v1";
+import { getApiBaseUrl } from "@/lib/api-base-url";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const res = await fetch(`${SOHOJ_BASE_URL}/users/create-User`, {
+    const res = await fetch(`${getApiBaseUrl()}/users/create-user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

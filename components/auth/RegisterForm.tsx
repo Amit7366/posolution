@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { registerSchema } from "@/schemas/auth";
+import { createRegisterSchema } from "@/schemas/auth";
 import { registerUser } from "@/services/actions/auth.services";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 type RegisterData = {
   name: string;
@@ -16,9 +17,12 @@ type RegisterData = {
 };
 
 export default function RegisterForm() {
+  const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
 
   const {
     register,
@@ -40,10 +44,10 @@ export default function RegisterForm() {
         email: data.email,
         password: data.password,
       });
-      setSuccessMessage("Account created successfully. You can now log in.");
+      setSuccessMessage(t("auth.registerForm.successMessage"));
       reset();
     } catch (error: any) {
-      setServerError(error?.message || "Registration failed");
+      setServerError(error?.message || t("auth.registerForm.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -59,11 +63,11 @@ export default function RegisterForm() {
       {/* Full Name */}
       <div>
         <label className="text-xs font-medium text-neutral-400">
-          Full name
+          {t("auth.registerForm.fullNameLabel")}
         </label>
         <input
           {...register("name")}
-          placeholder="John Doe"
+          placeholder={t("auth.registerForm.fullNamePlaceholder")}
           className="mt-2 w-full rounded-lg bg-neutral-800 border border-neutral-700 px-4 py-3 text-sm text-white placeholder-neutral-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
         />
         {errors.name && (
@@ -76,11 +80,11 @@ export default function RegisterForm() {
       {/* Username */}
       <div>
         <label className="text-xs font-medium text-neutral-400">
-          Username
+          {t("auth.registerForm.usernameLabel")}
         </label>
         <input
           {...register("userName")}
-          placeholder="sohojuser1"
+          placeholder={t("auth.registerForm.usernamePlaceholder")}
           className="mt-2 w-full rounded-lg bg-neutral-800 border border-neutral-700 px-4 py-3 text-sm text-white placeholder-neutral-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
         />
         {errors.userName && (
@@ -93,11 +97,11 @@ export default function RegisterForm() {
       {/* Email */}
       <div>
         <label className="text-xs font-medium text-neutral-400">
-          Email address
+          {t("auth.registerForm.emailLabel")}
         </label>
         <input
           {...register("email")}
-          placeholder="you@example.com"
+          placeholder={t("auth.registerForm.emailPlaceholder")}
           className="mt-2 w-full rounded-lg bg-neutral-800 border border-neutral-700 px-4 py-3 text-sm text-white placeholder-neutral-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
         />
         {errors.email && (
@@ -110,7 +114,7 @@ export default function RegisterForm() {
       {/* Password */}
       <div>
         <label className="text-xs font-medium text-neutral-400">
-          Password
+          {t("auth.registerForm.passwordLabel")}
         </label>
         <input
           type="password"
@@ -128,7 +132,7 @@ export default function RegisterForm() {
       {/* Confirm Password */}
       <div>
         <label className="text-xs font-medium text-neutral-400">
-          Confirm password
+          {t("auth.registerForm.confirmPasswordLabel")}
         </label>
         <input
           type="password"
@@ -157,13 +161,13 @@ export default function RegisterForm() {
         disabled={submitting}
         className="w-full rounded-lg bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {submitting ? "Creating account..." : "Create account"}
+        {submitting ? t("auth.registerForm.creatingAccount") : t("auth.registerForm.createAccount")}
       </button>
 
       <p className="text-center text-xs text-neutral-500">
-        By signing up, you agree to our{" "}
-        <span className="underline hover:text-neutral-300 cursor-pointer">
-          Terms & Privacy Policy
+        {t("auth.registerForm.termsPrefix")}{" "}
+        <span className="cursor-pointer underline hover:text-neutral-300">
+          {t("auth.registerForm.termsLink")}
         </span>
       </p>
     </motion.form>

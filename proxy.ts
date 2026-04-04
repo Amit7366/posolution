@@ -2,8 +2,6 @@ import { jwtDecode } from "jwt-decode";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-type Role = keyof typeof roleBasedPrivateRoutes;
-
 // Public routes that don't require auth
 const publicRoutes = [
   "/",
@@ -14,16 +12,6 @@ const publicRoutes = [
   "/blog",
   "/contact",
 ];
-
-// Any path that starts with /dashboard is protected
-const commonPrivateRoutes = ["/dashboard"];
-
-const roleBasedPrivateRoutes = {
-  USER: [/^\/dashboard\/user/],
-  DOCTOR: [/^\/dashboard\/doctor/],
-  ADMIN: [/^\/dashboard\/admin/],
-  SUPER_ADMIN: [/^\/dashboard\/super-admin/],
-};
 
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -44,31 +32,41 @@ export default function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Allow access to /dashboard and any nested routes when logged in
-  if (
-    commonPrivateRoutes.includes(pathname) ||
-    commonPrivateRoutes.some((route) => pathname.startsWith(route))
-  ) {
+  // Protect dashboard: require valid token; sidebar links stay /dashboard/... (no forced /dashboard/user).
+  if (pathname.startsWith("/dashboard")) {
+    let decodedData: { role?: string } | null = null;
+    try {
+      decodedData = jwtDecode(accessToken) as { role?: string };
+    } catch {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    const role = decodedData?.role;
+    if (!role) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    // Optional admin-area page: only admin / superAdmin
+    if (pathname.startsWith("/dashboard/admin")) {
+      if (role !== "admin" && role !== "superAdmin") {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+      return NextResponse.next();
+    }
+
+    // User-specific stub page
+    if (pathname.startsWith("/dashboard/user")) {
+      if (role !== "user") {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+      return NextResponse.next();
+    }
+
+    // POS routes (products, category, sales, etc.): any authenticated role
     return NextResponse.next();
   }
 
-  // Optional: role-based access if you need it
-  let decodedData: any = null;
-  try {
-    decodedData = jwtDecode(accessToken);
-  } catch {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  const role = decodedData?.role;
-  if (role && roleBasedPrivateRoutes[role as Role]) {
-    const roleRoutes = roleBasedPrivateRoutes[role as Role];
-    if (roleRoutes.some((regex) => regex.test(pathname))) {
-      return NextResponse.next();
-    }
-  }
-
-  // Fallback: redirect unknown private paths to home
+  // Fallback for any other non-public route.
   return NextResponse.redirect(new URL("/", request.url));
 }
 
@@ -81,6 +79,7 @@ export const config = {
     "/our-plan",
     "/blog",
     "/contact",
+    "/dashboard",
     "/dashboard/:path*",
   ],
 };

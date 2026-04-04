@@ -15,12 +15,14 @@ export function AddEditVariantModal({
   initial,
   onClose,
   onSubmit,
+  submitting = false,
 }: {
   open: boolean;
   mode: Mode;
   initial?: VariantAttribute | null;
   onClose: () => void;
-  onSubmit: (payload: { name: string; values: string[]; status: boolean }) => void;
+  onSubmit: (payload: { name: string; values: string[]; status: boolean }) => void | Promise<void>;
+  submitting?: boolean;
 }) {
   const [name, setName] = useState("");
   const [values, setValues] = useState<string[]>([]);
@@ -47,11 +49,11 @@ export function AddEditVariantModal({
 
   const canSubmit = useMemo(() => name.trim().length > 0 && values.length > 0, [name, values]);
 
-  function submit() {
+  async function submit() {
     if (!name.trim()) return setError("Variant is required.");
     if (values.length === 0) return setError("Values are required.");
     setError(null);
-    onSubmit({ name: name.trim(), values, status });
+    await onSubmit({ name: name.trim(), values, status });
   }
 
   return (
@@ -66,8 +68,12 @@ export function AddEditVariantModal({
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" disabled={!canSubmit} onClick={submit}>
-            {submitLabel}
+          <Button
+            variant="primary"
+            disabled={!canSubmit || submitting}
+            onClick={() => void submit()}
+          >
+            {submitting ? "Saving…" : submitLabel}
           </Button>
         </>
       }

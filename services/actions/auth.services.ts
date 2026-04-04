@@ -93,8 +93,7 @@ export const registerUser = async (payload: RegisterPayload) => {
       name: payload.name,
       userName: payload.userName,
       email: payload.email,
-      gender: "male",
-      tenantId: "t-001",
+      gender: "male" as const,
       presentAddress: "1234 Elm Street, Los Angeles, CA",
     },
   };
@@ -115,13 +114,25 @@ export const registerUser = async (payload: RegisterPayload) => {
 };
 
 export const refreshAccessToken = async () => {
-  const res = await fetch("https://bm24api.xyz/api/v1/refresh-token");
+  const token = getFromLocalStorage(authKey);
+  const res = await fetch("/api/auth/refresh-token", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: token } : {}),
+    },
+  });
   if (!res.ok) throw new Error("Refresh failed");
 
-  const data = await res.json();
-  const user = jwtDecode<DecodedUser>(data.accessToken);
+  const payload = await res.json();
+  const accessToken = payload?.data?.accessToken as string | undefined;
+  if (!accessToken) throw new Error("Refresh failed");
 
-  return { accessToken: data.accessToken, user };
+  setToLocalStorage(authKey, accessToken);
+  const user = jwtDecode<DecodedUser>(accessToken);
+
+  return { accessToken, user };
 };
 
 export const getUserInfo = () => {

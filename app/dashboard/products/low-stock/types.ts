@@ -1,11 +1,12 @@
 export type LowStockProduct = {
-  id: number;
+  id: string;
   warehouse: string;
   store: string;
   name: string;
-  image:string;
+  imageUrl?: string;
   category: string;
   sku: string;
-  qty: number;
-  qtyAlert: number;
+  quantity: number;
+  /** Stored on product; null means list used default threshold */
+  lowStockThreshold: number | null;
 };

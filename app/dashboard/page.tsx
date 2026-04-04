@@ -7,197 +7,252 @@ import {
   Shield,
   RotateCcw,
   DollarSign,
-  Receipt,
-  Clock,
   X,
   Calendar,
   Settings,
 } from "lucide-react";
-import { useState } from "react";
-import SalesPurchaseCard from "../components/dashboard/SalesPurchaseCard";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import SalesPurchaseCard, { type SalesChartRange } from "../components/dashboard/SalesPurchaseCard";
 import OverallInformationCard from "../components/dashboard/OverallInformationCard";
-import CustomersOverviewCard from "../components/dashboard/CustomersOverviewCard";
-import TopSellingProducts from "../components/dashboard/TopSellingProducts";
+import TopSellingProducts, { mapTopProductsToRows } from "../components/dashboard/TopSellingProducts";
 import LowStockProducts from "../components/dashboard/LowStockProducts";
-import RecentSales from "../components/dashboard/RecentSales";
+import RecentSales, { mapRecentInvoicesToRows } from "../components/dashboard/RecentSales";
 import DashboardWidgetsDemo from "../components/dashboard/DashobardWidgets";
+import { useGetDashboardSummaryQuery } from "@/redux/api/baseApi";
+import { parseDashboardSummaryPayload } from "@/app/types/dashboard-summary";
+import { money } from "@/app/lib/money";
+
+function TrendLine({ value, variant }: { value: number | null; variant: "onDark" | "onLight" }) {
+  const { t } = useTranslation();
+  if (value === null) {
+    return <span className={variant === "onDark" ? "text-white/70" : "text-gray-400"}>—</span>;
+  }
+  const pos = value >= 0;
+  const suffix = ` ${t("dash.dashboard.vsLastMonth")}`;
+  if (variant === "onDark") {
+    return (
+      <span className={pos ? "text-white/95" : "text-red-200"}>
+        {pos ? "+" : ""}
+        {value}%{suffix}
+      </span>
+    );
+  }
+  return (
+    <span className={`text-sm mt-3 font-medium inline-flex items-center gap-1 ${pos ? "text-green-500" : "text-red-500"}`}>
+      {pos ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+      {pos ? "+" : ""}
+      {value}%{suffix}
+    </span>
+  );
+}
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(true);
+  const [chartRange, setChartRange] = useState<SalesChartRange>("1W");
+
+  const { data: raw, isLoading, isFetching, error } = useGetDashboardSummaryQuery({ chartRange });
+
+  const summary = useMemo(() => parseDashboardSummaryPayload(raw), [raw]);
+
+  const topSellingRows = useMemo(
+    () => (summary ? mapTopProductsToRows(summary.topProducts) : []),
+    [summary]
+  );
+  const recentRows = useMemo(
+    () => (summary ? mapRecentInvoicesToRows(summary.recentInvoices) : []),
+    [summary]
+  );
+  const lowStockRows = useMemo(
+    () =>
+      summary
+        ? summary.lowStock.map((p) => ({
+            name: p.name,
+            id: p.sku || p.id.slice(-6),
+            stock: p.quantity,
+            image: p.imageUrl,
+          }))
+        : [],
+    [summary]
+  );
+
+  const firstLow = summary?.lowStock[0];
+  const busy = isLoading || isFetching;
 
   return (
     <div className="p-6 space-y-6">
-      {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row items-center justify-between">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">
-            Welcome, Admin
-          </h1>
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">{t("dash.dashboard.welcome")}</h1>
           <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
-            You have <span className="text-orange-600 font-semibold">200+</span>{" "}
-            Orders, Today
+            {t("dash.dashboard.ordersToday")}{" "}
+            <span className="text-orange-600 font-semibold">
+              {busy ? "…" : summary?.counts.invoicesToday ?? 0}
+            </span>{" "}
+            {t("dash.dashboard.ordersTodaySuffix")}
           </p>
         </div>
 
-        {/* Date Range */}
-        <button className="flex items-center gap-2 border px-4 py-2 rounded-md bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 shadow-sm">
+        <button
+          type="button"
+          className="flex items-center gap-2 border px-4 py-2 rounded-md bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 shadow-sm opacity-80 cursor-default"
+        >
           <Calendar size={18} />
-          12/05/2025 - 12/11/2025
+          {t("dash.dashboard.dateRangeSample")}
         </button>
       </div>
 
-      {/* Alert Banner */}
-      {showAlert && (
+      {error != null ? (
+        <div className="rounded-md border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm">
+          {String((error as { data?: { message?: string } })?.data?.message || "Failed to load dashboard.")}
+        </div>
+      ) : null}
+
+      {showAlert && firstLow && !busy && (
         <div className="relative bg-orange-50 border border-orange-200 text-orange-700 px-5 py-3 rounded-md flex items-center">
           <span className="text-sm">
-            🔔 Your Product <strong>Apple iPhone 15</strong> is running Low,
-            already below 5 Pcs.
-            <a href="#" className="text-blue-600 font-semibold ml-1">
-              Add Stock
-            </a>
+            🔔 {t("dash.dashboard.lowStockBanner")} <strong>{firstLow.name}</strong> {t("dash.dashboard.lowStockMid")}{" "}
+            {firstLow.quantity} {t("dash.dashboard.lowStockEnd")}
+            <Link href="/dashboard/products/low-stock" className="ml-1 font-semibold text-blue-600 hover:underline">
+              {t("dash.dashboard.addStock")}
+            </Link>
           </span>
           <button
+            type="button"
             onClick={() => setShowAlert(false)}
             className="absolute right-4 text-gray-600 hover:text-gray-900"
+            aria-label="Dismiss"
           >
             <X size={18} />
           </button>
         </div>
       )}
 
-      {/* Top Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {/* Total Sales */}
         <div className="rounded-xl p-5 bg-orange-500 text-white shadow-sm">
           <div className="flex items-center gap-3 text-white/90">
             <DollarSign size={24} />
-            <span className="font-medium text-sm">Total Sales</span>
+            <span className="font-medium text-sm">{t("dash.dashboard.totalSales")}</span>
           </div>
-          <div className="text-3xl font-bold mt-2">$48,988,078</div>
-          <div className="bg-white/20 inline-block px-2 py-[2px] rounded text-xs mt-3">
-            +22%
-          </div>
+          <div className="text-3xl font-bold mt-2">{busy ? "…" : money(summary?.totals.totalSales ?? 0)}</div>
+          <p className="text-sm mt-3">
+            {busy ? "…" : <TrendLine value={summary?.trends.salesPctVsLastMonth ?? null} variant="onDark" />}
+          </p>
         </div>
 
-        {/* Total Sales Return */}
         <div className="rounded-xl p-5 bg-[#0C274E] text-white shadow-sm">
           <div className="flex items-center gap-3 text-white/90">
             <RotateCcw size={24} />
-            <span className="font-medium text-sm">Total Sales Return</span>
+            <span className="font-medium text-sm">{t("dash.dashboard.totalSalesReturn")}</span>
           </div>
-          <div className="text-3xl font-bold mt-2">$16,478,145</div>
-          <div className="bg-red-500 inline-block px-2 py-[2px] rounded text-xs mt-3">
-            -22%
-          </div>
+          <div className="text-3xl font-bold mt-2">{busy ? "…" : money(summary?.totals.totalSalesReturn ?? 0)}</div>
+          <p className="text-sm mt-3">
+            {busy ? "…" : <TrendLine value={summary?.trends.salesReturnPctVsLastMonth ?? null} variant="onDark" />}
+          </p>
         </div>
 
-        {/* Total Purchase */}
         <div className="rounded-xl p-5 bg-teal-600 text-white shadow-sm">
           <div className="flex items-center gap-3 text-white/90">
             <Gift size={24} />
-            <span className="font-medium text-sm">Total Purchase</span>
+            <span className="font-medium text-sm">{t("dash.dashboard.totalPurchase")}</span>
           </div>
-          <div className="text-3xl font-bold mt-2">$24,145,789</div>
-          <div className="bg-white/20 inline-block px-2 py-[2px] rounded text-xs mt-3">
-            +22%
-          </div>
+          <div className="text-3xl font-bold mt-2">{busy ? "…" : money(summary?.totals.totalPurchase ?? 0)}</div>
+          <div className="text-white/80 text-xs mt-2">—</div>
         </div>
 
-        {/* Total Purchase Return */}
         <div className="rounded-xl p-5 bg-blue-600 text-white shadow-sm relative">
           <div className="flex items-center gap-3 text-white/90">
             <Shield size={24} />
-            <span className="font-medium text-sm">Total Purchase Return</span>
+            <span className="font-medium text-sm">{t("dash.dashboard.totalPurchaseReturn")}</span>
           </div>
-          <div className="text-3xl font-bold mt-2">$18,458,747</div>
-          <div className="bg-white/20 inline-block px-2 py-[2px] rounded text-xs mt-3">
-            +22%
-          </div>
-
-          {/* Settings Badge */}
+          <div className="text-3xl font-bold mt-2">{busy ? "…" : money(summary?.totals.totalPurchaseReturn ?? 0)}</div>
+          <div className="bg-white/20 inline-block px-2 py-[2px] rounded text-xs mt-3">—</div>
           <div className="absolute -right-3 -top-3 bg-orange-500 p-2 rounded-full shadow">
             <Settings size={18} className="text-white" />
           </div>
         </div>
       </div>
 
-      {/* Bottom Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {/* Profit */}
         <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold">$8,458,798</h3>
-          <p className="text-gray-600 text-sm mt-1">Profit</p>
-          <p className="text-green-500 text-sm mt-3 font-medium">
-            +35% vs Last Month
-          </p>
-          <a
-            href="#"
-            className="text-blue-600 font-medium text-sm mt-3 inline-block"
-          >
-            View All
-          </a>
+          <h3 className="text-xl font-semibold">{busy ? "…" : money(summary?.totals.profit ?? 0)}</h3>
+          <p className="text-gray-600 text-sm mt-1">{t("dash.dashboard.profit")}</p>
+          {busy ? <p className="text-sm mt-3">…</p> : <TrendLine value={summary?.trends.profitPctVsLastMonth ?? null} variant="onLight" />}
+          <Link href="/dashboard/sales/invoices" className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline">
+            {t("dash.dashboard.viewAll")}
+          </Link>
         </div>
 
-        {/* Invoice Due */}
         <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold">$48,988,78</h3>
-          <p className="text-gray-600 text-sm mt-1">Invoice Due</p>
-          <p className="text-green-500 text-sm mt-3 font-medium">
-            +35% vs Last Month
-          </p>
-          <a
-            href="#"
-            className="text-blue-600 font-medium text-sm mt-3 inline-block"
-          >
-            View All
-          </a>
+          <h3 className="text-xl font-semibold">{busy ? "…" : money(summary?.totals.invoiceDue ?? 0)}</h3>
+          <p className="text-gray-600 text-sm mt-1">{t("dash.dashboard.invoiceDue")}</p>
+          {busy ? (
+            <p className="text-sm mt-3">…</p>
+          ) : (
+            <TrendLine value={summary?.trends.invoiceDuePctVsLastMonth ?? null} variant="onLight" />
+          )}
+          <Link href="/dashboard/sales/invoices" className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline">
+            {t("dash.dashboard.viewAll")}
+          </Link>
         </div>
 
-        {/* Total Expense */}
         <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold">$8,980,097</h3>
-          <p className="text-gray-600 text-sm mt-1">Total Expenses</p>
-          <p className="text-green-500 text-sm mt-3 font-medium">
-            +41% vs Last Month
-          </p>
-          <a
-            href="#"
-            className="text-blue-600 font-medium text-sm mt-3 inline-block"
-          >
-            View All
-          </a>
+          <h3 className="text-xl font-semibold">{busy ? "…" : money(summary?.totals.totalExpenses ?? 0)}</h3>
+          <p className="text-gray-600 text-sm mt-1">{t("dash.dashboard.totalExpenses")}</p>
+          <p className="text-gray-400 text-sm mt-3">—</p>
+          <span className="mt-3 inline-block text-sm font-medium text-gray-400">{t("dash.dashboard.viewAll")}</span>
         </div>
 
-        {/* Total Payment Returns */}
         <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold">$78,458,798</h3>
-          <p className="text-gray-600 text-sm mt-1">Total Payment Returns</p>
-          <p className="text-red-500 text-sm mt-3 font-medium">
-            -20% vs Last Month
-          </p>
-          <a
-            href="#"
-            className="text-blue-600 font-medium text-sm mt-3 inline-block"
-          >
-            View All
-          </a>
+          <h3 className="text-xl font-semibold">{busy ? "…" : money(summary?.totals.totalPaymentReturns ?? 0)}</h3>
+          <p className="text-gray-600 text-sm mt-1">{t("dash.dashboard.totalPaymentReturns")}</p>
+          {busy ? (
+            <p className="text-sm mt-3">…</p>
+          ) : (
+            <TrendLine value={summary?.trends.salesReturnPctVsLastMonth ?? null} variant="onLight" />
+          )}
+          <Link href="/dashboard/sales/return" className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline">
+            {t("dash.dashboard.viewAll")}
+          </Link>
         </div>
       </div>
-      {/* Info cards  */}
+
       <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <SalesPurchaseCard />
+          <SalesPurchaseCard
+            chartPoints={summary?.chartPoints ?? []}
+            selected={chartRange}
+            onSelect={setChartRange}
+            isLoading={busy}
+          />
         </div>
 
-        <OverallInformationCard />
+        <OverallInformationCard
+          suppliers={summary?.counts.suppliers ?? 0}
+          customers={summary?.counts.customers ?? 0}
+          orders={summary?.counts.orders ?? 0}
+          firstTimeCustomers={summary?.customersOverview.firstTime ?? 0}
+          returningCustomers={summary?.customersOverview.returning ?? 0}
+          isLoading={busy}
+        />
       </div>
-      {/* selling info  */}
+
       <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <TopSellingProducts />
-        <LowStockProducts />
-        <RecentSales />
+        <TopSellingProducts products={topSellingRows} isLoading={busy} />
+        <LowStockProducts items={lowStockRows} isLoading={busy} />
+        <RecentSales sales={recentRows} isLoading={busy} />
       </div>
-      <DashboardWidgetsDemo />
+
+      <DashboardWidgetsDemo
+        topCustomers={summary?.topCustomers ?? []}
+        topCategories={summary?.topCategories ?? []}
+        categoryCount={summary?.categoryStats.categoryCount ?? 0}
+        productCount={summary?.categoryStats.productCount ?? 0}
+        heatmap={summary?.orderHeatmap ?? []}
+        isLoading={busy}
+      />
     </div>
   );
 }

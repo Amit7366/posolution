@@ -1,8 +1,5 @@
 import {
   Home,
-  Users,
-  UserCog,
-  Settings,
   Boxes,
   Package,
   Clock3,
@@ -16,169 +13,129 @@ import {
   QrCode,
   Layers3,
   RefreshCcw,
-  ArrowLeftRight,
   ShoppingCart,
   FileText,
   Undo2,
-  FileSignature,
 } from "lucide-react";
 
 export interface MenuItem {
-  title: string;
+  /** i18n key under dictionaries, e.g. sidebar.dashboard */
+  titleKey: string;
   icon: React.ElementType;
   link?: string;
   role?: "admin" | "user" | "all";
-  section?: string;
+  /** i18n key for section label, e.g. sidebar.sectionMain */
+  sectionKey?: string;
   children?: MenuItem[];
 }
 
 export const sidebarMenus: MenuItem[] = [
-  // MAIN
   {
-    section: "Main",
-    title: "Dashboard",
+    sectionKey: "sidebar.sectionMain",
+    titleKey: "sidebar.dashboard",
     icon: Home,
     link: "/dashboard",
     role: "all",
   },
-
-  // INVENTORY
   {
-    section: "Inventory",
-    title: "Products",
+    sectionKey: "sidebar.sectionInventory",
+    titleKey: "sidebar.products",
     icon: Boxes,
     link: "/dashboard/products",
     role: "admin",
   },
   {
-    title: "Create Product",
+    titleKey: "sidebar.createProduct",
     icon: Package,
     link: "/dashboard/products/create",
     role: "admin",
   },
   {
-    title: "Expired Products",
+    titleKey: "sidebar.expiredProducts",
     icon: Clock3,
     link: "/dashboard/products/expired",
     role: "admin",
   },
   {
-    title: "Low Stocks",
+    titleKey: "sidebar.lowStocks",
     icon: AlertTriangle,
     link: "/dashboard/products/low-stock",
     role: "admin",
   },
   {
-    title: "Category",
+    titleKey: "sidebar.category",
     icon: Layers,
     link: "/dashboard/category",
     role: "admin",
   },
   {
-    title: "Sub Category",
+    titleKey: "sidebar.subCategory",
     icon: ListTree,
     link: "/dashboard/sub-category",
     role: "admin",
   },
   {
-    title: "Brands",
+    titleKey: "sidebar.brands",
     icon: Tags,
     link: "/dashboard/brands",
     role: "admin",
   },
   {
-    title: "Units",
+    titleKey: "sidebar.units",
     icon: ListChecks,
     link: "/dashboard/units",
     role: "admin",
   },
   {
-    title: "Variant Attributes",
+    titleKey: "sidebar.variantAttributes",
     icon: ClipboardCheck,
     link: "/dashboard/variants",
     role: "admin",
   },
   {
-    title: "Warranties",
+    titleKey: "sidebar.warranties",
     icon: RefreshCcw,
     link: "/dashboard/warranties",
     role: "admin",
   },
   {
-    title: "Print Barcode",
+    titleKey: "sidebar.printBarcode",
     icon: Barcode,
     link: "/dashboard/barcode",
     role: "admin",
   },
   {
-    title: "Print QR Code",
+    titleKey: "sidebar.printQrCode",
     icon: QrCode,
     link: "/dashboard/qrcode",
     role: "admin",
   },
-
-  // STOCK
   {
-    section: "Stock",
-    title: "Manage Stock",
+    sectionKey: "sidebar.sectionStock",
+    titleKey: "sidebar.manageStock",
     icon: Layers3,
     link: "/dashboard/stock",
     role: "admin",
   },
-  // {
-  //   title: "Stock Adjustment",
-  //   icon: RefreshCcw,
-  //   link: "/dashboard/stock/adjustment",
-  //   role: "admin",
-  // },
-  // {
-  //   title: "Stock Transfer",
-  //   icon: ArrowLeftRight,
-  //   link: "/dashboard/stock/transfer",
-  //   role: "admin",
-  // },
-
-  // SALES
   {
-    section: "Sales",
-    title: "Sales",
+    sectionKey: "sidebar.sectionSales",
+    titleKey: "sidebar.sales",
     icon: ShoppingCart,
     link: "/dashboard/sales",
     role: "admin",
     children: [
       {
-        title: "Invoices",
+        titleKey: "sidebar.invoices",
         icon: FileText,
         link: "/dashboard/sales/invoices",
         role: "admin",
       },
       {
-        title: "Sales Return",
+        titleKey: "sidebar.salesReturn",
         icon: Undo2,
         link: "/dashboard/sales/return",
         role: "admin",
       },
-      // {
-      //   title: "Quotation",
-      //   icon: FileSignature,
-      //   link: "/dashboard/sales/quotation",
-      //   role: "admin",
-      // },
     ],
   },
-
-  // // ACCOUNT
-  // {
-  //   section: "Account",
-  //   title: "Profile",
-  //   icon: Users,
-  //   link: "/dashboard/profile",
-  //   role: "admin",
-  // },
-  // {
-  //   title: "Settings",
-  //   icon: Settings,
-  //   link: "/dashboard/settings",
-  //   role: "admin",
-  // },
 ];

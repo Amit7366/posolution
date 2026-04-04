@@ -8,10 +8,14 @@ export function DeleteWarrantyModal({
   open,
   onClose,
   onConfirm,
+  isDeleting,
+  itemName,
 }: {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
+  isDeleting?: boolean;
+  itemName?: string;
 }) {
   return (
     <Modal
@@ -20,11 +24,11 @@ export function DeleteWarrantyModal({
       className="max-w-[780px]"
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} disabled={isDeleting}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={onConfirm}>
-            Yes Delete
+          <Button variant="primary" onClick={() => void onConfirm()} disabled={isDeleting}>
+            {isDeleting ? "Deleting…" : "Yes, delete"}
           </Button>
         </>
       }
@@ -33,8 +37,12 @@ export function DeleteWarrantyModal({
         <div className="grid h-12 w-12 place-items-center rounded-full bg-red-500/15 text-red-300">
           <TrashIcon />
         </div>
-        <h3 className="text-2xl font-semibold text-slate-100">Delete Warranty</h3>
-        <p className="text-sm text-slate-300">Are you sure you want to delete warranty?</p>
+        <h3 className="text-2xl font-semibold text-slate-100">Delete warranty</h3>
+        <p className="text-sm text-slate-300 max-w-md">
+          {itemName
+            ? `Are you sure you want to delete “${itemName}”? This cannot be undone.`
+            : "Are you sure you want to delete this warranty? This cannot be undone."}
+        </p>
       </div>
     </Modal>
   );

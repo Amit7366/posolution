@@ -2,6 +2,17 @@
 
 import StatusToggle from "./StatusToggle";
 
+type BaseModalFormProps = {
+  title: string;
+  submitText: string;
+  status: boolean;
+  setStatus: (v: boolean) => void;
+  onClose: () => void;
+  children: React.ReactNode;
+  onSubmit?: () => void | Promise<void>;
+  submitting?: boolean;
+};
+
 export function BaseModalForm({
   title,
   submitText,
@@ -9,14 +20,9 @@ export function BaseModalForm({
   setStatus,
   onClose,
   children,
-}: {
-  title: string;
-  submitText: string;
-  status: boolean;
-  setStatus: (v: boolean) => void;
-  onClose: () => void;
-  children: React.ReactNode;
-}) {
+  onSubmit,
+  submitting = false,
+}: BaseModalFormProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-fadeIn">
       <div className="w-full max-w-xl rounded-xl border border-white/10 bg-[#0b0b0b] animate-scaleIn">
@@ -44,6 +50,7 @@ export function BaseModalForm({
 
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={onClose}
               className="rounded-lg bg-blue-900/60 px-4 py-2 text-sm text-white hover:bg-blue-900"
             >
@@ -51,15 +58,20 @@ export function BaseModalForm({
             </button>
 
             <button
-              disabled={!status}
+              type="button"
+              disabled={!status || submitting}
+              onClick={() => {
+                if (!onSubmit || !status || submitting) return;
+                void onSubmit();
+              }}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition
                 ${
-                  status
+                  status && !submitting
                     ? "bg-gradient-to-r from-orange-500 to-orange-400 text-black"
                     : "cursor-not-allowed bg-gray-700 text-gray-400"
                 }`}
             >
-              {submitText}
+              {submitting ? "Saving..." : submitText}
             </button>
           </div>
         </div>

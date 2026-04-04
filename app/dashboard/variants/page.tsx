@@ -6,32 +6,75 @@ import { VariantTable } from "@/app/components/variants/VariantTable";
 import { VariantStatusFilter, VariantToolbar } from "@/app/components/variants/VariantToolbar";
 import { cn } from "@/app/lib/cn";
 import { exportVariantsToCSV, exportVariantsToXLS } from "@/app/lib/export-variants";
-import { todayYmd } from "@/app/lib/format";
 import { VariantAttribute } from "@/app/types/variant-attribute";
-import React, { useMemo, useState } from "react";
+import {
+  useCreateVariantAttributeMutation,
+  useDeleteVariantAttributeMutation,
+  useGetVariantAttributesQuery,
+  useUpdateVariantAttributeMutation,
+} from "@/redux/api/baseApi";
+import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
-
-function uid() {
-  return Math.random().toString(36).slice(2, 10);
+function getQueryErrorMessage(error: unknown): string | null {
+  if (!error) return null;
+  if (typeof error === "object" && error !== null && "data" in error) {
+    const d = (error as { data?: { message?: string } }).data;
+    if (d?.message) return String(d.message);
+  }
+  if (typeof error === "object" && error !== null && "error" in error) {
+    return String((error as { error: string }).error);
+  }
+  return null;
 }
 
-const seed: VariantAttribute[] = [
-  { id: "1", name: "Size", values: ["XS", "S", "M", "L", "XL"], createdAt: "2024-12-24", status: "Active" },
-  { id: "2", name: "Color", values: ["Red", "Blue", "Green"], createdAt: "2024-12-10", status: "Active" },
-  { id: "3", name: "Capacity", values: ["Small", "Medium", "Large"], createdAt: "2024-11-27", status: "Active" },
-  { id: "4", name: "Material", values: ["Cotton", "Leather", "Synthetic"], createdAt: "2024-11-18", status: "Active" },
-  { id: "5", name: "Weight", values: ["Light", "Heavy"], createdAt: "2024-11-06", status: "Active" },
-  { id: "6", name: "Style", values: ["Casual", "Formal", "Sporty"], createdAt: "2024-10-25", status: "Active" },
-  { id: "7", name: "Pattern", values: ["Solid", "Striped", "Printed"], createdAt: "2024-10-14", status: "Active" },
-  { id: "8", name: "Memory", values: ["8 GB", "16 GB", "36 GB"], createdAt: "2024-10-03", status: "Active" },
-  { id: "9", name: "Storage", values: ["128 GB", "256 GB", "512 GB", "1TB"], createdAt: "2024-09-20", status: "Active" },
-  { id: "10", name: "Length", values: ["Short", "Regular", "Long"], createdAt: "2024-09-10", status: "Active" },
-];
+function toastMutationError(
+  e: unknown,
+  fallback: string
+) {
+  const data = (e as { data?: { message?: string; errorSources?: { path: string; message: string }[] } })
+    ?.data;
+  const msg = data?.message;
+  const details = data?.errorSources?.length
+    ? data.errorSources.map((s) => `${s.path}: ${s.message}`).join(", ")
+    : undefined;
+  toast.error(details ? `${msg ?? fallback} (${details})` : msg ?? fallback);
+}
+
+function mapApiRow(row: Record<string, unknown>): VariantAttribute {
+  const rawId = row._id ?? row.id;
+  const id =
+    typeof rawId === "string" ? rawId : rawId ? String(rawId) : "";
+
+  const createdAtVal = row.createdAt;
+  const createdAt =
+    typeof createdAtVal === "string"
+      ? createdAtVal
+      : createdAtVal instanceof Date
+        ? createdAtVal.toISOString()
+        : "";
+
+  const status: VariantAttribute["status"] =
+    row.status === "inactive" ? "Inactive" : "Active";
+
+  const values = Array.isArray(row.values)
+    ? row.values.map((v) => String(v))
+    : [];
+
+  return {
+    id,
+    name: String(row.name ?? ""),
+    values,
+    createdAt,
+    status,
+  };
+}
 
 export default function VariantAttributesPage() {
-  const [rows, setRows] = useState<VariantAttribute[]>(seed);
-
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<VariantStatusFilter>("All");
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -49,35 +92,61 @@ export default function VariantAttributesPage() {
 
   const [collapsed, setCollapsed] = useState(false);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    let list = rows.filter((r) => {
-      if (!q) return true;
-      return (
-        r.name.toLowerCase().includes(q) ||
-        r.values.join(",").toLowerCase().includes(q)
-      );
-    });
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query.trim()), 400);
+    return () => clearTimeout(t);
+  }, [query]);
 
-    if (statusFilter !== "All") list = list.filter((r) => r.status === statusFilter);
-    return list;
-  }, [rows, query, statusFilter]);
+  const statusParam =
+    statusFilter === "All"
+      ? undefined
+      : statusFilter === "Active"
+        ? "active"
+        : "inactive";
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+  const {
+    data: listPayload,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useGetVariantAttributesQuery({
+    page,
+    limit: rowsPerPage,
+    search: debouncedQuery,
+    ...(statusParam ? { status: statusParam } : {}),
+    sortBy: "createdAt",
+    sortOrder: "desc",
+  });
+
+  const total = listPayload?.meta?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
   const safePage = Math.min(page, totalPages);
 
-  const paged = useMemo(() => {
-    const start = (safePage - 1) * rowsPerPage;
-    return filtered.slice(start, start + rowsPerPage);
-  }, [filtered, rowsPerPage, safePage]);
+  useEffect(() => {
+    if (page !== safePage) setPage(safePage);
+  }, [page, safePage]);
 
-  const allOnPageSelected = paged.length > 0 && paged.every((r) => selected[r.id]);
-  const someOnPageSelected = paged.some((r) => selected[r.id]) && !allOnPageSelected;
+  const variants = useMemo(() => {
+    const raw = listPayload?.data;
+    if (!Array.isArray(raw)) return [];
+    return raw.map((r) => mapApiRow(r as Record<string, unknown>));
+  }, [listPayload]);
+
+  useEffect(() => {
+    setSelected({});
+  }, [variants]);
+
+  const allOnPageSelected =
+    variants.length > 0 && variants.every((r) => selected[r.id]);
+  const someOnPageSelected =
+    variants.some((r) => selected[r.id]) && !allOnPageSelected;
 
   function toggleAllOnPage() {
     const next = { ...selected };
     const target = !allOnPageSelected;
-    for (const r of paged) next[r.id] = target;
+    for (const r of variants) next[r.id] = target;
     setSelected(next);
   }
 
@@ -97,35 +166,39 @@ export default function VariantAttributesPage() {
     setModalOpen(true);
   }
 
-  function submitModal(payload: { name: string; values: string[]; status: boolean }) {
-    if (modalMode === "add") {
-      const newRow: VariantAttribute = {
-        id: uid(),
-        name: payload.name,
-        values: payload.values,
-        createdAt: todayYmd(),
-        status: payload.status ? "Active" : "Inactive",
-      };
-      setRows((prev) => [newRow, ...prev]);
+  const [createVariant, { isLoading: creating }] = useCreateVariantAttributeMutation();
+  const [updateVariant, { isLoading: updating }] = useUpdateVariantAttributeMutation();
+  const [deleteVariant, { isLoading: deletingMutation }] = useDeleteVariantAttributeMutation();
+  const submitting = creating || updating;
+
+  async function submitModal(payload: {
+    name: string;
+    values: string[];
+    status: boolean;
+  }) {
+    const body: Record<string, unknown> = {
+      name: payload.name.trim(),
+      values: payload.values,
+      status: payload.status ? "active" : "inactive",
+    };
+
+    try {
+      if (modalMode === "add") {
+        await createVariant(body).unwrap();
+        toast.success(t("dash.variants.variantCreated"));
+      } else if (editing) {
+        await updateVariant({ id: editing.id, body }).unwrap();
+        toast.success(t("dash.variants.variantUpdated"));
+      }
       setModalOpen(false);
-      return;
+      setEditing(null);
+      refetch();
+    } catch (e) {
+      toastMutationError(
+        e,
+        modalMode === "add" ? t("dash.variants.createFailed") : t("dash.variants.updateFailed")
+      );
     }
-
-    if (!editing) return;
-
-    setRows((prev) =>
-      prev.map((x) =>
-        x.id === editing.id
-          ? {
-              ...x,
-              name: payload.name,
-              values: payload.values,
-              status: payload.status ? "Active" : "Inactive",
-            }
-          : x
-      )
-    );
-    setModalOpen(false);
   }
 
   function askDelete(r: VariantAttribute) {
@@ -133,34 +206,40 @@ export default function VariantAttributesPage() {
     setDeleteOpen(true);
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleting) return;
-    setRows((prev) => prev.filter((x) => x.id !== deleting.id));
-    setSelected((prev) => {
-      const copy = { ...prev };
-      delete copy[deleting.id];
-      return copy;
-    });
-    setDeleteOpen(false);
-    setDeleting(null);
+    try {
+      await deleteVariant(deleting.id).unwrap();
+      toast.success(t("dash.variants.variantDeleted"));
+      setDeleteOpen(false);
+      setDeleting(null);
+      refetch();
+    } catch (e) {
+      toastMutationError(e, t("dash.variants.deleteFailed"));
+    }
+  }
+
+  function refresh() {
+    setQuery("");
+    setDebouncedQuery("");
+    setStatusFilter("All");
+    setRowsPerPage(10);
+    setPage(1);
+    setSelected({});
+    void refetch();
   }
 
   function exportPDF() {
     window.print();
   }
   function exportXLS() {
-    exportVariantsToXLS(filtered, "variant-attributes.xls");
+    exportVariantsToXLS(variants, "variant-attributes.xls");
   }
   function exportCSV() {
-    exportVariantsToCSV(filtered, "variant-attributes.csv");
+    exportVariantsToCSV(variants, "variant-attributes.csv");
   }
-  function refresh() {
-    setQuery("");
-    setStatusFilter("All");
-    setRowsPerPage(10);
-    setPage(1);
-    setSelected({});
-  }
+
+  const errMsg = isError ? getQueryErrorMessage(error) ?? t("dash.variants.failedLoad") : null;
 
   return (
     <div className="min-h-screen bg-[#0b0f14] text-slate-100">
@@ -170,24 +249,24 @@ export default function VariantAttributesPage() {
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">Variant Attributes</h1>
-            <p className="mt-1 text-sm text-slate-400">Manage your variant attributes</p>
+            <h1 className="text-xl font-semibold tracking-tight">{t("dash.variants.pageTitle")}</h1>
+            <p className="mt-1 text-sm text-slate-400">{t("dash.variants.manage")}</p>
           </div>
 
           <div className="flex items-center gap-2">
-            <TopIconButton title="Export PDF" onClick={exportPDF}>
+            <TopIconButton title={t("dash.common.exportPdf")} onClick={exportPDF}>
               <PdfIcon />
             </TopIconButton>
-            <TopIconButton title="Export XLS" onClick={exportXLS}>
+            <TopIconButton title={t("dash.common.exportXls")} onClick={exportXLS}>
               <XlsIcon />
             </TopIconButton>
-            <TopIconButton title="Export CSV" onClick={exportCSV}>
+            <TopIconButton title={t("dash.common.exportCsv")} onClick={exportCSV}>
               <CsvIcon />
             </TopIconButton>
-            <TopIconButton title="Refresh" onClick={refresh}>
+            <TopIconButton title={t("dash.common.refresh")} onClick={refresh}>
               <RefreshIcon />
             </TopIconButton>
-            <TopIconButton title="Collapse" onClick={() => setCollapsed((s) => !s)}>
+            <TopIconButton title={t("dash.common.collapse")} onClick={() => setCollapsed((s) => !s)}>
               <ChevronUpIcon />
             </TopIconButton>
 
@@ -196,10 +275,16 @@ export default function VariantAttributesPage() {
               className="ml-2 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_-12px_rgba(249,115,22,0.8)] transition hover:bg-orange-400 active:translate-y-[1px]"
             >
               <PlusIcon />
-              Add Variant
+              {t("dash.variants.add")}
             </button>
           </div>
         </div>
+
+        {errMsg ? (
+          <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {errMsg}
+          </div>
+        ) : null}
 
         <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
           <VariantToolbar
@@ -213,12 +298,13 @@ export default function VariantAttributesPage() {
               setStatusFilter(v);
               setPage(1);
             }}
+            t={t}
           />
 
           {!collapsed && (
             <>
               <VariantTable
-                rows={paged}
+                rows={variants}
                 selected={selected}
                 allSelected={allOnPageSelected}
                 someSelected={someOnPageSelected}
@@ -226,12 +312,13 @@ export default function VariantAttributesPage() {
                 onToggleOne={toggleOne}
                 onEdit={openEdit}
                 onAskDelete={askDelete}
+                t={t}
               />
 
               {/* footer */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4">
                 <div className="flex items-center gap-2 text-sm text-slate-400">
-                  <span>Row Per Page</span>
+                  <span>{t("dash.common.rowPerPage")}</span>
                   <select
                     value={rowsPerPage}
                     onChange={(e) => {
@@ -246,11 +333,15 @@ export default function VariantAttributesPage() {
                       </option>
                     ))}
                   </select>
-                  <span>Entries</span>
+                  <span>{t("dash.common.entries")}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <PageNavButton disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} title="Previous">
+                  <PageNavButton
+                    disabled={safePage <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    title={t("dash.common.previous")}
+                  >
                     <ChevronLeftIcon />
                   </PageNavButton>
 
@@ -261,7 +352,7 @@ export default function VariantAttributesPage() {
                   <PageNavButton
                     disabled={safePage >= totalPages}
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    title="Next"
+                    title={t("dash.common.next")}
                   >
                     <ChevronRightIcon />
                   </PageNavButton>
@@ -278,6 +369,7 @@ export default function VariantAttributesPage() {
         initial={editing}
         onClose={() => setModalOpen(false)}
         onSubmit={submitModal}
+        submitting={submitting}
       />
 
       <DeleteVariantModal
@@ -288,6 +380,7 @@ export default function VariantAttributesPage() {
           setDeleting(null);
         }}
         onConfirm={confirmDelete}
+        deleting={deletingMutation}
       />
     </div>
   );

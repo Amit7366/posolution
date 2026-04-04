@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Unit } from "recharts/types/cartesian/CartesianAxis";
 import { Button } from "../ui/Button";
 import { Modal } from "../ui/Modal";
 import type { Unit as UnitModel } from "@/app/types/unit";
 import { Toggle } from "../ui/Toggle";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 type Mode = "add" | "edit";
 
@@ -15,20 +15,27 @@ export function AddEditUnitModal({
   initial,
   onClose,
   onSubmit,
+  submitting = false,
 }: {
   open: boolean;
   mode: Mode;
-  initial?: UnitModel | null;   // ✅ use UnitModel
+  initial?: UnitModel | null;
   onClose: () => void;
-  onSubmit: (payload: { unit: string; shortName: string; status: boolean }) => void;
+  onSubmit: (payload: {
+    unit: string;
+    shortName: string;
+    status: boolean;
+  }) => void | Promise<void>;
+  submitting?: boolean;
 }) {
+  const { t } = useTranslation();
   const [unit, setUnit] = useState("");
   const [shortName, setShortName] = useState("");
   const [status, setStatus] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const title = mode === "add" ? "Add Unit" : "Edit Unit";
-  const submitLabel = mode === "add" ? "Add Unit" : "Save Changes";
+  const title = mode === "add" ? t("dash.units.addTitle") : t("dash.units.editTitle");
+  const submitLabel = mode === "add" ? t("dash.units.add") : t("dash.common.saveChanges");
 
   useEffect(() => {
     if (!open) return;
@@ -48,7 +55,7 @@ export function AddEditUnitModal({
 
   function submit() {
     if (!unit.trim() || !shortName.trim()) {
-      setError("Unit and Short Name are required.");
+      setError(t("dash.units.unitFieldsRequired"));
       return;
     }
     setError(null);
@@ -65,19 +72,21 @@ export function AddEditUnitModal({
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t("dash.common.cancel")}
           </Button>
-          <Button variant="primary" disabled={!canSubmit} onClick={submit}>
-            {submitLabel}
+          <Button
+            variant="primary"
+            disabled={!canSubmit || submitting}
+            onClick={() => void submit()}
+          >
+            {submitting ? t("dash.common.saving") : submitLabel}
           </Button>
         </>
       }
     >
       <div className="space-y-5">
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">
-            Unit <span className="text-orange-400">*</span>
-          </label>
+          <label className="mb-2 block text-sm font-medium text-slate-200">{t("dash.units.unitLabel")}</label>
           <input
             name="unit"
             value={unit}
@@ -87,9 +96,7 @@ export function AddEditUnitModal({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">
-            Short Name <span className="text-orange-400">*</span>
-          </label>
+          <label className="mb-2 block text-sm font-medium text-slate-200">{t("dash.units.shortNameLabel")}</label>
           <input
             name="shortName"
             value={shortName}
@@ -99,8 +106,8 @@ export function AddEditUnitModal({
         </div>
 
         <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-          <div className="text-sm font-medium text-slate-200">Status</div>
-          <Toggle value={status} onChange={setStatus} ariaLabel="Unit status" />
+          <div className="text-sm font-medium text-slate-200">{t("dash.units.statusLabel")}</div>
+          <Toggle value={status} onChange={setStatus} ariaLabel={t("dash.units.statusLabel")} />
         </div>
 
         {error && <p className="text-sm text-red-300">{error}</p>}

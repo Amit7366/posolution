@@ -38,8 +38,10 @@
 }
 html {
   scroll-behavior: smooth;
+  color-scheme: light dark;
 }
 
 body {
   transition: background-color 0.4s ease, color 0.4s ease;
+  @apply bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
 }

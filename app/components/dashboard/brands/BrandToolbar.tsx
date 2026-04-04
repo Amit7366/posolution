@@ -1,6 +1,7 @@
 "use client";
 
 import { BrandStatus } from "@/app/types/brand";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import React from "react";
 import { Dropdown } from "../ui/Dropdown";
 import { Button } from "../ui/Button";
@@ -37,6 +38,12 @@ export function BrandToolbar({
   selectedCount: number;
   onBulkDelete: () => void;
 }) {
+  const { t } = useTranslation();
+  const statusLabel = (v: StatusFilter) =>
+    v === "All" ? t("dash.common.all") : v === "Active" ? t("dash.common.active") : t("dash.common.inactive");
+  const sortLabel = (v: SortOrder) =>
+    v === "Latest" ? t("dash.common.latest") : t("dash.common.oldest");
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
       <div className="relative w-full max-w-xs">
@@ -46,42 +53,49 @@ export function BrandToolbar({
         <input
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="Search"
+          placeholder={t("dash.common.search")}
           className="w-full rounded-xl border border-white/10 bg-[#0b0f14] py-2.5 pl-10 pr-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
         />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <IconButton title="Export PDF" onClick={onExportPDF}>
+        <IconButton title={t("dash.common.exportPdf")} onClick={onExportPDF}>
           <PdfIcon />
         </IconButton>
-        <IconButton title="Export XLS" onClick={onExportXLS}>
+        <IconButton title={t("dash.common.exportXls")} onClick={onExportXLS}>
           <XlsIcon />
         </IconButton>
-        <IconButton title="Refresh" onClick={onRefresh}>
+        <IconButton title={t("dash.common.refresh")} onClick={onRefresh}>
           <RefreshIcon />
         </IconButton>
 
         <div className="ml-1 flex items-center gap-2">
           <Dropdown
-            label="Status"
+            label={t("dash.common.status")}
             value={statusFilter}
             options={["All", "Active", "Inactive"] as const}
             onChange={onStatusFilterChange}
+            formatOption={statusLabel}
           />
-          <Dropdown label="Sort By" value={sort} options={["Latest", "Oldest"] as const} onChange={onSortChange} />
+          <Dropdown
+            label={t("dash.common.sortBy")}
+            value={sort}
+            options={["Latest", "Oldest"] as const}
+            onChange={onSortChange}
+            formatOption={sortLabel}
+          />
         </div>
 
         {selectedCount > 0 && (
           <Button variant="danger" onClick={onBulkDelete} className="ml-2">
             <TrashIcon />
-            Delete ({selectedCount})
+            {t("dash.brands.deleteWithCount", { count: selectedCount })}
           </Button>
         )}
 
         <Button variant="primary" onClick={onAdd} className="ml-2">
           <PlusIcon />
-          Add Brand
+          {t("dash.brands.add")}
         </Button>
       </div>
     </div>

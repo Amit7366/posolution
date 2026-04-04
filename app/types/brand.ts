@@ -3,7 +3,9 @@ export type BrandStatus = "Active" | "Inactive";
 export type Brand = {
   id: string;
   name: string;
-  createdAt: string; // YYYY-MM-DD
+  /** API slug (unique per tenant) */
+  slug?: string;
+  createdAt: string; // YYYY-MM-DD or ISO from API
   status: BrandStatus;
   logoUrl?: string; // remote url or data url
 };

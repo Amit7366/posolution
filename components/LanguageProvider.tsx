@@ -41,8 +41,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleLanguage = useCallback(() => {
-    setLanguage((prev) => (prev === "en" ? "bn" : "en"));
-  }, [setLanguage]);
+    setLanguageState((prev) => {
+      const next: Language = prev === "en" ? "bn" : "en";
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(STORAGE_KEY, next);
+      }
+      return next;
+    });
+  }, []);
 
   const value: LanguageContextValue = {
     language,

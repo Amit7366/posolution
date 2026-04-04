@@ -1,5 +1,7 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
+import Link from "next/link";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import {
   PieChart,
   Pie,
@@ -7,68 +9,25 @@ import {
   ResponsiveContainer,
   Tooltip as ReTooltip,
 } from "recharts";
+import { money } from "@/app/lib/money";
 
-// -----------------------------------------------------------------------------
-// Dashboard Widgets - 3 components in one file
-// - TopCustomers
-// - TopCategories
-// - OrderStatistics (heatmap)
-// Meant for Next.js + Tailwind CSS (dark mode ready)
-// Put this file in your components/ folder and import the components you need.
-// -----------------------------------------------------------------------------
-
-// ----------------------------- Utilities ------------------------------------
 const classNames = (...c: Array<string | false | null | undefined>) =>
   c.filter(Boolean).join(" ");
 
-// tiny currency formatter
-const fmt = (n: number) =>
-  n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+function initials(name: string) {
+  const p = name.trim().split(/\s+/).filter(Boolean);
+  if (p.length === 0) return "?";
+  if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+  return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+}
 
-// ----------------------------- TopCustomers ---------------------------------
-export const TopCustomers: React.FC = () => {
-  const customers = [
-    {
-      id: 1,
-      name: "Carlos Curran",
-      country: "USA",
-      orders: 24,
-      revenue: 89645,
-      avatar: "CC",
-    },
-    {
-      id: 2,
-      name: "Stan Gaunter",
-      country: "UAE",
-      orders: 22,
-      revenue: 16985,
-      avatar: "SG",
-    },
-    {
-      id: 3,
-      name: "Richard Wilson",
-      country: "Germany",
-      orders: 14,
-      revenue: 5366,
-      avatar: "RW",
-    },
-    {
-      id: 4,
-      name: "Mary Bronson",
-      country: "Belgium",
-      orders: 8,
-      revenue: 4569,
-      avatar: "MB",
-    },
-    {
-      id: 5,
-      name: "Annie Tremblay",
-      country: "Greenland",
-      orders: 14,
-      revenue: 35698,
-      avatar: "AT",
-    },
-  ];
+export type TopCustomerRow = { name: string; orders: number; revenue: number };
+export type TopCategoryRow = { name: string; revenue: number };
+
+type TopCustomersProps = { customers: TopCustomerRow[]; isLoading?: boolean };
+
+export const TopCustomers: React.FC<TopCustomersProps> = ({ customers, isLoading }) => {
+  const { t } = useTranslation();
 
   return (
     <div className="rounded-lg border bg-white dark:bg-slate-800 dark:border-slate-700 p-4 shadow-sm">
@@ -79,50 +38,77 @@ export const TopCustomers: React.FC = () => {
               <path d="M10 3a1 1 0 011 1v1h-2V4a1 1 0 011-1zM5 6h10v8H5V6z" />
             </svg>
           </div>
-          <h3 className="text-slate-900 dark:text-slate-100 font-medium">Top Customers</h3>
+          <h3 className="text-slate-900 dark:text-slate-100 font-medium">{t("dash.widgets.topCustomers")}</h3>
         </div>
-        <a className="text-sm text-slate-500 hover:underline dark:text-slate-300" href="#">View All</a>
+        <Link className="text-sm text-slate-500 hover:underline dark:text-slate-300" href="/dashboard/sales/invoices">
+          {t("dash.dashboard.viewAll")}
+        </Link>
       </div>
 
-      <ul className="space-y-4">
-        {customers.map((c) => (
-          <li key={c.id} className="flex items-center justify-between py-2 border-t last:border-b-0 border-slate-100 dark:border-slate-700">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-100 font-semibold">
-                {c.avatar}
-              </div>
-              <div>
-                <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{c.name}</div>
-                <div className="text-xs text-slate-500 dark:text-slate-300 flex items-center gap-2">
-                  <span className="inline-flex items-center">{c.country}</span>
-                  <span className="h-1 w-1 rounded-full bg-orange-400 inline-block" />
-                  <span>{c.orders} Orders</span>
+      {isLoading ? (
+        <p className="text-slate-400 text-sm py-6 text-center">…</p>
+      ) : customers.length === 0 ? (
+        <p className="text-slate-400 text-sm py-6 text-center">{t("dash.dashboard.noRecentSales")}</p>
+      ) : (
+        <ul className="space-y-4">
+          {customers.map((c) => (
+            <li
+              key={c.name}
+              className="flex items-center justify-between py-2 border-t last:border-b-0 border-slate-100 dark:border-slate-700"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-100 font-semibold shrink-0">
+                  {initials(c.name)}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                    {c.name}
+                  </div>
+                  <div className="text-xs text-slate-500 dark:text-slate-300">
+                    {t("dash.widgets.ordersCount", { n: c.orders })}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{fmt(c.revenue)}</div>
-          </li>
-        ))}
-      </ul>
+              <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 shrink-0 ml-2">
+                {money(c.revenue)}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
-// ----------------------------- TopCategories --------------------------------
-export const TopCategories: React.FC = () => {
-  // pie data
-  const pieData = [
-    { name: "Electronics", value: 698 },
-    { name: "Sports", value: 545 },
-    { name: "Lifestyles", value: 456 },
-  ];
+const COLORS = ["#F59E0B", "#EF4444", "#0F172A", "#10b981", "#6366f1"];
 
-  const COLORS = ["#F59E0B", "#EF4444", "#0F172A"]; // orange, red, dark-navy
+type TopCategoriesProps = {
+  categories: TopCategoryRow[];
+  categoryCount: number;
+  productCount: number;
+  isLoading?: boolean;
+};
 
-  const stats = [
-    { label: "Total Number Of Categories", value: 698 },
-    { label: "Total Number Of Products", value: 7899 },
-  ];
+export const TopCategories: React.FC<TopCategoriesProps> = ({
+  categories,
+  categoryCount,
+  productCount,
+  isLoading,
+}) => {
+  const { t } = useTranslation();
+
+  const pieData = useMemo(() => {
+    if (categories.length === 0) return [{ name: "—", value: 1 }];
+    return categories.map((c) => ({ name: c.name, value: Math.max(0, c.revenue) }));
+  }, [categories]);
+
+  const stats = useMemo(
+    () => [
+      { label: t("dash.widgets.totalCategories"), value: categoryCount },
+      { label: t("dash.widgets.totalProductsCount"), value: productCount },
+    ],
+    [t, categoryCount, productCount]
+  );
 
   return (
     <div className="rounded-lg border bg-white dark:bg-slate-800 dark:border-slate-700 p-4 shadow-sm">
@@ -133,77 +119,99 @@ export const TopCategories: React.FC = () => {
               <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
             </svg>
           </div>
-          <h3 className="text-slate-900 dark:text-slate-100 font-medium">Top Categories</h3>
-        </div>
-        <div className="text-sm">
-          <select className="border px-3 py-1 rounded bg-white dark:bg-slate-700 dark:border-slate-600 text-slate-700 dark:text-slate-100">
-            <option>Weekly</option>
-            <option>Monthly</option>
-          </select>
+          <h3 className="text-slate-900 dark:text-slate-100 font-medium">{t("dash.widgets.topCategories")}</h3>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center">
-        <div className="w-full md:w-1/2 h-56">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={pieData} dataKey="value" innerRadius={48} outerRadius={80} paddingAngle={4}>
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+      {isLoading ? (
+        <p className="text-slate-400 text-sm py-6 text-center">…</p>
+      ) : (
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="w-full md:w-1/2 h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={pieData} dataKey="value" innerRadius={48} outerRadius={80} paddingAngle={4}>
+                  {pieData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <ReTooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <div className="space-y-4">
+              {categories.length === 0 ? (
+                <p className="text-slate-400 text-sm">{t("dash.dashboard.noProducts")}</p>
+              ) : (
+                categories.map((p, i) => (
+                  <div key={p.name} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div style={{ background: COLORS[i % COLORS.length] }} className="w-3 h-3 rounded-full shrink-0" />
+                      <div className="text-sm text-slate-600 dark:text-slate-300 truncate">{p.name}</div>
+                    </div>
+                    <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 shrink-0 ml-2">
+                      {money(p.revenue)}
+                    </div>
+                  </div>
+                ))
+              )}
+
+              <div className="mt-2 rounded-md border border-slate-100 dark:border-slate-700 p-3 bg-slate-50 dark:bg-slate-900/20">
+                {stats.map((s, idx) => (
+                  <div
+                    key={s.label}
+                    className={classNames(
+                      "flex items-center justify-between py-2",
+                      idx === 0 ? "border-b border-slate-100 dark:border-slate-700" : ""
+                    )}
+                  >
+                    <div className="text-sm text-slate-600 dark:text-slate-300">{s.label}</div>
+                    <div className="font-medium text-slate-900 dark:text-slate-100">{s.value}</div>
+                  </div>
                 ))}
-              </Pie>
-              <ReTooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="w-full md:w-1/2">
-          <div className="space-y-4">
-            {pieData.map((p, i) => (
-              <div key={p.name} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div style={{ background: COLORS[i] }} className="w-3 h-3 rounded-full" />
-                  <div className="text-sm text-slate-600 dark:text-slate-300">{p.name}</div>
-                </div>
-                <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">{p.value} Sales</div>
               </div>
-            ))}
-
-            <div className="mt-2 rounded-md border border-slate-100 dark:border-slate-700 p-3 bg-slate-50 dark:bg-slate-900/20">
-              {stats.map((s, idx) => (
-                <div key={s.label} className={classNames("flex items-center justify-between py-2", idx === 0 ? "border-b border-slate-100 dark:border-slate-700" : "")}>
-                  <div className="text-sm text-slate-600 dark:text-slate-300">{s.label}</div>
-                  <div className="font-medium text-slate-900 dark:text-slate-100">{s.value}</div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
-// ----------------------------- OrderStatistics --------------------------------
-export const OrderStatistics: React.FC = () => {
-  // generate heatmap-style data (days x timeslots)
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const hours = ["2 Am", "4 Am", "6 Am", "8 Am", "10 Am", "12 Pm", "14 Pm", "16 Pm", "18 Am"];
+type OrderStatisticsProps = { heatmap: number[][]; isLoading?: boolean };
 
-  // matrix of numbers (0 - 10 intensity)
-  const heatmap: number[][] = [
-    [3, 4, 5, 2, 1, 0, 0], // 2am
-    [4, 5, 4, 3, 2, 2, 1],
-    [2, 3, 2, 1, 1, 3, 4],
-    [6, 6, 6, 4, 2, 1, 2],
-    [8, 8, 7, 7, 4, 3, 5],
-    [1, 1, 2, 1, 1, 2, 1],
-    [0, 0, 1, 0, 0, 2, 3],
-    [0, 1, 3, 2, 5, 4, 2],
-    [2, 1, 0, 0, 3, 5, 6],
-  ];
+export const OrderStatistics: React.FC<OrderStatisticsProps> = ({ heatmap, isLoading }) => {
+  const { t } = useTranslation();
+  const days = useMemo(
+    () => [
+      t("dash.widgets.mon"),
+      t("dash.widgets.tue"),
+      t("dash.widgets.wed"),
+      t("dash.widgets.thu"),
+      t("dash.widgets.fri"),
+      t("dash.widgets.sat"),
+      t("dash.widgets.sun"),
+    ],
+    [t]
+  );
+  const hours = ["2 Am", "4 Am", "6 Am", "8 Am", "10 Am", "12 Pm", "14 Pm", "16 Pm", "18 Pm"];
 
-  // color scale: 0 -> light, 8+ -> deep orange
+  const grid = useMemo(() => {
+    const rows = 9;
+    const cols = 7;
+    const out: number[][] = [];
+    for (let r = 0; r < rows; r++) {
+      const row: number[] = [];
+      for (let c = 0; c < cols; c++) {
+        row.push(heatmap[r]?.[c] ?? 0);
+      }
+      out.push(row);
+    }
+    return out;
+  }, [heatmap]);
+
   const intensityToBg = (v: number) => {
     if (v >= 8) return "bg-orange-600";
     if (v >= 5) return "bg-orange-400";
@@ -221,51 +229,76 @@ export const OrderStatistics: React.FC = () => {
               <path d="M4 4h16v16H4z" />
             </svg>
           </div>
-          <h3 className="text-slate-900 dark:text-slate-100 font-medium">Order Statistics</h3>
-        </div>
-        <div className="text-sm">
-          <select className="border px-3 py-1 rounded bg-white dark:bg-slate-700 dark:border-slate-600 text-slate-700 dark:text-slate-100">
-            <option>Weekly</option>
-            <option>Monthly</option>
-          </select>
+          <h3 className="text-slate-900 dark:text-slate-100 font-medium">{t("dash.widgets.orderStatistics")}</h3>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <div className="grid grid-cols-8 gap-2 items-center">
-          <div className="col-span-1" />
-          {days.map((d) => (
-            <div key={d} className="text-xs text-slate-500 dark:text-slate-300 text-center">{d}</div>
-          ))}
+      {isLoading ? (
+        <p className="text-slate-400 text-sm py-6 text-center">…</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <div className="grid grid-cols-8 gap-2 items-center">
+            <div className="col-span-1" />
+            {days.map((d) => (
+              <div key={d} className="text-xs text-slate-500 dark:text-slate-300 text-center">
+                {d}
+              </div>
+            ))}
 
-          {hours.map((hour, r) => (
-            <React.Fragment key={hour}>
-              <div className="text-xs text-slate-500 dark:text-slate-300">{hour}</div>
-              {heatmap[r].map((cell, c) => (
-                <div key={`${r}-${c}`} className={classNames("w-12 h-8 rounded-sm border border-transparent flex items-center justify-center", intensityToBg(cell), "dark:opacity-90")}>
-                  {/* optional small dot or number */}
-                </div>
-              ))}
-            </React.Fragment>
-          ))}
+            {hours.map((hour, r) => (
+              <React.Fragment key={hour}>
+                <div className="text-xs text-slate-500 dark:text-slate-300">{hour}</div>
+                {grid[r]?.map((cell, c) => (
+                  <div
+                    key={`${r}-${c}`}
+                    className={classNames(
+                      "w-12 h-8 rounded-sm border border-transparent flex items-center justify-center",
+                      intensityToBg(cell),
+                      "dark:opacity-90"
+                    )}
+                  />
+                ))}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
-// ----------------------------- Wrapper Dashboard (optional) -------------------
-export default function DashboardWidgetsDemo() {
+type DemoProps = {
+  topCustomers: TopCustomerRow[];
+  topCategories: TopCategoryRow[];
+  categoryCount: number;
+  productCount: number;
+  heatmap: number[][];
+  isLoading?: boolean;
+};
+
+export default function DashboardWidgetsDemo({
+  topCustomers,
+  topCategories,
+  categoryCount,
+  productCount,
+  heatmap,
+  isLoading,
+}: DemoProps) {
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="md:col-span-1">
-        <TopCustomers />
+        <TopCustomers customers={topCustomers} isLoading={isLoading} />
       </div>
       <div className="md:col-span-1">
-        <TopCategories />
+        <TopCategories
+          categories={topCategories}
+          categoryCount={categoryCount}
+          productCount={productCount}
+          isLoading={isLoading}
+        />
       </div>
       <div className="md:col-span-1">
-        <OrderStatistics />
+        <OrderStatistics heatmap={heatmap} isLoading={isLoading} />
       </div>
     </div>
   );

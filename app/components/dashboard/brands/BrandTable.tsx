@@ -1,6 +1,7 @@
 "use client";
 
 import { Brand } from "@/app/types/brand";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import React from "react";
 import { Checkbox } from "../ui/Checkbox";
 import { formatDate } from "@/app/lib/format";
@@ -25,17 +26,23 @@ export function BrandTable({
   onEdit: (brand: Brand) => void;
   onDelete: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full min-w-[980px]">
         <thead>
           <tr className="text-left text-sm text-slate-400">
             <th className="w-12 px-5 py-4">
-              <Checkbox checked={allSelected} indeterminate={someSelected} onChange={onToggleAll} ariaLabel="Select all" />
+              <Checkbox
+              checked={allSelected}
+              indeterminate={someSelected}
+              onChange={onToggleAll}
+              ariaLabel={t("dash.common.selectAll")}
+            />
             </th>
-            <th className="px-5 py-4 font-medium">Brand</th>
-            <th className="px-5 py-4 font-medium">Created Date</th>
-            <th className="px-5 py-4 font-medium">Status</th>
+            <th className="px-5 py-4 font-medium">{t("dash.brands.colBrand")}</th>
+            <th className="px-5 py-4 font-medium">{t("dash.common.createdDate")}</th>
+            <th className="px-5 py-4 font-medium">{t("dash.common.status")}</th>
             <th className="w-40 px-5 py-4 text-right font-medium"></th>
           </tr>
         </thead>
@@ -44,7 +51,11 @@ export function BrandTable({
           {brands.map((b) => (
             <tr key={b.id} className="group hover:bg-white/[0.03]">
               <td className="px-5 py-4">
-                <Checkbox checked={!!selected[b.id]} onChange={() => onToggleOne(b.id)} ariaLabel={`Select ${b.name}`} />
+                <Checkbox
+                  checked={!!selected[b.id]}
+                  onChange={() => onToggleOne(b.id)}
+                  ariaLabel={`${t("dash.common.selectRow")} ${b.name}`}
+                />
               </td>
 
               <td className="px-5 py-4">
@@ -62,10 +73,10 @@ export function BrandTable({
 
               <td className="px-5 py-4">
                 <div className="flex justify-end gap-2">
-                  <ActionButton title="Edit" onClick={() => onEdit(b)}>
+                  <ActionButton title={t("dash.common.edit")} onClick={() => onEdit(b)}>
                     <EditIcon />
                   </ActionButton>
-                  <ActionButton title="Delete" onClick={() => onDelete(b.id)}>
+                  <ActionButton title={t("dash.common.delete")} onClick={() => onDelete(b.id)}>
                     <TrashIcon />
                   </ActionButton>
                 </div>
@@ -76,7 +87,7 @@ export function BrandTable({
           {brands.length === 0 && (
             <tr>
               <td colSpan={5} className="px-5 py-14 text-center text-sm text-slate-400">
-                No brands found.
+                {t("dash.brands.noBrandsFound")}
               </td>
             </tr>
           )}
@@ -108,6 +119,7 @@ function ActionButton({
 }
 
 function StatusPill({ status }: { status: "Active" | "Inactive" }) {
+  const { t } = useTranslation();
   const isActive = status === "Active";
   return (
     <span
@@ -117,7 +129,7 @@ function StatusPill({ status }: { status: "Active" | "Inactive" }) {
       )}
     >
       <span className={cn("h-2 w-2 rounded-full", isActive ? "bg-emerald-400" : "bg-slate-400")} />
-      {status}
+      {isActive ? t("dash.common.active") : t("dash.common.inactive")}
     </span>
   );
 }

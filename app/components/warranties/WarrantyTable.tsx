@@ -5,12 +5,9 @@ import React from "react";
 import { Checkbox } from "../dashboard/ui/Checkbox";
 import { formatDate } from "@/app/lib/format";
 import { cn } from "@/app/lib/cn";
+import { warrantyLabel } from "@/app/lib/warranty-api";
 
-
-function durationLabel(w: Warranty) {
-  const unit = w.period + (w.duration === 1 ? "" : "s");
-  return `${w.duration} ${unit}`;
-}
+type TFn = (key: string, vars?: Record<string, string | number>) => string;
 
 export function WarrantyTable({
   rows,
@@ -19,8 +16,10 @@ export function WarrantyTable({
   someSelected,
   onToggleAll,
   onToggleOne,
+  onView,
   onEdit,
   onAskDelete,
+  t,
 }: {
   rows: Warranty[];
   selected: Record<string, boolean>;
@@ -28,8 +27,10 @@ export function WarrantyTable({
   someSelected: boolean;
   onToggleAll: () => void;
   onToggleOne: (id: string) => void;
+  onView: (row: Warranty) => void;
   onEdit: (row: Warranty) => void;
   onAskDelete: (row: Warranty) => void;
+  t: TFn;
 }) {
   return (
     <div className="w-full overflow-x-auto">
@@ -37,13 +38,18 @@ export function WarrantyTable({
         <thead>
           <tr className="text-left text-sm text-slate-300">
             <th className="w-12 px-5 py-4">
-              <Checkbox checked={allSelected} indeterminate={someSelected} onChange={onToggleAll} ariaLabel="Select all" />
+              <Checkbox
+                checked={allSelected}
+                indeterminate={someSelected}
+                onChange={onToggleAll}
+                ariaLabel={t("dash.common.selectAll")}
+              />
             </th>
-            <th className="px-5 py-4 font-semibold text-slate-100">Warranty</th>
-            <th className="px-5 py-4 font-semibold text-slate-100">Description</th>
-            <th className="px-5 py-4 font-semibold text-slate-100">Duration</th>
-            <th className="px-5 py-4 font-semibold text-slate-100">Status</th>
-            <th className="w-40 px-5 py-4 text-right font-semibold text-slate-100"></th>
+            <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.warranties.colWarranty")}</th>
+            <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.warranties.colDesc")}</th>
+            <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.common.duration")}</th>
+            <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.common.status")}</th>
+            <th className="w-52 px-5 py-4 text-right font-semibold text-slate-100">{t("dash.common.actions")}</th>
           </tr>
         </thead>
 
@@ -51,7 +57,11 @@ export function WarrantyTable({
           {rows.map((r) => (
             <tr key={r.id} className="group hover:bg-white/[0.03]">
               <td className="px-5 py-4">
-                <Checkbox checked={!!selected[r.id]} onChange={() => onToggleOne(r.id)} ariaLabel={`Select ${r.name}`} />
+                <Checkbox
+                  checked={!!selected[r.id]}
+                  onChange={() => onToggleOne(r.id)}
+                  ariaLabel={`${t("dash.common.selectRow")} ${r.name}`}
+                />
               </td>
 
               <td className="px-5 py-4 text-sm font-semibold text-slate-100">{r.name}</td>
@@ -60,18 +70,21 @@ export function WarrantyTable({
                 <div className="max-w-[680px] truncate">{r.description}</div>
               </td>
 
-              <td className="px-5 py-4 text-sm text-slate-400">{durationLabel(r)}</td>
+              <td className="px-5 py-4 text-sm text-slate-400">{warrantyLabel(r)}</td>
 
               <td className="px-5 py-4">
-                <StatusPill status={r.status} />
+                <StatusPill status={r.status} t={t} />
               </td>
 
               <td className="px-5 py-4">
                 <div className="flex justify-end gap-2">
-                  <ActionButton title="Edit" onClick={() => onEdit(r)}>
+                  <ActionButton title={t("dash.warranties.view")} onClick={() => onView(r)}>
+                    <EyeIcon />
+                  </ActionButton>
+                  <ActionButton title={t("dash.common.edit")} onClick={() => onEdit(r)}>
                     <EditIcon />
                   </ActionButton>
-                  <ActionButton title="Delete" onClick={() => onAskDelete(r)}>
+                  <ActionButton title={t("dash.common.delete")} onClick={() => onAskDelete(r)}>
                     <TrashIcon />
                   </ActionButton>
                 </div>
@@ -82,21 +95,21 @@ export function WarrantyTable({
           {rows.length === 0 && (
             <tr>
               <td colSpan={6} className="px-5 py-14 text-center text-sm text-slate-400">
-                No warranties found.
+                {t("dash.warranties.noWarrantiesFound")}
               </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {/* Optional: keep created date in data model for export/sorting */}
       <div className="sr-only">{rows.map((r) => formatDate(r.createdAt)).join(",")}</div>
     </div>
   );
 }
 
-function StatusPill({ status }: { status: "Active" | "Inactive" }) {
+function StatusPill({ status, t }: { status: "Active" | "Inactive"; t: TFn }) {
   const isActive = status === "Active";
+  const label = isActive ? t("dash.common.active") : t("dash.common.inactive");
   return (
     <span
       className={cn(
@@ -105,7 +118,7 @@ function StatusPill({ status }: { status: "Active" | "Inactive" }) {
       )}
     >
       <span className={cn("h-2 w-2 rounded-full", isActive ? "bg-emerald-400" : "bg-slate-400")} />
-      {status}
+      {label}
     </span>
   );
 }
@@ -131,7 +144,20 @@ function ActionButton({
   );
 }
 
-/* icons */
+function EyeIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
 function EditIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">

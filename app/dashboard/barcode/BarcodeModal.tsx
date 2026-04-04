@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import JsBarcode from "jsbarcode";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 interface Product {
   id: number;
@@ -25,6 +26,7 @@ export default function BarcodeModal({
   showPrice: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,14 +54,14 @@ export default function BarcodeModal({
 
         {/* HEADER */}
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          <h2 className="text-lg font-semibold">Barcode</h2>
+          <h2 className="text-lg font-semibold">{t("dash.barcode.modalTitle")}</h2>
 
           <div className="flex items-center gap-3">
             <button
               onClick={printNow}
               className="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-md text-white font-medium transition"
             >
-              🖨 Print Barcode
+              🖨 {t("dash.barcode.print")}
             </button>
 
             <button
@@ -97,7 +99,9 @@ export default function BarcodeModal({
                     )}
 
                     {showPrice && (
-                      <p className="text-gray-400">Price: ${p.price}</p>
+                      <p className="text-gray-400">
+                        {t("dash.barcode.modalPricePrefix")}: ${p.price}
+                      </p>
                     )}
 
                     {/* Barcode */}

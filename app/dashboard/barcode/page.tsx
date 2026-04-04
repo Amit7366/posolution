@@ -3,6 +3,7 @@
 import { useState } from "react";
 import BarcodeModal from "./BarcodeModal";
 import { Eye, Printer, RefreshCcwIcon } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 interface Product {
   id: number;
@@ -15,6 +16,7 @@ interface Product {
 }
 
 export default function BarcodePage() {
+  const { t } = useTranslation();
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([
     {
       id: 1,
@@ -67,33 +69,33 @@ export default function BarcodePage() {
 
   return (
     <div className="p-6 text-gray-200">
-      <h1 className="text-xl font-semibold">Print Barcode</h1>
-      <p className="text-gray-400">Manage your barcodes</p>
+      <h1 className="text-xl font-semibold">{t("dash.barcode.title")}</h1>
+      <p className="text-gray-400">{t("dash.barcode.manage")}</p>
 
       <div className="bg-gray-800 mt-5 p-6 rounded-xl shadow-xl border border-gray-700">
 
         {/* Warehouse + Store */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label className="block">
-            <span className="font-medium">Warehouse *</span>
+            <span className="font-medium">{t("dash.barcode.warehouse")}</span>
             <select className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200">
-              <option>Select</option>
+              <option>{t("dash.barcode.selectPlaceholder")}</option>
             </select>
           </label>
 
           <label className="block">
-            <span className="font-medium">Store *</span>
+            <span className="font-medium">{t("dash.barcode.store")}</span>
             <select className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200">
-              <option>Select</option>
+              <option>{t("dash.barcode.selectPlaceholder")}</option>
             </select>
           </label>
         </div>
 
         {/* Product Search */}
         <div className="mt-6">
-          <span className="font-medium">Product *</span>
+          <span className="font-medium">{t("dash.barcode.product")}</span>
           <input
-            placeholder="Search Product by Code"
+            placeholder={t("dash.barcode.searchPlaceholder")}
             className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200"
           />
         </div>
@@ -103,10 +105,10 @@ export default function BarcodePage() {
           <table className="w-full text-left">
             <thead className="bg-gray-700/40 text-gray-300">
               <tr>
-                <th className="p-3">Product</th>
-                <th className="p-3">SKU</th>
-                <th className="p-3">Code</th>
-                <th className="p-3">Qty</th>
+                <th className="p-3">{t("dash.barcode.colProduct")}</th>
+                <th className="p-3">{t("dash.barcode.colSku")}</th>
+                <th className="p-3">{t("dash.barcode.colCode")}</th>
+                <th className="p-3">{t("dash.barcode.colQty")}</th>
                 <th className="p-3"></th>
               </tr>
             </thead>
@@ -157,16 +159,16 @@ export default function BarcodePage() {
         {/* Paper Size + Toggles */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
           <label className="block">
-            <span className="font-medium">Paper Size *</span>
+            <span className="font-medium">{t("dash.barcode.paperSize")}</span>
             <select className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200">
-              <option>Select</option>
+              <option>{t("dash.barcode.selectPlaceholder")}</option>
               <option>A4</option>
               <option>50x25</option>
             </select>
           </label>
 
           <div className="flex items-center gap-3">
-            <span>Show Store Name</span>
+            <span>{t("dash.barcode.showStore")}</span>
             <input
               type="checkbox"
               checked={showStoreName}
@@ -175,7 +177,7 @@ export default function BarcodePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span>Show Product Name</span>
+            <span>{t("dash.barcode.showProduct")}</span>
             <input
               type="checkbox"
               checked={showProductName}
@@ -184,7 +186,7 @@ export default function BarcodePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span>Show Price</span>
+            <span>{t("dash.barcode.showPrice")}</span>
             <input
               type="checkbox"
               checked={showPrice}
@@ -199,21 +201,21 @@ export default function BarcodePage() {
             className="bg-yellow-600 hover:bg-yellow-500 px-5 py-2 text-white rounded"
             onClick={() => setModalOpen(true)}
           >
-            <Eye/> Generate Barcode
+            <Eye/> {t("dash.barcode.generate")}
           </button>
 
           <button
             className="bg-blue-900 hover:bg-blue-800 px-5 py-2 text-white rounded"
             onClick={resetAll}
           >
-           <RefreshCcwIcon/> Reset Barcode
+           <RefreshCcwIcon/> {t("dash.barcode.reset")}
           </button>
 
           <button
             className="bg-red-600 hover:bg-red-500 px-5 py-2 text-white rounded"
             onClick={() => setModalOpen(true)}
           >
-            <Printer/> Print Barcode
+            <Printer/> {t("dash.barcode.print")}
           </button>
         </div>
       </div>

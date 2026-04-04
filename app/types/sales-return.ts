@@ -31,9 +31,13 @@ export type SalesReturnLine = {
 
 export type SalesReturn = {
   id: string;
+  /** System number from API (e.g. SR0001) */
+  returnNo?: string;
   productName: string; // display in list
   productImage?: string;
   date: string; // YYYY-MM-DD
+  /** Refund due (from API, YYYY-MM-DD) */
+  refundDueDate?: string;
   customer: Customer;
 
   status: ReturnStatus;

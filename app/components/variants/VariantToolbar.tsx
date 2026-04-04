@@ -7,16 +7,20 @@ import { Dropdown } from "../dashboard/ui/Dropdown";
 
 export type VariantStatusFilter = "All" | VariantStatus;
 
+type TFn = (key: string, vars?: Record<string, string | number>) => string;
+
 export function VariantToolbar({
   query,
   onQueryChange,
   statusFilter,
   onStatusFilterChange,
+  t,
 }: {
   query: string;
   onQueryChange: (v: string) => void;
   statusFilter: VariantStatusFilter;
   onStatusFilterChange: (v: VariantStatusFilter) => void;
+  t: TFn;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
@@ -27,16 +31,19 @@ export function VariantToolbar({
         <input
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="Search"
+          placeholder={t("dash.common.search")}
           className="w-full rounded-xl border border-white/10 bg-[#0b0f14] py-2.5 pl-10 pr-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
         />
       </div>
 
       <Dropdown
-        label="Status"
+        label={t("dash.common.status")}
         value={statusFilter}
         options={["All", "Active", "Inactive"] as const}
         onChange={onStatusFilterChange}
+        formatOption={(v) =>
+          v === "All" ? t("dash.common.all") : v === "Active" ? t("dash.common.active") : t("dash.common.inactive")
+        }
       />
     </div>
   );

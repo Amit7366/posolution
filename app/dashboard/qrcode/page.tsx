@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import QRCode from "qrcode";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 /* ----------------------------- Types ----------------------------- */
 
@@ -112,6 +113,7 @@ function paperConfig(size: PaperSize) {
 /* ----------------------------- Page ----------------------------- */
 
 export default function PrintQrCodePage() {
+  const { t } = useTranslation();
   const [warehouseId, setWarehouseId] = useState<string>("");
   const [storeId, setStoreId] = useState<string>("");
   const [productQuery, setProductQuery] = useState("");
@@ -147,7 +149,7 @@ export default function PrintQrCodePage() {
 
     const p = products.find((x) => x.code.toLowerCase() === clean.toLowerCase());
     if (!p) {
-      setFormError("Product not found for this code.");
+      setFormError(t("dash.qr.errProductNotFound"));
       return;
     }
 
@@ -165,10 +167,10 @@ export default function PrintQrCodePage() {
 
   async function generateQrForItems(openPreview = true) {
     // Validate required fields (like screenshot red *)
-    if (!warehouseId) return setFormError("Warehouse is required.");
-    if (!storeId) return setFormError("Store is required.");
-    if (!paperSize) return setFormError("Paper size is required.");
-    if (items.length === 0) return setFormError("Please add at least one product.");
+    if (!warehouseId) return setFormError(t("dash.qr.errWarehouse"));
+    if (!storeId) return setFormError(t("dash.qr.errStore"));
+    if (!paperSize) return setFormError(t("dash.qr.errPaper"));
+    if (items.length === 0) return setFormError(t("dash.qr.errAddProduct"));
 
     setFormError(null);
     setBusy(true);
@@ -218,12 +220,14 @@ export default function PrintQrCodePage() {
   }
 
   function printAllQrs() {
-    if (!paperSize) return setFormError("Paper size is required.");
-    if (items.length === 0) return setFormError("No items to print.");
-    if (items.some((x) => !x.qrDataUrl)) return setFormError("Please generate QR code first.");
+    if (!paperSize) return setFormError(t("dash.qr.errPaper"));
+    if (items.length === 0) return setFormError(t("dash.qr.errNoItems"));
+    if (items.some((x) => !x.qrDataUrl)) return setFormError(t("dash.qr.errGenerateFirst"));
 
     setFormError(null);
 
+    const printTitle = t("dash.qr.printDocTitle");
+    const refLabel = t("dash.qr.refNoPrint");
     const cfg = paperConfig(paperSize);
     const printWindow = window.open("", "_blank", "width=900,height=650");
     if (!printWindow) return;
@@ -245,7 +249,7 @@ export default function PrintQrCodePage() {
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Print QR Code</title>
+  <title>${escapeHtml(printTitle)}</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; padding: ${cfg.pad}px; font-family: Arial, sans-serif; }
@@ -278,7 +282,7 @@ export default function PrintQrCodePage() {
       <div class="card">
         <div class="name">${escapeHtml(l.name)}</div>
         <img src="${l.qr}" />
-        ${includeRef ? `<div class="ref">Ref No : ${escapeHtml(l.ref)}</div>` : ""}
+        ${includeRef ? `<div class="ref">${escapeHtml(refLabel)} ${escapeHtml(l.ref)}</div>` : ""}
       </div>
     `
       )
@@ -300,9 +304,11 @@ export default function PrintQrCodePage() {
   }
 
   function printSingle(item: LineItem) {
-    if (!paperSize) return setFormError("Paper size is required.");
-    if (!item.qrDataUrl) return setFormError("Please generate QR code first.");
+    if (!paperSize) return setFormError(t("dash.qr.errPaper"));
+    if (!item.qrDataUrl) return setFormError(t("dash.qr.errGenerateFirst"));
 
+    const printTitle = t("dash.qr.printDocTitle");
+    const refLabel = t("dash.qr.refNoPrint");
     const cfg = paperConfig(paperSize);
     const w = window.open("", "_blank", "width=600,height=600");
     if (!w) return;
@@ -318,7 +324,7 @@ export default function PrintQrCodePage() {
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Print QR Code</title>
+  <title>${escapeHtml(printTitle)}</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; padding: ${cfg.pad}px; font-family: Arial, sans-serif; }
@@ -347,7 +353,7 @@ export default function PrintQrCodePage() {
       <div class="card">
         <div class="name">${escapeHtml(l.name)}</div>
         <img src="${l.qr}" />
-        ${includeRef ? `<div class="ref">Ref No : ${escapeHtml(l.ref)}</div>` : ""}
+        ${includeRef ? `<div class="ref">${escapeHtml(refLabel)} ${escapeHtml(l.ref)}</div>` : ""}
       </div>
     `
       )
@@ -375,15 +381,15 @@ export default function PrintQrCodePage() {
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">Print QR Code</h1>
-            <p className="mt-1 text-sm text-slate-400">Manage your QR code</p>
+            <h1 className="text-xl font-semibold tracking-tight">{t("dash.qr.title")}</h1>
+            <p className="mt-1 text-sm text-slate-400">{t("dash.qr.manage")}</p>
           </div>
 
           <div className="flex items-center gap-2">
-            <IconButton title="Refresh" onClick={() => window.location.reload()}>
+            <IconButton title={t("dash.common.refresh")} onClick={() => window.location.reload()}>
               <RefreshIcon />
             </IconButton>
-            <IconButton title="Collapse" onClick={() => setCollapsed((s) => !s)}>
+            <IconButton title={t("dash.common.collapse")} onClick={() => setCollapsed((s) => !s)}>
               <ChevronUpIcon />
             </IconButton>
           </div>
@@ -395,13 +401,13 @@ export default function PrintQrCodePage() {
             <div className="px-6 py-6">
               {/* Warehouse + Store */}
               <div className="grid gap-6 md:grid-cols-2">
-                <Field label="Warehouse" required>
+                <Field label={t("dash.qr.warehouse")} required>
                   <select
                     value={warehouseId}
                     onChange={(e) => setWarehouseId(e.target.value)}
                     className={selectClass}
                   >
-                    <option value="">Select</option>
+                    <option value="">{t("dash.qr.selectPlaceholder")}</option>
                     {warehouses.map((w) => (
                       <option key={w.id} value={w.id}>
                         {w.name}
@@ -410,9 +416,9 @@ export default function PrintQrCodePage() {
                   </select>
                 </Field>
 
-                <Field label="Store" required>
+                <Field label={t("dash.qr.store")} required>
                   <select value={storeId} onChange={(e) => setStoreId(e.target.value)} className={selectClass}>
-                    <option value="">Select</option>
+                    <option value="">{t("dash.qr.selectPlaceholder")}</option>
                     {storeOptions.map((s) => (
                       <option key={s.id} value={s.id}>
                         {s.name}
@@ -424,7 +430,7 @@ export default function PrintQrCodePage() {
 
               {/* Product search */}
               <div className="mt-7">
-                <Field label="Product" required>
+                <Field label={t("dash.qr.product")} required>
                   <div className="relative">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                       <SearchIcon />
@@ -435,12 +441,14 @@ export default function PrintQrCodePage() {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") addProductByCode(productQuery);
                       }}
-                      placeholder="Search Product by Code"
+                      placeholder={t("dash.qr.searchPlaceholder")}
                       className={cn(inputClass, "pl-10")}
                     />
                   </div>
                   <div className="mt-2 text-xs text-slate-500">
-                    Tip: type product code (e.g. <span className="text-slate-300">HG3FK</span>) then press Enter.
+                    {t("dash.qr.tipEnter")}{" "}
+                    <span className="text-slate-300">{t("dash.qr.tipExample")}</span>
+                    {t("dash.qr.tipThen")}
                   </div>
                 </Field>
               </div>
@@ -451,11 +459,11 @@ export default function PrintQrCodePage() {
                   <table className="w-full min-w-[950px]">
                     <thead>
                       <tr className="text-left text-sm text-slate-300">
-                        <th className="px-4 py-4 font-semibold text-slate-100">Product</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">SKU</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">Code</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">Reference Number</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">Qty</th>
+                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colProduct")}</th>
+                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colSku")}</th>
+                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colCode")}</th>
+                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colRef")}</th>
+                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colQty")}</th>
                         <th className="px-4 py-4 font-semibold text-slate-100"></th>
                       </tr>
                     </thead>
@@ -478,12 +486,14 @@ export default function PrintQrCodePage() {
                               onChange={(v) =>
                                 setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, qty: v } : x)))
                               }
+                              decTitle={t("dash.qr.titleDecrease")}
+                              incTitle={t("dash.qr.titleIncrease")}
                             />
                           </td>
                           <td className="px-4 py-4">
                             <button
                               type="button"
-                              title="Remove"
+                              title={t("dash.qr.remove")}
                               onClick={() => setItems((prev) => prev.filter((x) => x.id !== it.id))}
                               className="grid h-10 w-10 place-items-center rounded-lg bg-[#133b68] text-white transition hover:brightness-110 active:translate-y-[1px]"
                             >
@@ -496,7 +506,7 @@ export default function PrintQrCodePage() {
                       {items.length === 0 && (
                         <tr>
                           <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-500">
-                            No products added.
+                            {t("dash.qr.emptyNoProducts")}
                           </td>
                         </tr>
                       )}
@@ -507,9 +517,9 @@ export default function PrintQrCodePage() {
 
               {/* Paper size + ref toggle */}
               <div className="mt-7 grid gap-6 md:grid-cols-[1fr_260px]">
-                <Field label="Paper Size" required>
+                <Field label={t("dash.qr.paperSize")} required>
                   <select value={paperSize} onChange={(e) => setPaperSize(e.target.value as any)} className={selectClass}>
-                    <option value="">Select</option>
+                    <option value="">{t("dash.qr.selectPlaceholder")}</option>
                     {(["A4", "A5", "Sticker 50x30", "Sticker 40x25"] as PaperSize[]).map((p) => (
                       <option key={p} value={p}>
                         {p}
@@ -520,8 +530,13 @@ export default function PrintQrCodePage() {
 
                 <div className="flex items-end justify-start">
                   <div className="flex items-center gap-3 pb-1">
-                    <div className="text-sm font-medium text-slate-200">Reference Number</div>
-                    <Toggle value={includeRef} onChange={setIncludeRef} />
+                    <div className="text-sm font-medium text-slate-200">{t("dash.qr.refNumber")}</div>
+                    <Toggle
+                      value={includeRef}
+                      onChange={setIncludeRef}
+                      ariaLabel={t("dash.qr.refNumber")}
+                      title={t("dash.qr.refNumber")}
+                    />
                   </div>
                 </div>
               </div>
@@ -546,7 +561,7 @@ export default function PrintQrCodePage() {
                     )}
                   >
                     <TargetIcon />
-                    Generate QR Code
+                    {t("dash.qr.generate")}
                   </button>
 
                   <button
@@ -555,7 +570,7 @@ export default function PrintQrCodePage() {
                     className="inline-flex items-center gap-2 rounded-lg bg-[#0f2f52] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 active:translate-y-[1px]"
                   >
                     <PowerIcon />
-                    Reset
+                    {t("dash.qr.reset")}
                   </button>
 
                   <button
@@ -571,7 +586,7 @@ export default function PrintQrCodePage() {
                     className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-500 active:translate-y-[1px]"
                   >
                     <PrintIcon />
-                    Print QRcode
+                    {t("dash.qr.printBtn")}
                   </button>
                 </div>
               </div>
@@ -581,7 +596,7 @@ export default function PrintQrCodePage() {
       </div>
 
       {/* Preview Modal */}
-      <Modal open={previewOpen} onClose={() => setPreviewOpen(false)} title="QR Code" size="md">
+      <Modal open={previewOpen} onClose={() => setPreviewOpen(false)} title={t("dash.qr.modalTitle")} size="md">
         {previewItem ? (
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-3">
@@ -592,7 +607,7 @@ export default function PrintQrCodePage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 active:translate-y-[1px]"
               >
                 <PrintIcon />
-                Print QR Code
+                {t("dash.qr.printLarge")}
               </button>
             </div>
 
@@ -603,21 +618,22 @@ export default function PrintQrCodePage() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={previewItem.qrDataUrl} alt="QR" className="h-[85px] w-[85px] object-contain" />
                   ) : (
-                    <div className="text-sm text-slate-400">Not generated</div>
+                    <div className="text-sm text-slate-400">{t("dash.common.notGenerated")}</div>
                   )}
                 </div>
 
                 <div className="text-sm text-slate-400">
                   {includeRef && (
                     <div className="mt-1">
-                      Ref No : <span className="text-slate-200">{previewItem.product.referenceNumber}</span>
+                      {t("dash.qr.refNoPrint")}{" "}
+                      <span className="text-slate-200">{previewItem.product.referenceNumber}</span>
                     </div>
                   )}
                   <div className="mt-1">
-                    Code : <span className="text-slate-200">{previewItem.product.code}</span>
+                    {t("dash.qr.codeLabel")} <span className="text-slate-200">{previewItem.product.code}</span>
                   </div>
                   <div className="mt-1">
-                    Qty : <span className="text-slate-200">{previewItem.qty}</span>
+                    {t("dash.qr.qtyLabel")} <span className="text-slate-200">{previewItem.qty}</span>
                   </div>
                 </div>
               </div>
@@ -645,7 +661,7 @@ export default function PrintQrCodePage() {
             )}
           </div>
         ) : (
-          <div className="py-8 text-center text-sm text-slate-400">No preview item.</div>
+          <div className="py-8 text-center text-sm text-slate-400">{t("dash.common.noPreview")}</div>
         )}
       </Modal>
     </div>
@@ -684,7 +700,17 @@ function IconButton({ children, title, onClick }: { children: React.ReactNode; t
   );
 }
 
-function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+function Toggle({
+  value,
+  onChange,
+  ariaLabel,
+  title,
+}: {
+  value: boolean;
+  onChange: (v: boolean) => void;
+  ariaLabel: string;
+  title: string;
+}) {
   return (
     <button
       type="button"
@@ -693,8 +719,8 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
         "relative h-6 w-11 rounded-full border border-white/10 transition",
         value ? "bg-emerald-500/40" : "bg-white/10"
       )}
-      aria-label="Toggle"
-      title="Toggle"
+      aria-label={ariaLabel}
+      title={title}
     >
       <span
         className={cn(
@@ -706,14 +732,24 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
   );
 }
 
-function QtyStepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+function QtyStepper({
+  value,
+  onChange,
+  decTitle,
+  incTitle,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  decTitle: string;
+  incTitle: string;
+}) {
   return (
     <div className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-black/20 px-3 py-2">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, value - 1))}
         className="grid h-7 w-7 place-items-center rounded-full border border-white/15 text-slate-200 hover:bg-white/10"
-        title="Decrease"
+        title={decTitle}
       >
         <MinusIcon />
       </button>
@@ -722,7 +758,7 @@ function QtyStepper({ value, onChange }: { value: number; onChange: (v: number) 
         type="button"
         onClick={() => onChange(value + 1)}
         className="grid h-7 w-7 place-items-center rounded-full border border-white/15 text-slate-200 hover:bg-white/10"
-        title="Increase"
+        title={incTitle}
       >
         <PlusIconSmall />
       </button>
@@ -764,6 +800,7 @@ function Modal({
   size?: "md" | "lg";
   children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const panelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -808,8 +845,8 @@ function Modal({
             type="button"
             onClick={onClose}
             className="grid h-8 w-8 place-items-center rounded-full bg-red-500/15 text-red-400 transition hover:bg-red-500/25"
-            aria-label="Close"
-            title="Close"
+            aria-label={t("dash.common.close")}
+            title={t("dash.common.close")}
           >
             <XIcon />
           </button>

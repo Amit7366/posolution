@@ -4,6 +4,7 @@ import PageTransition from "@/components/PageTransition";
 import { ThemeProvider } from "@/components/theme-provider";
 import { StoreProvider } from "@/components/StoreProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import { LanguageHtmlLang } from "@/components/LanguageHtmlLang";
 
 export const metadata: Metadata = {
   title: "BrandName - Premium SaaS Platform",
@@ -29,7 +30,9 @@ export default function RootLayout({
         <StoreProvider>
           <ThemeProvider>
             <LanguageProvider>
-              <PageTransition>{children}</PageTransition>
+              <LanguageHtmlLang>
+                <PageTransition>{children}</PageTransition>
+              </LanguageHtmlLang>
             </LanguageProvider>
           </ThemeProvider>
         </StoreProvider>

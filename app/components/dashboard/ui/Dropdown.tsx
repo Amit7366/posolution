@@ -8,12 +8,16 @@ export function Dropdown<T extends string>({
   value,
   options,
   onChange,
+  formatOption,
 }: {
   label: string;
   value: T;
   options: readonly T[];
   onChange: (v: T) => void;
+  /** Show translated text while keeping `value` as the canonical option key */
+  formatOption?: (v: T) => string;
 }) {
+  const labelOf = formatOption ?? ((v: T) => v);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -34,7 +38,7 @@ export function Dropdown<T extends string>({
         className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.05]"
       >
         <span className="text-slate-400">{label}</span>
-        <span className="font-semibold">{value}</span>
+        <span className="font-semibold">{labelOf(value)}</span>
         <ChevronDownIcon />
       </button>
 
@@ -53,7 +57,7 @@ export function Dropdown<T extends string>({
                 opt === value && "bg-white/[0.05]"
               )}
             >
-              {opt}
+              {labelOf(opt)}
               {opt === value ? <CheckIcon /> : <span className="w-4" />}
             </button>
           ))}

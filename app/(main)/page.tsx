@@ -1,40 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export default function HomePage() {
-
+  const { t } = useTranslation();
 
   return (
-    <main className="px-6 md:px-16 py-24">
-      <section className="text-center max-w-5xl mx-auto">
-        <h1 className="text-5xl md:text-7xl font-bold leading-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-          Build Premium SaaS Apps with Next.js 16
+    <main className="px-6 py-24 md:px-16">
+      <section className="mx-auto max-w-5xl text-center">
+        <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-5xl font-bold leading-tight text-transparent md:text-7xl">
+          {t("home.heroTitle")}
         </h1>
-        <p className="mt-6 text-lg text-slate-600 dark:text-slate-400">
-          Enterprise architecture, persistent dark mode, SEO optimized metadata,
-          and production-ready UI system.
-        </p>
-        <div className="mt-10 flex gap-6 justify-center">
+        <p className="mt-6 text-lg text-slate-600 dark:text-slate-400">{t("home.heroSubtitle")}</p>
+        <div className="mt-10 flex justify-center gap-6">
           <Link href="/register">
-            <button className="px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-lg shadow-xl hover:shadow-indigo-500/40 transition-all">
-              Get Started
+            <button
+              type="button"
+              className="rounded-2xl bg-indigo-600 px-8 py-4 text-lg text-white shadow-xl transition-all hover:bg-indigo-700 hover:shadow-indigo-500/40"
+            >
+              {t("home.getStarted")}
             </button>
           </Link>
           <Link href="#features">
             <button
-              className="
-    px-8 py-4 rounded-2xl text-lg
-    border border-slate-300 dark:border-yellow-400
-    bg-transparent dark:bg-yellow-400
-    text-slate-900 dark:text-black
-    transition-colors duration-300
-  "
+              type="button"
+              className="rounded-2xl border border-slate-300 bg-transparent px-8 py-4 text-lg text-slate-900 transition-colors duration-300 dark:border-yellow-400 dark:bg-yellow-400 dark:text-black"
             >
-              Learn More
+              {t("home.learnMore")}
             </button>
           </Link>
         </div>

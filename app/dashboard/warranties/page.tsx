@@ -2,36 +2,61 @@
 
 import { AddEditWarrantyModal } from "@/app/components/warranties/AddEditWarrantyModal";
 import { DeleteWarrantyModal } from "@/app/components/warranties/DeleteWarrantyModal";
+import { ViewWarrantyModal } from "@/app/components/warranties/ViewWarrantyModal";
 import { WarrantyTable } from "@/app/components/warranties/WarrantyTable";
 import { WarrantyStatusFilter, WarrantyToolbar } from "@/app/components/warranties/WarrantyToolbar";
 import { cn } from "@/app/lib/cn";
 import { exportWarrantiesToCSV, exportWarrantiesToXLS } from "@/app/lib/export-warranties";
-import { todayYmd } from "@/app/lib/format";
-import { Warranty, WarrantyPeriod } from "@/app/types/warranty";
-import React, { useMemo, useState } from "react";
+import { apiDocToWarranty, uiPeriodToApi } from "@/app/lib/warranty-api";
+import type { Warranty } from "@/app/types/warranty";
+import {
+  useCreateWarrantyMutation,
+  useDeleteWarrantyMutation,
+  useGetWarrantiesQuery,
+  useUpdateWarrantyMutation,
+} from "@/redux/api/baseApi";
+import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
-
-function uid() {
-  return Math.random().toString(36).slice(2, 10);
+function getQueryErrorMessage(error: unknown): string | null {
+  if (!error) return null;
+  if (typeof error === "object" && error !== null && "data" in error) {
+    const d = (error as { data?: { message?: string } }).data;
+    if (d?.message) return String(d.message);
+  }
+  if (typeof error === "object" && error !== null && "error" in error) {
+    return String((error as { error: string }).error);
+  }
+  return null;
 }
 
-const seed: Warranty[] = [
-  { id: "1", name: "Replacement Warranty", description: "Covers replacement of faulty items", duration: 2, period: "Year", createdAt: "2024-12-24", status: "Active" },
-  { id: "2", name: "On-Site Warranty", description: "Product repairs done at the customer’s location", duration: 1, period: "Year", createdAt: "2024-12-10", status: "Active" },
-  { id: "3", name: "Accidental Protection Plan", description: "Coverage for accidental damage", duration: 6, period: "Month", createdAt: "2024-11-27", status: "Active" },
-  { id: "4", name: "Labor-Only Warranty", description: "Covers only labor costs, not parts", duration: 6, period: "Month", createdAt: "2024-11-18", status: "Active" },
-  { id: "5", name: "No-Cost Repairs", description: "No charge for repairs during warranty period", duration: 3, period: "Month", createdAt: "2024-11-06", status: "Active" },
-  { id: "6", name: "Accidental Damage", description: "Coverage for unexpected damage", duration: 6, period: "Month", createdAt: "2024-10-25", status: "Active" },
-  { id: "7", name: "Wear & Tear Warranty", description: "Covers specific product aging issues", duration: 1, period: "Year", createdAt: "2024-10-03", status: "Active" },
-  { id: "8", name: "Money-Back Guarantee", description: "Refund within a specified period", duration: 3, period: "Month", createdAt: "2024-09-20", status: "Active" },
-  { id: "9", name: "Water Damage Warranty", description: "Coverage for water-related issues", duration: 6, period: "Month", createdAt: "2024-09-10", status: "Active" },
-  { id: "10", name: "Power Surge Protection", description: "Covers damage from power surges", duration: 6, period: "Month", createdAt: "2024-09-01", status: "Active" },
-];
+function listFromPayload(payload: unknown): Record<string, unknown>[] {
+  if (!payload || typeof payload !== "object") return [];
+  const p = payload as { data?: unknown };
+  const d = p.data;
+  if (Array.isArray(d)) return d as Record<string, unknown>[];
+  if (d && typeof d === "object" && "data" in (d as object)) {
+    const inner = (d as { data?: unknown }).data;
+    if (Array.isArray(inner)) return inner as Record<string, unknown>[];
+  }
+  return [];
+}
+
+function toastMutationError(e: unknown, fallback: string) {
+  const data = (e as { data?: { message?: string; errorSources?: { path: string; message: string }[] } })
+    ?.data;
+  const msg = data?.message;
+  const details = data?.errorSources?.length
+    ? data.errorSources.map((s) => `${s.path}: ${s.message}`).join(", ")
+    : undefined;
+  toast.error(details ? `${msg ?? fallback} (${details})` : msg ?? fallback);
+}
 
 export default function WarrantiesPage() {
-  const [rows, setRows] = useState<Warranty[]>(seed);
-
-  const [query, setQuery] = useState("");
+  const { t } = useTranslation();
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<WarrantyStatusFilter>("All");
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -39,46 +64,65 @@ export default function WarrantiesPage() {
 
   const [selected, setSelected] = useState<Record<string, boolean>>({});
 
-  // modals
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
   const [editing, setEditing] = useState<Warranty | null>(null);
 
+  const [viewOpen, setViewOpen] = useState(false);
+  const [viewing, setViewing] = useState<Warranty | null>(null);
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState<Warranty | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   const [collapsed, setCollapsed] = useState(false);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    let list = rows.filter((r) => {
-      if (!q) return true;
-      return (
-        r.name.toLowerCase().includes(q) ||
-        r.description.toLowerCase().includes(q) ||
-        String(r.duration).includes(q) ||
-        r.period.toLowerCase().includes(q)
-      );
-    });
-    if (statusFilter !== "All") list = list.filter((r) => r.status === statusFilter);
-    return list;
-  }, [rows, query, statusFilter]);
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(searchInput.trim()), 400);
+    return () => clearTimeout(t);
+  }, [searchInput]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-  const safePage = Math.min(page, totalPages);
+  const statusParam =
+    statusFilter === "Active" ? "active" : statusFilter === "Inactive" ? "inactive" : "";
 
-  const paged = useMemo(() => {
-    const start = (safePage - 1) * rowsPerPage;
-    return filtered.slice(start, start + rowsPerPage);
-  }, [filtered, rowsPerPage, safePage]);
+  const {
+    data: listPayload,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useGetWarrantiesQuery({
+    page,
+    limit: rowsPerPage,
+    ...(debouncedSearch ? { search: debouncedSearch } : {}),
+    ...(statusParam ? { status: statusParam } : {}),
+    sortBy: "createdAt",
+    sortOrder: "desc",
+  });
 
-  const allOnPageSelected = paged.length > 0 && paged.every((r) => selected[r.id]);
-  const someOnPageSelected = paged.some((r) => selected[r.id]) && !allOnPageSelected;
+  const total = (listPayload as { meta?: { total?: number } } | undefined)?.meta?.total ?? 0;
+  const pages = Math.max(1, Math.ceil(total / rowsPerPage));
+
+  useEffect(() => {
+    if (page > pages) setPage(pages);
+  }, [page, pages]);
+
+  const rows = useMemo(() => {
+    return listFromPayload(listPayload).map((doc) => apiDocToWarranty(doc));
+  }, [listPayload]);
+
+  const [createWarranty] = useCreateWarrantyMutation();
+  const [updateWarranty] = useUpdateWarrantyMutation();
+  const [deleteWarranty] = useDeleteWarrantyMutation();
+
+  const allOnPageSelected = rows.length > 0 && rows.every((r) => selected[r.id]);
+  const someOnPageSelected = rows.some((r) => selected[r.id]) && !allOnPageSelected;
 
   function toggleAllOnPage() {
     const next = { ...selected };
     const target = !allOnPageSelected;
-    for (const r of paged) next[r.id] = target;
+    for (const r of rows) next[r.id] = target;
     setSelected(next);
   }
 
@@ -98,45 +142,48 @@ export default function WarrantiesPage() {
     setModalOpen(true);
   }
 
-  function submitModal(payload: {
+  function openView(r: Warranty) {
+    setViewing(r);
+    setViewOpen(true);
+  }
+
+  async function handleSubmitModal(payload: {
     name: string;
     duration: number;
-    period: WarrantyPeriod;
+    period: Warranty["period"];
     description: string;
     status: boolean;
   }) {
-    if (modalMode === "add") {
-      const newRow: Warranty = {
-        id: uid(),
-        name: payload.name,
-        duration: payload.duration,
-        period: payload.period,
-        description: payload.description,
-        createdAt: todayYmd(),
-        status: payload.status ? "Active" : "Inactive",
-      };
-      setRows((prev) => [newRow, ...prev]);
+    const status = payload.status ? "active" : "inactive";
+    const period = uiPeriodToApi(payload.period);
+    try {
+      if (modalMode === "add") {
+        await createWarranty({
+          name: payload.name,
+          duration: payload.duration,
+          period,
+          description: payload.description,
+          status,
+        }).unwrap();
+        toast.success(t("dash.warranties.warrantyCreated"));
+      } else if (editing) {
+        await updateWarranty({
+          id: editing.id,
+          body: {
+            name: payload.name,
+            duration: payload.duration,
+            period,
+            description: payload.description,
+            status,
+          },
+        }).unwrap();
+        toast.success(t("dash.warranties.warrantyUpdated"));
+      }
       setModalOpen(false);
-      return;
+      setEditing(null);
+    } catch (e) {
+      toastMutationError(e, t("dash.warranties.saveFailed"));
     }
-
-    if (!editing) return;
-
-    setRows((prev) =>
-      prev.map((x) =>
-        x.id === editing.id
-          ? {
-              ...x,
-              name: payload.name,
-              duration: payload.duration,
-              period: payload.period,
-              description: payload.description,
-              status: payload.status ? "Active" : "Inactive",
-            }
-          : x
-      )
-    );
-    setModalOpen(false);
   }
 
   function askDelete(r: Warranty) {
@@ -144,79 +191,95 @@ export default function WarrantiesPage() {
     setDeleteOpen(true);
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleting) return;
-    setRows((prev) => prev.filter((x) => x.id !== deleting.id));
-    setSelected((prev) => {
-      const copy = { ...prev };
-      delete copy[deleting.id];
-      return copy;
-    });
-    setDeleteOpen(false);
-    setDeleting(null);
+    setDeleteBusy(true);
+    try {
+      await deleteWarranty(deleting.id).unwrap();
+      toast.success(t("dash.warranties.warrantyDeleted"));
+      setDeleteOpen(false);
+      setDeleting(null);
+      setSelected((prev) => {
+        const copy = { ...prev };
+        delete copy[deleting.id];
+        return copy;
+      });
+    } catch (e) {
+      toastMutationError(e, t("dash.warranties.deleteFailed"));
+    } finally {
+      setDeleteBusy(false);
+    }
   }
 
   function exportPDF() {
     window.print();
   }
   function exportXLS() {
-    exportWarrantiesToXLS(filtered, "warranties.xls");
+    exportWarrantiesToXLS(rows, "warranties.xls");
   }
   function exportCSV() {
-    exportWarrantiesToCSV(filtered, "warranties.csv");
+    exportWarrantiesToCSV(rows, "warranties.csv");
   }
   function refresh() {
-    setQuery("");
+    void refetch();
+    setSearchInput("");
+    setDebouncedSearch("");
     setStatusFilter("All");
     setRowsPerPage(10);
     setPage(1);
     setSelected({});
   }
 
+  const errMsg = isError ? getQueryErrorMessage(error) ?? t("dash.warranties.failedLoad") : null;
+
   return (
     <div className="min-h-screen bg-[#0b0f14] text-slate-100">
       <div className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(60%_40%_at_50%_0%,rgba(249,115,22,0.18),transparent_60%)]" />
 
       <div className="relative mx-auto w-full max-w-[1600px] px-6 py-7">
-        {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">Warranties</h1>
-            <p className="mt-1 text-sm text-slate-400">Manage your warranties</p>
+            <h1 className="text-xl font-semibold tracking-tight">{t("dash.warranties.pageTitle")}</h1>
+            <p className="mt-1 text-sm text-slate-400">{t("dash.warranties.manage")}</p>
           </div>
 
           <div className="flex items-center gap-2">
-            <TopIconButton title="Export PDF" onClick={exportPDF}>
+            <TopIconButton title={t("dash.common.exportPdf")} onClick={exportPDF}>
               <PdfIcon />
             </TopIconButton>
-            <TopIconButton title="Export XLS" onClick={exportXLS}>
+            <TopIconButton title={t("dash.common.exportXls")} onClick={exportXLS}>
               <XlsIcon />
             </TopIconButton>
-            <TopIconButton title="Export CSV" onClick={exportCSV}>
+            <TopIconButton title={t("dash.common.exportCsv")} onClick={exportCSV}>
               <CsvIcon />
             </TopIconButton>
-            <TopIconButton title="Refresh" onClick={refresh}>
+            <TopIconButton title={t("dash.common.refresh")} onClick={refresh}>
               <RefreshIcon />
             </TopIconButton>
-            <TopIconButton title="Collapse" onClick={() => setCollapsed((s) => !s)}>
+            <TopIconButton title={t("dash.common.collapse")} onClick={() => setCollapsed((s) => !s)}>
               <ChevronUpIcon />
             </TopIconButton>
 
             <button
+              type="button"
               onClick={openAdd}
               className="ml-2 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_-12px_rgba(249,115,22,0.8)] transition hover:bg-orange-400 active:translate-y-[1px]"
             >
               <PlusIcon />
-              Add Warranty
+              {t("dash.warranties.add")}
             </button>
           </div>
         </div>
 
+        {errMsg ? (
+          <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{errMsg}</div>
+        ) : null}
+
         <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
           <WarrantyToolbar
-            query={query}
+            query={searchInput}
             onQueryChange={(v) => {
-              setQuery(v);
+              setSearchInput(v);
               setPage(1);
             }}
             statusFilter={statusFilter}
@@ -224,25 +287,31 @@ export default function WarrantiesPage() {
               setStatusFilter(v);
               setPage(1);
             }}
+            t={t}
           />
+
+          {(isLoading || isFetching) && (
+            <div className="px-5 py-3 text-sm text-slate-400 border-b border-white/10">{t("dash.common.loading")}</div>
+          )}
 
           {!collapsed && (
             <>
               <WarrantyTable
-                rows={paged}
+                rows={rows}
                 selected={selected}
                 allSelected={allOnPageSelected}
                 someSelected={someOnPageSelected}
                 onToggleAll={toggleAllOnPage}
                 onToggleOne={toggleOne}
+                onView={openView}
                 onEdit={openEdit}
                 onAskDelete={askDelete}
+                t={t}
               />
 
-              {/* footer */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4">
                 <div className="flex items-center gap-2 text-sm text-slate-400">
-                  <span>Row Per Page</span>
+                  <span>{t("dash.common.rowPerPage")}</span>
                   <select
                     value={rowsPerPage}
                     onChange={(e) => {
@@ -257,22 +326,33 @@ export default function WarrantiesPage() {
                       </option>
                     ))}
                   </select>
-                  <span>Entries</span>
+                  <span>{t("dash.common.entries")}</span>
+                  <span className="ml-2 text-slate-500">
+                    {t("dash.common.rangePage", {
+                      start: total === 0 ? 0 : (page - 1) * rowsPerPage + 1,
+                      end: Math.min(page * rowsPerPage, total),
+                      total,
+                    })}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <PageNavButton disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} title="Previous">
+                  <PageNavButton
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    title={t("dash.common.previous")}
+                  >
                     <ChevronLeftIcon />
                   </PageNavButton>
 
-                  <span className="grid h-8 w-8 place-items-center rounded-full bg-orange-500 text-sm font-semibold text-white shadow-[0_12px_26px_-14px_rgba(249,115,22,0.9)]">
-                    {safePage}
+                  <span className="grid h-8 min-w-8 px-2 place-items-center rounded-full bg-orange-500 text-sm font-semibold text-white shadow-[0_12px_26px_-14px_rgba(249,115,22,0.9)]">
+                    {page}
                   </span>
 
                   <PageNavButton
-                    disabled={safePage >= totalPages}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    title="Next"
+                    disabled={page >= pages}
+                    onClick={() => setPage((p) => Math.min(pages, p + 1))}
+                    title={t("dash.common.next")}
                   >
                     <ChevronRightIcon />
                   </PageNavButton>
@@ -287,13 +367,29 @@ export default function WarrantiesPage() {
         open={modalOpen}
         mode={modalMode}
         initial={editing}
-        onClose={() => setModalOpen(false)}
-        onSubmit={submitModal}
+        onClose={() => {
+          setModalOpen(false);
+          setEditing(null);
+        }}
+        onSubmit={handleSubmitModal}
+      />
+
+      <ViewWarrantyModal
+        open={viewOpen}
+        row={viewing}
+        onClose={() => {
+          setViewOpen(false);
+          setViewing(null);
+        }}
+        onEdit={(r) => openEdit(r)}
       />
 
       <DeleteWarrantyModal
         open={deleteOpen}
+        isDeleting={deleteBusy}
+        itemName={deleting?.name}
         onClose={() => {
+          if (deleteBusy) return;
           setDeleteOpen(false);
           setDeleting(null);
         }}
@@ -302,8 +398,6 @@ export default function WarrantiesPage() {
     </div>
   );
 }
-
-/* ---------- small UI helpers + icons (same style as your other pages) ---------- */
 
 function TopIconButton({
   children,

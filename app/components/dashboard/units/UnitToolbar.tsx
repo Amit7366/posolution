@@ -8,6 +8,8 @@ import { Button } from "../ui/Button";
 
 export type UnitStatusFilter = "All" | UnitStatus;
 
+type TFn = (key: string, vars?: Record<string, string | number>) => string;
+
 export function UnitToolbar({
   query,
   onQueryChange,
@@ -18,6 +20,7 @@ export function UnitToolbar({
   onExportXLS,
   onRefresh,
   onCollapse,
+  t,
 }: {
   query: string;
   onQueryChange: (v: string) => void;
@@ -29,6 +32,7 @@ export function UnitToolbar({
   onExportXLS: () => void;
   onRefresh: () => void;
   onCollapse: () => void;
+  t: TFn;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
@@ -39,35 +43,38 @@ export function UnitToolbar({
         <input
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="Search"
+          placeholder={t("dash.common.search")}
           className="w-full rounded-xl border border-white/10 bg-[#0b0f14] py-2.5 pl-10 pr-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
         />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <IconButton title="Export PDF (Print)" onClick={onExportPDF}>
+        <IconButton title={t("dash.common.exportPdf")} onClick={onExportPDF}>
           <PdfIcon />
         </IconButton>
-        <IconButton title="Export XLS" onClick={onExportXLS}>
+        <IconButton title={t("dash.common.exportXls")} onClick={onExportXLS}>
           <XlsIcon />
         </IconButton>
-        <IconButton title="Refresh" onClick={onRefresh}>
+        <IconButton title={t("dash.common.refresh")} onClick={onRefresh}>
           <RefreshIcon />
         </IconButton>
-        <IconButton title="Collapse" onClick={onCollapse}>
+        <IconButton title={t("dash.common.collapse")} onClick={onCollapse}>
           <ChevronUpIcon />
         </IconButton>
 
         <Dropdown
-          label="Status"
+          label={t("dash.common.status")}
           value={statusFilter}
           options={["All", "Active", "Inactive"] as const}
           onChange={onStatusFilterChange}
+          formatOption={(v) =>
+            v === "All" ? t("dash.common.all") : v === "Active" ? t("dash.common.active") : t("dash.common.inactive")
+          }
         />
 
         <Button variant="primary" onClick={onAdd} className="ml-1">
           <PlusIcon />
-          Add Unit
+          {t("dash.units.add")}
         </Button>
       </div>
     </div>
