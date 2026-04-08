@@ -7,14 +7,15 @@ import { LanguageProvider } from "@/components/LanguageProvider";
 import { LanguageHtmlLang } from "@/components/LanguageHtmlLang";
 
 export const metadata: Metadata = {
-  title: "BrandName - Premium SaaS Platform",
+  title: "Sohoj POS — The Smartest POS System for Your Business",
   description:
-    "Enterprise-grade Next.js 16 SaaS starter with SEO optimization and scalable architecture.",
+    "Manage sales, inventory, invoices, and reports — all from one powerful dashboard. Trusted by 10,000+ businesses in Bangladesh.",
   openGraph: {
-    title: "BrandName SaaS",
-    description: "Modern scalable Next.js application.",
-    url: "https://yourdomain.com",
-    siteName: "BrandName",
+    title: "Sohoj POS — Smart Retail Management",
+    description:
+      "Process sales, track inventory, generate invoices, and grow your business with Sohoj POS.",
+    url: "https://sohojpos.com",
+    siteName: "Sohoj POS",
     type: "website",
   },
 };
