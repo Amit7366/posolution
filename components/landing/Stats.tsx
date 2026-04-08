@@ -1,35 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { Building2, ArrowUpRight, Activity, Headphones } from "lucide-react";
-
-if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 const icons = [Building2, ArrowUpRight, Activity, Headphones];
 
 export default function Stats() {
   const { t } = useTranslation();
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".stat-item", {
-        y: 40,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.12,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
 
   const stats = [1, 2, 3, 4].map((n, i) => ({
     value: t(`landing.stats.s${n}`),
@@ -38,7 +16,7 @@ export default function Stats() {
   }));
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-24">
       {/* Full bleed gradient bg */}
       <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-indigo-600 to-violet-700" />
       {/* Noise texture */}
@@ -56,13 +34,20 @@ export default function Stats() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12">
           {stats.map(({ value, label, icon: Icon }, i) => (
-            <div key={i} className="stat-item text-center">
+            <motion.div
+              key={i}
+              className="text-center"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
+            >
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
                 <Icon size={24} className="text-white" />
               </div>
               <p className="text-4xl font-black text-white sm:text-5xl">{value}</p>
               <p className="mt-2 text-sm font-medium text-blue-100">{label}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 

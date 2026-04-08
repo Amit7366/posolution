@@ -1,40 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Plus, Minus, MessageCircle } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import Link from "next/link";
 
-if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
-
 export default function FAQ() {
   const { t } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".faq-header", {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".faq-header", start: "top 85%" },
-      });
-      gsap.from(".faq-item", {
-        y: 30,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.08,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".faq-list", start: "top 78%" },
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
 
   const faqs = [1, 2, 3, 4, 5, 6].map((n) => ({
     q: t(`landing.faq.q${n}`),
@@ -42,10 +16,7 @@ export default function FAQ() {
   }));
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden bg-[#fafafa] py-28 dark:bg-[#070710]"
-    >
+    <section className="relative overflow-hidden bg-[#fafafa] py-28 dark:bg-[#070710]">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.012] dark:opacity-[0.025]"
         style={{
@@ -57,7 +28,13 @@ export default function FAQ() {
 
       <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="faq-header mb-14 text-center">
+        <motion.div
+          className="mb-14 text-center"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
           <span className="inline-flex items-center gap-2 rounded-full border border-teal-200/60 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-700 dark:border-teal-800/60 dark:bg-teal-950/40 dark:text-teal-300">
             <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
             {t("landing.faq.badge")}
@@ -68,14 +45,18 @@ export default function FAQ() {
           <p className="mt-5 text-lg leading-relaxed text-gray-500 dark:text-gray-400">
             {t("landing.faq.subtitle")}
           </p>
-        </div>
+        </motion.div>
 
         {/* Accordion */}
-        <div className="faq-list space-y-3">
+        <div className="space-y-3">
           {faqs.map(({ q, a }, i) => (
-            <div
+            <motion.div
               key={i}
-              className={`faq-item overflow-hidden rounded-2xl border transition-all duration-200 ${
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.45, delay: i * 0.07, ease: "easeOut" }}
+              className={`overflow-hidden rounded-2xl border transition-all duration-200 ${
                 openIndex === i
                   ? "border-blue-200/80 bg-white shadow-md dark:border-blue-800/60 dark:bg-gray-900"
                   : "border-gray-200/60 bg-white shadow-sm dark:border-gray-800/50 dark:bg-gray-900/60"
@@ -116,12 +97,18 @@ export default function FAQ() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Support CTA */}
-        <div className="mt-12 flex flex-col items-center gap-3 rounded-2xl border border-gray-200/60 bg-white p-8 text-center shadow-sm dark:border-gray-800/50 dark:bg-gray-900/60">
+        <motion.div
+          className="mt-12 flex flex-col items-center gap-3 rounded-2xl border border-gray-200/60 bg-white p-8 text-center shadow-sm dark:border-gray-800/50 dark:bg-gray-900/60"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
             <MessageCircle size={22} className="text-blue-600 dark:text-blue-400" />
           </div>
@@ -135,7 +122,7 @@ export default function FAQ() {
           >
             Talk to Support
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Sparkles, ShieldCheck, Zap, Users } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/useTranslation";
-
-if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 const TRUST = [
   { icon: ShieldCheck, label: "Enterprise Security" },
@@ -17,23 +15,13 @@ const TRUST = [
 
 export default function CTABanner() {
   const { t } = useTranslation();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const bannerRef = useRef<HTMLDivElement>(null);
+  const blobsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(bannerRef.current, {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: bannerRef.current,
-          start: "top 85%",
-        },
-      });
+    if (typeof window === "undefined") return;
 
-      // Subtle floating animation on blobs
+    const ctx = gsap.context(() => {
+      // Continuous blob float — no ScrollTrigger needed
       gsap.to(".cta-blob-1", {
         y: -20,
         x: 15,
@@ -51,18 +39,20 @@ export default function CTABanner() {
         repeat: -1,
         delay: 1,
       });
-    }, sectionRef);
+    }, blobsRef);
+
     return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden bg-white py-28 dark:bg-[#060612]"
-    >
+    <section className="relative overflow-hidden bg-white py-28 dark:bg-[#060612]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div
-          ref={bannerRef}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          ref={blobsRef}
           className="relative overflow-hidden rounded-3xl bg-linear-to-br from-blue-600 via-indigo-600 to-violet-700 px-8 py-20 text-center sm:px-16"
         >
           {/* Animated blobs */}
@@ -122,7 +112,7 @@ export default function CTABanner() {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
