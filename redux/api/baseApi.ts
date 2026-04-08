@@ -34,6 +34,8 @@ export const baseApi = createApi({
     "Invoice",
     "SalesReturn",
     "Dashboard",
+    "Payment",
+    "Subscription",
   ],
   endpoints: (builder) => ({
     // Example dashboard endpoint (keep if used elsewhere)
@@ -706,6 +708,71 @@ export const baseApi = createApi({
       }),
       invalidatesTags: ["SalesReturn", "Product", "Dashboard"],
     }),
+
+    // ── Subscription ─────────────────────────────────────────────────────────
+    getSubscriptionStatus: builder.query<any, void>({
+      query: () => "/subscription",
+      providesTags: ["Subscription"],
+    }),
+
+    // ── Payment (user) ────────────────────────────────────────────────────────
+    submitPayment: builder.mutation<any, {
+      paymentMedium: "bkash" | "nagad" | "rocket" | "bank";
+      amount: number;
+      transactionId: string;
+      senderNumber?: string;
+      bankAccountName?: string;
+      bankAccountNumber?: string;
+      bankName?: string;
+      bankBranchName?: string;
+    }>({
+      query: (body) => ({
+        url: "/payment",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Payment", "Subscription"],
+    }),
+
+    getMyPayments: builder.query<any, void>({
+      query: () => "/payment",
+      providesTags: ["Payment"],
+    }),
+
+    // ── Payment (admin) ───────────────────────────────────────────────────────
+    getAllPayments: builder.query<
+      any,
+      { page?: number; limit?: number; status?: string; tenantId?: string }
+    >({
+      query: ({ page = 1, limit = 20, status, tenantId } = {}) => ({
+        url: "/payment/all",
+        params: {
+          page,
+          limit,
+          ...(status ? { status } : {}),
+          ...(tenantId ? { tenantId } : {}),
+        },
+      }),
+      providesTags: ["Payment"],
+    }),
+
+    approvePayment: builder.mutation<any, { id: string; note?: string; subscriptionDays?: number }>({
+      query: ({ id, ...body }) => ({
+        url: `/payment/${id}/approve`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Payment", "Subscription"],
+    }),
+
+    rejectPayment: builder.mutation<any, { id: string; note?: string }>({
+      query: ({ id, ...body }) => ({
+        url: `/payment/${id}/reject`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Payment"],
+    }),
   }),
 });
 
@@ -764,4 +831,11 @@ export const {
   useCreateSalesReturnMutation,
   useUpdateSalesReturnMutation,
   useDeleteSalesReturnMutation,
+
+  useGetSubscriptionStatusQuery,
+  useSubmitPaymentMutation,
+  useGetMyPaymentsQuery,
+  useGetAllPaymentsQuery,
+  useApprovePaymentMutation,
+  useRejectPaymentMutation,
 } = baseApi;

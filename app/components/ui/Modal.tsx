@@ -36,7 +36,7 @@ export default function Modal({
   return (
     <div className="fixed inset-0 z-[80]">
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/50 backdrop-blur-[2px] dark:bg-black/70"
         onClick={onClose}
       />
       <div className="absolute inset-0 overflow-y-auto p-4 sm:p-6">
@@ -44,18 +44,18 @@ export default function Modal({
           className={cx(
             "relative mx-auto w-full",
             widthClassName,
-            "rounded-xl border border-white/10 bg-[#0b0f14] shadow-[0_20px_70px_rgba(0,0,0,.65)]",
+            "rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900",
             className
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-            <div className="text-lg font-semibold text-white">
+          <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">
               {title ?? ""}
             </div>
             <button
               onClick={onClose}
-              className="grid h-7 w-7 place-items-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500"
+              className="grid h-7 w-7 place-items-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
               aria-label="Close"
             >
               <X size={16} />

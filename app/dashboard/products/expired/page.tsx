@@ -167,22 +167,22 @@ export default function ExpiredPage() {
   const endIdx = Math.min(page * perPage, total);
 
   return (
-    <div className="min-h-screen text-slate-200">
+    <div className="min-h-screen text-gray-900 dark:text-gray-200">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold">{t("dash.expired.title")}</h1>
-        <p className="text-sm text-slate-400">{t("dash.expired.subtitle")}</p>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{t("dash.expired.title")}</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t("dash.expired.subtitle")}</p>
       </div>
 
       {errMsg ? (
-        <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <div className="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200">
           {errMsg}
         </div>
       ) : null}
 
-      <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur">
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b border-white/10">
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 p-4 dark:border-gray-700">
           <div className="relative w-full max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <input
               value={searchInput}
               onChange={(e) => {
@@ -190,7 +190,7 @@ export default function ExpiredPage() {
                 setPage(1);
               }}
               placeholder={t("dash.expired.searchPlaceholder")}
-              className="w-full rounded-md bg-black/60 pl-9 pr-3 py-2 text-sm outline-none border border-white/10 focus:border-orange-500/60"
+              className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm text-gray-900 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
             />
           </div>
 
@@ -198,14 +198,14 @@ export default function ExpiredPage() {
             <button
               type="button"
               title={t("dash.expired.exportPdfTitle")}
-              className="rounded-md border border-white/10 bg-black/60 p-2 hover:bg-white/10 transition"
+              className="rounded-md border border-gray-300 bg-white p-2 text-gray-600 hover:bg-gray-100 transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               <FileText className="h-4 w-4" />
             </button>
             <button
               type="button"
               title={t("dash.expired.exportSheetTitle")}
-              className="rounded-md border border-white/10 bg-black/60 p-2 hover:bg-white/10 transition"
+              className="rounded-md border border-gray-300 bg-white p-2 text-gray-600 hover:bg-gray-100 transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               <FileSpreadsheet className="h-4 w-4" />
             </button>
@@ -213,7 +213,7 @@ export default function ExpiredPage() {
               type="button"
               title={t("dash.common.refresh")}
               onClick={() => void refetch()}
-              className="rounded-md border border-white/10 bg-black/60 p-2 hover:bg-white/10 transition"
+              className="rounded-md border border-gray-300 bg-white p-2 text-gray-600 hover:bg-gray-100 transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               <RotateCcw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
             </button>
@@ -221,12 +221,12 @@ export default function ExpiredPage() {
         </div>
 
         {(isLoading || isFetching) && !listPayload ? (
-          <div className="p-8 text-center text-sm text-slate-400">{t("dash.common.loading")}</div>
+          <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">{t("dash.common.loading")}</div>
         ) : null}
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-white/5 text-slate-300">
+            <thead className="bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
               <tr>
                 <th className="px-4 py-3 text-left">{t("dash.expired.colSku")}</th>
                 <th className="px-4 py-3 text-left">{t("dash.expired.colProduct")}</th>
@@ -237,31 +237,31 @@ export default function ExpiredPage() {
             </thead>
             <tbody>
               {rows.map((p) => (
-                <tr key={p.id} className="border-t border-white/5 hover:bg-white/5">
-                  <td className="px-4 py-3 text-slate-400 font-mono text-xs">{p.sku}</td>
+                <tr key={p.id} className="border-t border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50">
+                  <td className="px-4 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{p.sku}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-8 w-8 shrink-0 rounded bg-white/10 overflow-hidden flex items-center justify-center">
+                      <div className="h-8 w-8 shrink-0 rounded bg-gray-100 dark:bg-gray-700 overflow-hidden flex items-center justify-center">
                         {p.imageUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={p.imageUrl} alt="" className="h-full w-full object-cover" />
                         ) : (
-                          <span className="text-[10px] text-slate-500">—</span>
+                          <span className="text-[10px] text-gray-400 dark:text-gray-500">—</span>
                         )}
                       </div>
-                      <span className="font-medium truncate">{p.name}</span>
+                      <span className="font-medium truncate text-gray-900 dark:text-white">{p.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-400">
+                  <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
                     {p.manufacturedDate ? formatDisplayDate(p.manufacturedDate) : "—"}
                   </td>
-                  <td className="px-4 py-3 text-amber-200/90">{formatDisplayDate(p.expiryOn)}</td>
+                  <td className="px-4 py-3 text-amber-600 dark:text-amber-300">{formatDisplayDate(p.expiryOn)}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="inline-flex gap-2">
                       <button
                         type="button"
                         onClick={() => setEditing(p)}
-                        className="rounded-md border border-white/10 bg-black/60 p-2 text-orange-400 hover:bg-white/10 transition"
+                        className="rounded-md border border-gray-300 bg-white p-2 text-orange-500 hover:bg-orange-50 transition dark:border-gray-600 dark:bg-gray-800 dark:text-orange-400 dark:hover:bg-gray-700"
                         title={t("dash.common.edit")}
                       >
                         <Pencil className="h-4 w-4" />
@@ -269,7 +269,7 @@ export default function ExpiredPage() {
                       <button
                         type="button"
                         onClick={() => void handleDelete(p)}
-                        className="rounded-md border border-white/10 bg-black/60 p-2 text-red-400 hover:bg-white/10 transition"
+                        className="rounded-md border border-gray-300 bg-white p-2 text-red-500 hover:bg-red-50 transition dark:border-gray-600 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
                         title={t("dash.common.delete")}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -280,7 +280,7 @@ export default function ExpiredPage() {
               ))}
               {!isLoading && rows.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                  <td colSpan={5} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                     {t("dash.expired.emptyState")}
                   </td>
                 </tr>
@@ -289,7 +289,7 @@ export default function ExpiredPage() {
           </table>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-t border-white/10 text-sm text-slate-400">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 p-4 text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
           <div className="flex items-center gap-2">
             <span>{t("dash.common.rowsPerPage")}</span>
             <select
@@ -298,7 +298,7 @@ export default function ExpiredPage() {
                 setPerPage(Number(e.target.value));
                 setPage(1);
               }}
-              className="rounded-md bg-black/60 border border-white/10 px-2 py-1.5 text-slate-200"
+              className="rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
             >
               {[5, 10, 20, 50].map((n) => (
                 <option key={n} value={n}>
@@ -312,19 +312,19 @@ export default function ExpiredPage() {
             <button
               type="button"
               title={t("dash.common.previous")}
-              className="rounded-md border border-white/10 bg-black/60 p-2 disabled:opacity-40"
+              className="rounded-md border border-gray-300 bg-white p-2 text-gray-600 disabled:opacity-40 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="h-8 min-w-8 px-2 rounded-full bg-orange-500 text-black flex items-center justify-center text-xs font-semibold">
+            <span className="h-8 min-w-8 px-2 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-semibold">
               {page}
             </span>
             <button
               type="button"
               title={t("dash.common.next")}
-              className="rounded-md border border-white/10 bg-black/60 p-2 disabled:opacity-40"
+              className="rounded-md border border-gray-300 bg-white p-2 text-gray-600 disabled:opacity-40 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
               disabled={page >= pages}
               onClick={() => setPage((p) => Math.min(pages, p + 1))}
             >

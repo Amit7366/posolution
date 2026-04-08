@@ -29,8 +29,8 @@ function getQueryErrorMessage(error: unknown): string | null {
 function StatusBadge({ status, label }: { status: ReturnStatus; label: string }) {
   const cls =
     status === "Received"
-      ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/20"
-      : "bg-sky-500/15 text-sky-300 border-sky-500/20";
+      ? "bg-green-100 text-green-700 border-green-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20"
+      : "bg-blue-100 text-blue-700 border-blue-200 dark:bg-sky-500/15 dark:text-sky-300 dark:border-sky-500/20";
   return (
     <span className={cx("inline-flex items-center gap-2 rounded-md border px-3 py-1 text-xs font-semibold", cls)}>
       <span className="h-1.5 w-1.5 rounded-full bg-current" />
@@ -41,9 +41,9 @@ function StatusBadge({ status, label }: { status: ReturnStatus; label: string })
 
 function PaymentBadge({ status, label }: { status: PaymentStatus; label: string }) {
   const map: Record<PaymentStatus, string> = {
-    Paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20",
-    Unpaid: "bg-rose-500/15 text-rose-200 border-rose-500/20",
-    Overdue: "bg-amber-500/15 text-amber-200 border-amber-500/20",
+    Paid: "bg-green-100 text-green-700 border-green-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20",
+    Unpaid: "bg-red-100 text-red-700 border-red-200 dark:bg-rose-500/15 dark:text-rose-200 dark:border-rose-500/20",
+    Overdue: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-200 dark:border-amber-500/20",
   };
   return (
     <span className={cx("inline-flex items-center gap-2 rounded-md border px-3 py-1 text-xs font-semibold", map[status])}>
@@ -60,12 +60,12 @@ function Avatar({ name, url }: { name: string; url?: string }) {
     .map((w) => w[0]?.toUpperCase())
     .join("");
   return (
-    <div className="h-10 w-10 overflow-hidden rounded bg-white/10">
+    <div className="h-10 w-10 overflow-hidden rounded bg-gray-100 dark:bg-gray-700">
       {url ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={url} alt="" className="h-full w-full object-cover" />
       ) : (
-        <div className="grid h-full w-full place-items-center text-xs font-bold text-white/80">{initials}</div>
+        <div className="grid h-full w-full place-items-center text-xs font-bold text-gray-600 dark:text-gray-300">{initials}</div>
       )}
     </div>
   );
@@ -203,11 +203,11 @@ export default function SalesReturnPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#06090d] p-6 text-white">
+    <div className="min-h-screen p-6 text-gray-900 dark:text-white">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">{t("dash.salesReturn.title")}</h1>
-          <p className="mt-1 text-sm text-white/50">{t("dash.salesReturn.manage")}</p>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">{t("dash.salesReturn.title")}</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("dash.salesReturn.manage")}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -215,20 +215,20 @@ export default function SalesReturnPage() {
             type="button"
             title={t("dash.common.refresh")}
             onClick={() => void refetch()}
-            className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-black/20 hover:bg-white/5"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700"
           >
-            <RotateCcw size={18} className="text-white/70" />
+            <RotateCcw size={18} className="text-gray-600 dark:text-gray-300" />
           </button>
-          <button className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-black/20 hover:bg-white/5">
-            <FileText size={18} className="text-red-400" />
+          <button className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <FileText size={18} className="text-red-500 dark:text-red-400" />
           </button>
-          <button className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-black/20 hover:bg-white/5">
-            <Sheet size={18} className="text-emerald-400" />
+          <button className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <Sheet size={18} className="text-emerald-600 dark:text-emerald-400" />
           </button>
 
           <button
             onClick={openAdd}
-            className="ml-2 inline-flex h-10 items-center gap-2 rounded-lg bg-[#ffa24a] px-4 text-sm font-semibold text-white hover:brightness-110"
+            className="ml-2 inline-flex h-10 items-center gap-2 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white hover:bg-orange-600"
           >
             <Plus size={16} />
             {t("dash.salesReturn.add")}
@@ -236,8 +236,8 @@ export default function SalesReturnPage() {
         </div>
       </div>
 
-      <div className="mt-5 rounded-xl border border-white/10 bg-black/20 shadow-[0_30px_90px_rgba(0,0,0,.55)]">
-        <div className="flex flex-col gap-3 border-b border-white/10 p-4 md:flex-row md:items-center md:justify-between">
+      <div className="mt-5 rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="flex flex-col gap-3 border-b border-gray-200 p-4 md:flex-row md:items-center md:justify-between dark:border-gray-700">
           <div className="relative w-full md:max-w-sm">
             <input
               value={q}
@@ -246,7 +246,7 @@ export default function SalesReturnPage() {
                 setPage(1);
               }}
               placeholder={t("dash.common.search")}
-              className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-4 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/20"
+              className="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
             />
           </div>
 
@@ -258,7 +258,7 @@ export default function SalesReturnPage() {
                 setPage(1);
               }}
               placeholder={t("dash.salesReturn.customerFilterPh")}
-              className="h-10 w-48 rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white placeholder:text-white/30 outline-none"
+              className="h-10 w-48 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
             />
 
             <select
@@ -267,15 +267,15 @@ export default function SalesReturnPage() {
                 setFilterStatus(e.target.value as ReturnStatus | "All");
                 setPage(1);
               }}
-              className="h-10 rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+              className="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             >
-              <option className="bg-[#0b0f14]" value="All">
+              <option value="All">
                 {t("dash.common.status")}
               </option>
-              <option className="bg-[#0b0f14]" value="Received">
+              <option value="Received">
                 {t("dash.salesReturn.received")}
               </option>
-              <option className="bg-[#0b0f14]" value="Pending">
+              <option value="Pending">
                 {t("dash.salesReturn.pending")}
               </option>
             </select>
@@ -286,18 +286,18 @@ export default function SalesReturnPage() {
                 setFilterPayment(e.target.value as PaymentStatus | "All");
                 setPage(1);
               }}
-              className="h-10 rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+              className="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             >
-              <option className="bg-[#0b0f14]" value="All">
+              <option value="All">
                 {t("dash.salesReturn.paymentStatus")}
               </option>
-              <option className="bg-[#0b0f14]" value="Paid">
+              <option value="Paid">
                 {t("dash.invoices.paid")}
               </option>
-              <option className="bg-[#0b0f14]" value="Unpaid">
+              <option value="Unpaid">
                 {t("dash.invoices.unpaid")}
               </option>
-              <option className="bg-[#0b0f14]" value="Overdue">
+              <option value="Overdue">
                 {t("dash.invoices.overdue")}
               </option>
             </select>
@@ -308,12 +308,12 @@ export default function SalesReturnPage() {
                 setSortRange(e.target.value as SortRange);
                 setPage(1);
               }}
-              className="h-10 rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+              className="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             >
-              <option className="bg-[#0b0f14]" value="Last7">
+              <option value="Last7">
                 {t("dash.salesReturn.sortLast7")}
               </option>
-              <option className="bg-[#0b0f14]" value="All">
+              <option value="All">
                 {t("dash.salesReturn.sortAll")}
               </option>
             </select>
@@ -323,7 +323,7 @@ export default function SalesReturnPage() {
         <div className="overflow-x-auto">
           <table className="min-w-[1200px] w-full">
             <thead>
-              <tr className="bg-[#1b222c] text-left text-sm text-white/80">
+              <tr className="bg-gray-50 text-left text-sm text-gray-600 dark:bg-gray-800 dark:text-gray-300">
                 <th className="w-14 px-4 py-4">
                   <input
                     type="checkbox"
@@ -332,7 +332,7 @@ export default function SalesReturnPage() {
                       if (el) el.indeterminate = !allChecked && someChecked;
                     }}
                     onChange={toggleAll}
-                    className="h-4 w-4 rounded border-white/20 bg-black/30"
+                    className="h-4 w-4 rounded"
                   />
                 </th>
                 <th className="px-4 py-4">{t("dash.salesReturn.colProduct")}</th>
@@ -351,47 +351,47 @@ export default function SalesReturnPage() {
             <tbody>
               {isLoading || isFetching ? (
                 <tr>
-                  <td colSpan={11} className="px-4 py-14 text-center text-sm text-white/40">
+                  <td colSpan={11} className="px-4 py-14 text-center text-sm text-gray-500 dark:text-gray-400">
                     {t("dash.common.loading")}
                   </td>
                 </tr>
               ) : (
                 pageRows.map((r) => (
-                  <tr key={r.id} className="border-b border-white/10 text-sm">
+                  <tr key={r.id} className="border-b border-gray-200 text-sm dark:border-gray-700">
                     <td className="px-4 py-4">
                       <input
                         type="checkbox"
                         checked={!!selected[r.id]}
                         onChange={(e) => setSelected((prev) => ({ ...prev, [r.id]: e.target.checked }))}
-                        className="h-4 w-4 rounded border-white/20 bg-black/30"
+                        className="h-4 w-4 rounded"
                       />
                     </td>
 
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 overflow-hidden rounded bg-white/10">
+                        <div className="h-10 w-10 overflow-hidden rounded bg-gray-100 dark:bg-gray-700">
                           {r.productImage ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={r.productImage} alt="" className="h-full w-full object-cover" />
                           ) : (
-                            <div className="h-full w-full bg-white/5" />
+                            <div className="h-full w-full bg-gray-50 dark:bg-gray-800" />
                           )}
                         </div>
-                        <div className="font-medium">{r.productName}</div>
+                        <div className="font-medium text-gray-900 dark:text-white">{r.productName}</div>
                       </div>
                     </td>
 
-                    <td className="px-4 py-4 text-white/70">
-                      <div className="font-mono text-xs text-white/40">{r.returnNo ?? "—"}</div>
+                    <td className="px-4 py-4 text-gray-500 dark:text-gray-400">
+                      <div className="font-mono text-xs text-gray-400 dark:text-gray-500">{r.returnNo ?? "—"}</div>
                       <div>{r.reference}</div>
                     </td>
 
-                    <td className="px-4 py-4 text-white/60">{r.date}</td>
+                    <td className="px-4 py-4 text-gray-500 dark:text-gray-400">{r.date}</td>
 
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <Avatar name={r.customer.name} url={r.customer.avatar} />
-                        <div className="font-medium">{r.customer.name}</div>
+                        <div className="font-medium text-gray-900 dark:text-white">{r.customer.name}</div>
                       </div>
                     </td>
 
@@ -402,9 +402,9 @@ export default function SalesReturnPage() {
                       />
                     </td>
 
-                    <td className="px-4 py-4 text-white/70">{money(r.total)}</td>
-                    <td className="px-4 py-4 text-white/70">{money(r.paid)}</td>
-                    <td className="px-4 py-4 text-white/70">{money(r.due)}</td>
+                    <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{money(r.total)}</td>
+                    <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{money(r.paid)}</td>
+                    <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{money(r.due)}</td>
 
                     <td className="px-4 py-4">
                       <PaymentBadge
@@ -423,18 +423,18 @@ export default function SalesReturnPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openEdit(r)}
-                          className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-black/30 hover:bg-white/5"
+                          className="grid h-9 w-9 place-items-center rounded-lg border border-gray-300 bg-white hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700"
                           title={t("dash.common.edit")}
                         >
-                          <Pencil size={16} className="text-white/80" />
+                          <Pencil size={16} className="text-gray-600 dark:text-gray-300" />
                         </button>
                         <button
                           onClick={() => openDelete(r)}
                           disabled={deletingApi}
-                          className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-black/30 hover:bg-white/5 disabled:opacity-40"
+                          className="grid h-9 w-9 place-items-center rounded-lg border border-gray-300 bg-white hover:bg-gray-100 disabled:opacity-40 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700"
                           title={t("dash.common.delete")}
                         >
-                          <Trash2 size={16} className="text-white/80" />
+                          <Trash2 size={16} className="text-gray-600 dark:text-gray-300" />
                         </button>
                       </div>
                     </td>
@@ -444,7 +444,7 @@ export default function SalesReturnPage() {
 
               {!isLoading && !isFetching && pageRows.length === 0 && (
                 <tr>
-                  <td colSpan={11} className="px-4 py-14 text-center text-sm text-white/40">
+                  <td colSpan={11} className="px-4 py-14 text-center text-sm text-gray-500 dark:text-gray-400">
                     {t("dash.salesReturn.noResults")}
                   </td>
                 </tr>
@@ -453,8 +453,8 @@ export default function SalesReturnPage() {
           </table>
         </div>
 
-        <div className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-2 text-sm text-white/60">
+        <div className="flex flex-col gap-3 border-t border-gray-200 p-4 md:flex-row md:items-center md:justify-between dark:border-gray-700">
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
             <span>{t("dash.common.rowPerPage")}</span>
             <select
               value={perPage}
@@ -462,16 +462,16 @@ export default function SalesReturnPage() {
                 setPerPage(Number(e.target.value));
                 setPage(1);
               }}
-              className="h-9 rounded-lg border border-white/10 bg-black/30 px-2 text-sm text-white outline-none"
+              className="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             >
               {[5, 10, 20, 50].map((n) => (
-                <option key={n} value={n} className="bg-[#0b0f14]">
+                <option key={n} value={n}>
                   {n}
                 </option>
               ))}
             </select>
             <span>{t("dash.common.entries")}</span>
-            <span className="text-white/40">{t("dash.common.totalCount", { count: total })}</span>
+            <span className="text-gray-400 dark:text-gray-500">{t("dash.common.totalCount", { count: total })}</span>
           </div>
 
           <div className="flex items-center justify-end gap-2">
@@ -479,7 +479,7 @@ export default function SalesReturnPage() {
               type="button"
               title={t("dash.common.previous")}
               onClick={() => setPage((p) => clampInt(p - 1, 1, totalPages))}
-              className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-black/30 text-white/80 hover:bg-white/5"
+              className="grid h-9 w-9 place-items-center rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               ‹
             </button>
@@ -497,8 +497,8 @@ export default function SalesReturnPage() {
                     className={cx(
                       "grid h-9 w-9 place-items-center rounded-full text-sm",
                       active
-                        ? "bg-[#ffa24a] text-white"
-                        : "border border-white/10 bg-black/30 text-white/70 hover:bg-white/5"
+                        ? "bg-orange-500 text-white"
+                        : "border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     )}
                   >
                     {n}
@@ -510,7 +510,7 @@ export default function SalesReturnPage() {
               type="button"
               title={t("dash.common.next")}
               onClick={() => setPage((p) => clampInt(p + 1, 1, totalPages))}
-              className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-black/30 text-white/80 hover:bg-white/5"
+              className="grid h-9 w-9 place-items-center rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               ›
             </button>

@@ -41,6 +41,11 @@ function getQueryErrorMessage(error: unknown): string | null {
 
 const PLACEHOLDER_IMG = "https://cdn-icons-png.flaticon.com/512/732/732228.png";
 
+// Shared input class for this modal
+const inputCls = "h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-orange-400";
+const labelCls = "mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200";
+const selectCls = "h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white";
+
 export default function AddEditSalesReturnModal({ open, mode, initial, onClose, onSuccess }: Props) {
   const { t } = useTranslation();
   const isEdit = mode === "edit";
@@ -251,74 +256,74 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">
+          <label className={labelCls}>
             {t("dash.salesReturn.customerNameLabel")} <span className="text-red-500">*</span>
           </label>
           <input
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={inputCls}
             placeholder={t("dash.salesReturn.customerNamePh")}
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">
+          <label className={labelCls}>
             {t("dash.salesReturn.colDate")} <span className="text-red-500">*</span>
           </label>
           <input
             value={date}
             onChange={(e) => setDate(e.target.value)}
             type="date"
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={inputCls}
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">
+          <label className={labelCls}>
             {t("dash.salesReturn.referenceLabel")} <span className="text-red-500">*</span>
           </label>
           <input
             value={reference}
             onChange={(e) => setReference(e.target.value)}
             placeholder={t("dash.salesReturn.referencePh")}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/20"
+            className={inputCls}
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.refundDueLabel")}</label>
+          <label className={labelCls}>{t("dash.salesReturn.refundDueLabel")}</label>
           <input
             value={refundDueDate}
             onChange={(e) => setRefundDueDate(e.target.value)}
             type="date"
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={inputCls}
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.paidAmountLabel")}</label>
+          <label className={labelCls}>{t("dash.salesReturn.paidAmountLabel")}</label>
           <input
             type="number"
             min={0}
             step="0.01"
             value={paidInput}
             onChange={(e) => setPaidInput(Math.max(0, parseFloat(e.target.value) || 0))}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={inputCls}
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.paymentStatusApi")}</label>
+          <label className={labelCls}>{t("dash.salesReturn.paymentStatusApi")}</label>
           <select
             value={paymentApi}
             onChange={(e) => setPaymentApi(e.target.value as "unpaid" | "paid")}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={selectCls}
           >
-            <option className="bg-[#0b0f14]" value="unpaid">
+            <option value="unpaid">
               {t("dash.invoices.unpaid")}
             </option>
-            <option className="bg-[#0b0f14]" value="paid">
+            <option value="paid">
               {t("dash.invoices.paid")}
             </option>
           </select>
@@ -326,22 +331,22 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
       </div>
 
       <div className="mt-5">
-        <label className="mb-2 block text-sm font-medium text-white">
+        <label className={labelCls}>
           {t("dash.salesReturn.colProduct")} <span className="text-red-500">*</span>
         </label>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
           <input
             value={productQuery}
             onChange={(e) => setProductQuery(e.target.value)}
             placeholder={t("dash.salesReturn.searchProductsPh")}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 pl-10 pr-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/20"
+            className="h-11 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
           />
           {isFetching ? (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-orange-400">…</span>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-orange-500">…</span>
           ) : null}
           {debouncedQ.length >= 2 && productHits.length > 0 && (
-            <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-white/10 bg-[#0b0f14] shadow-[0_20px_60px_rgba(0,0,0,.65)]">
+            <div className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900">
               {productHits.map((raw) => {
                 const p = raw as Record<string, unknown>;
                 const imgs = p.images as string[] | undefined;
@@ -351,21 +356,21 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
                     key={String(p._id)}
                     type="button"
                     onClick={() => addProduct(p)}
-                    className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left hover:bg-white/5"
+                    className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 overflow-hidden rounded bg-white/10">
+                      <div className="h-9 w-9 overflow-hidden rounded bg-gray-100 dark:bg-gray-700">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={img} alt="" className="h-full w-full object-cover" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-white">{String(p.name ?? "")}</div>
-                        <div className="text-xs text-white/50">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{String(p.name ?? "")}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
                           SKU: {String(p.sku ?? "—")} · {t("dash.invoices.stock")} {String(p.quantity ?? 0)}
                         </div>
                       </div>
                     </div>
-                    <div className="text-sm text-white/70">{formatMoney(Number(p.price) || 0)}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">{formatMoney(Number(p.price) || 0)}</div>
                   </button>
                 );
               })}
@@ -374,8 +379,8 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
         </div>
       </div>
 
-      <div className="mt-4 rounded-xl border border-white/10 bg-black/25">
-        <div className="grid grid-cols-7 gap-0 border-b border-white/10 bg-[#1b222c] px-4 py-3 text-sm text-white/80">
+      <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50">
+        <div className="grid grid-cols-7 gap-0 border-b border-gray-200 bg-gray-100 px-4 py-3 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
           <div className="col-span-2">{t("dash.salesReturn.colProduct")}</div>
           <div>{t("dash.salesReturn.netUnitPrice")}</div>
           <div>{t("dash.invoices.stock")}</div>
@@ -386,41 +391,41 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
 
         <div className="max-h-[300px] overflow-auto">
           {lines.length === 0 ? (
-            <div className="px-4 py-10 text-center text-sm text-white/40">{t("dash.salesReturn.noLines")}</div>
+            <div className="px-4 py-10 text-center text-sm text-gray-400 dark:text-gray-500">{t("dash.salesReturn.noLines")}</div>
           ) : (
             lines.map((l) => (
               <div
                 key={l.id}
-                className="grid grid-cols-7 items-center gap-0 border-b border-white/10 px-4 py-3 text-sm"
+                className="grid grid-cols-7 items-center gap-0 border-b border-gray-200 px-4 py-3 text-sm dark:border-gray-700"
               >
                 <div className="col-span-2 flex items-center gap-3">
-                  <div className="h-10 w-10 overflow-hidden rounded bg-white/10">
+                  <div className="h-10 w-10 overflow-hidden rounded bg-gray-100 dark:bg-gray-700">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={lineImage(l.productId)} alt="" className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0">
-                    <div className="truncate font-medium text-white">{l.name}</div>
-                    <div className="text-xs text-white/40">
+                    <div className="truncate font-medium text-gray-900 dark:text-white">{l.name}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       Tax %:
                       <input
                         type="number"
                         min={0}
                         value={l.taxPct}
                         onChange={(e) => updateLine(l.id, { taxPct: Number(e.target.value) })}
-                        className="ml-2 h-7 w-16 rounded border border-white/10 bg-black/30 px-2 text-xs text-white outline-none"
+                        className="ml-2 h-7 w-16 rounded border border-gray-300 bg-white px-2 text-xs text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="text-white/80">{l.price}</div>
-                <div className="text-white/50">{l.stock}</div>
+                <div className="text-gray-700 dark:text-gray-300">{l.price}</div>
+                <div className="text-gray-500 dark:text-gray-400">{l.stock}</div>
 
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => updateLine(l.id, { qty: Math.max(1, l.qty - 1) })}
-                    className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-white hover:bg-white/5"
+                    className="grid h-8 w-8 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
                   >
                     −
                   </button>
@@ -429,12 +434,12 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
                     min={1}
                     value={l.qty}
                     onChange={(e) => updateLine(l.id, { qty: Math.max(1, Number(e.target.value || 1)) })}
-                    className="h-8 w-16 rounded-lg border border-white/10 bg-black/30 px-2 text-center text-sm text-white outline-none"
+                    className="h-8 w-16 rounded-lg border border-gray-300 bg-white px-2 text-center text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   />
                   <button
                     type="button"
                     onClick={() => updateLine(l.id, { qty: l.qty + 1 })}
-                    className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-white hover:bg-white/5"
+                    className="grid h-8 w-8 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
                   >
                     +
                   </button>
@@ -446,16 +451,16 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
                     min={0}
                     value={l.discount}
                     onChange={(e) => updateLine(l.id, { discount: Math.max(0, Number(e.target.value || 0)) })}
-                    className="h-8 w-28 rounded-lg border border-white/10 bg-black/30 px-2 text-sm text-white outline-none"
+                    className="h-8 w-28 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   />
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
-                  <div className="text-right text-white/80">{l.subtotal.toFixed(2)}</div>
+                  <div className="text-right text-gray-700 dark:text-gray-300">{l.subtotal.toFixed(2)}</div>
                   <button
                     type="button"
                     onClick={() => removeLine(l.id)}
-                    className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-red-400 hover:bg-white/5"
+                    className="grid h-8 w-8 place-items-center rounded-lg border border-gray-300 bg-white text-red-500 hover:bg-red-50 dark:border-gray-600 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
                     title={t("dash.common.delete")}
                   >
                     <Trash2 size={16} />
@@ -466,71 +471,71 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
           )}
         </div>
 
-        <div className="border-t border-white/10 p-4 text-sm text-white/70">
+        <div className="border-t border-gray-200 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300">
           <div className="flex flex-wrap justify-end gap-6">
             <span>
-              {t("dash.invoiceDetail.subTotal")}: <strong className="text-white">{formatMoney(subTotal)}</strong>
+              {t("dash.invoiceDetail.subTotal")}: <strong className="text-gray-900 dark:text-white">{formatMoney(subTotal)}</strong>
             </span>
             <span>
-              {t("dash.invoiceDetail.totalAmount")}: <strong className="text-orange-300">{formatMoney(grandTotal)}</strong>
+              {t("dash.invoiceDetail.totalAmount")}: <strong className="text-orange-600 dark:text-orange-300">{formatMoney(grandTotal)}</strong>
             </span>
           </div>
           {returnStatusUi === "Received" ? (
-            <p className="mt-2 text-xs text-amber-200/90">{t("dash.salesReturn.receivedStockHint")}</p>
+            <p className="mt-2 text-xs text-amber-600 dark:text-amber-300">{t("dash.salesReturn.receivedStockHint")}</p>
           ) : null}
         </div>
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-4">
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.orderTax")}</label>
+          <label className={labelCls}>{t("dash.salesReturn.orderTax")}</label>
           <input
             type="number"
             value={orderTax}
             onChange={(e) => setOrderTax(Number(e.target.value || 0))}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={inputCls}
           />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.orderDiscount")}</label>
+          <label className={labelCls}>{t("dash.salesReturn.orderDiscount")}</label>
           <input
             type="number"
             value={discount}
             onChange={(e) => setDiscount(Number(e.target.value || 0))}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={inputCls}
           />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">{t("dash.salesReturn.shipping")}</label>
+          <label className={labelCls}>{t("dash.salesReturn.shipping")}</label>
           <input
             type="number"
             value={shipping}
             onChange={(e) => setShipping(Number(e.target.value || 0))}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={inputCls}
           />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-white">{t("dash.common.status")}</label>
+          <label className={labelCls}>{t("dash.common.status")}</label>
           <select
             value={returnStatusUi}
             onChange={(e) => setReturnStatusUi(e.target.value as "Pending" | "Received")}
-            className="h-11 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/20"
+            className={selectCls}
           >
-            <option className="bg-[#0b0f14]" value="Pending">
+            <option value="Pending">
               {t("dash.salesReturn.pending")}
             </option>
-            <option className="bg-[#0b0f14]" value="Received">
+            <option value="Received">
               {t("dash.salesReturn.received")}
             </option>
           </select>
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
+      <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-200 pt-5 dark:border-gray-700">
         <button
           type="button"
           onClick={onClose}
-          className="h-10 rounded-lg bg-[#0b2a44] px-6 text-sm font-semibold text-white hover:opacity-95"
+          className="h-10 rounded-lg border border-gray-300 bg-white px-6 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
         >
           {t("dash.common.cancel")}
         </button>
@@ -538,7 +543,7 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
           type="button"
           disabled={saving}
           onClick={() => void handleSubmit()}
-          className="h-10 rounded-lg bg-[#ffa24a] px-6 text-sm font-semibold text-white hover:brightness-110 disabled:opacity-50"
+          className="h-10 rounded-lg bg-orange-500 px-6 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50"
         >
           {saving ? t("dash.common.saving") : isEdit ? t("dash.common.save") : t("dash.salesReturn.submit")}
         </button>

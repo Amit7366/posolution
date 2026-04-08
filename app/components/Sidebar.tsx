@@ -16,7 +16,6 @@ function sidebarItemVisible(
   viewer: "admin" | "user"
 ) {
   if (itemRole === "all" || itemRole === undefined) return true;
-  if (itemRole === "admin") return true;
   return itemRole === viewer;
 }
 

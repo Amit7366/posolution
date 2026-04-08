@@ -68,24 +68,24 @@ export default function BarcodePage() {
   };
 
   return (
-    <div className="p-6 text-gray-200">
-      <h1 className="text-xl font-semibold">{t("dash.barcode.title")}</h1>
-      <p className="text-gray-400">{t("dash.barcode.manage")}</p>
+    <div className="p-6 text-gray-900 dark:text-gray-200">
+      <h1 className="text-xl font-semibold text-gray-900 dark:text-white">{t("dash.barcode.title")}</h1>
+      <p className="text-gray-500 dark:text-gray-400">{t("dash.barcode.manage")}</p>
 
-      <div className="bg-gray-800 mt-5 p-6 rounded-xl shadow-xl border border-gray-700">
+      <div className="mt-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
 
         {/* Warehouse + Store */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label className="block">
-            <span className="font-medium">{t("dash.barcode.warehouse")}</span>
-            <select className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200">
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t("dash.barcode.warehouse")}</span>
+            <select className="mt-1 w-full rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
               <option>{t("dash.barcode.selectPlaceholder")}</option>
             </select>
           </label>
 
           <label className="block">
-            <span className="font-medium">{t("dash.barcode.store")}</span>
-            <select className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200">
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t("dash.barcode.store")}</span>
+            <select className="mt-1 w-full rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
               <option>{t("dash.barcode.selectPlaceholder")}</option>
             </select>
           </label>
@@ -93,17 +93,17 @@ export default function BarcodePage() {
 
         {/* Product Search */}
         <div className="mt-6">
-          <span className="font-medium">{t("dash.barcode.product")}</span>
+          <span className="font-medium text-gray-700 dark:text-gray-300">{t("dash.barcode.product")}</span>
           <input
             placeholder={t("dash.barcode.searchPlaceholder")}
-            className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200"
+            className="mt-1 w-full rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
           />
         </div>
 
         {/* Product Table */}
-        <div className="mt-6 border border-gray-700 rounded-lg overflow-hidden">
+        <div className="mt-6 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
           <table className="w-full text-left">
-            <thead className="bg-gray-700/40 text-gray-300">
+            <thead className="bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
               <tr>
                 <th className="p-3">{t("dash.barcode.colProduct")}</th>
                 <th className="p-3">{t("dash.barcode.colSku")}</th>
@@ -115,7 +115,7 @@ export default function BarcodePage() {
 
             <tbody>
               {selectedProducts.map((p) => (
-                <tr key={p.id} className="border-t border-gray-700">
+                <tr key={p.id} className="border-t border-gray-200 dark:border-gray-700">
                   <td className="p-3 flex items-center gap-3">
                     <img src={p.image} className="w-10 h-10 rounded" />
                     {p.name}
@@ -125,17 +125,17 @@ export default function BarcodePage() {
 
                   {/* Qty */}
                   <td className="p-3">
-                    <div className="flex items-center border border-gray-700 rounded-lg bg-gray-900">
+                    <div className="flex items-center rounded-lg border border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-800">
                       <button
                         onClick={() => decreaseQty(p.id)}
-                        className="px-3 py-1 text-gray-300"
+                        className="px-3 py-1 text-gray-600 dark:text-gray-300"
                       >
                         -
                       </button>
                       <span className="px-3">{p.qty}</span>
                       <button
                         onClick={() => increaseQty(p.id)}
-                        className="px-3 py-1 text-gray-300"
+                        className="px-3 py-1 text-gray-600 dark:text-gray-300"
                       >
                         +
                       </button>
@@ -145,7 +145,7 @@ export default function BarcodePage() {
                   <td className="p-3">
                     <button
                       onClick={() => removeProduct(p.id)}
-                      className="text-red-400 hover:text-red-300"
+                      className="text-red-500 hover:text-red-400 dark:text-red-400 dark:hover:text-red-300"
                     >
                       🗑
                     </button>
@@ -159,15 +159,15 @@ export default function BarcodePage() {
         {/* Paper Size + Toggles */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
           <label className="block">
-            <span className="font-medium">{t("dash.barcode.paperSize")}</span>
-            <select className="mt-1 w-full bg-gray-900 border border-gray-700 p-2 rounded text-gray-200">
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t("dash.barcode.paperSize")}</span>
+            <select className="mt-1 w-full rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200">
               <option>{t("dash.barcode.selectPlaceholder")}</option>
               <option>A4</option>
               <option>50x25</option>
             </select>
           </label>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
             <span>{t("dash.barcode.showStore")}</span>
             <input
               type="checkbox"
@@ -176,7 +176,7 @@ export default function BarcodePage() {
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
             <span>{t("dash.barcode.showProduct")}</span>
             <input
               type="checkbox"
@@ -185,7 +185,7 @@ export default function BarcodePage() {
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
             <span>{t("dash.barcode.showPrice")}</span>
             <input
               type="checkbox"
@@ -198,21 +198,21 @@ export default function BarcodePage() {
         {/* Action Buttons */}
         <div className="mt-8 flex justify-end gap-4">
           <button
-            className="bg-yellow-600 hover:bg-yellow-500 px-5 py-2 text-white rounded"
+            className="bg-yellow-500 hover:bg-yellow-600 px-5 py-2 text-white rounded dark:bg-yellow-600 dark:hover:bg-yellow-500"
             onClick={() => setModalOpen(true)}
           >
             <Eye/> {t("dash.barcode.generate")}
           </button>
 
           <button
-            className="bg-blue-900 hover:bg-blue-800 px-5 py-2 text-white rounded"
+            className="bg-blue-600 hover:bg-blue-700 px-5 py-2 text-white rounded dark:bg-blue-700 dark:hover:bg-blue-600"
             onClick={resetAll}
           >
            <RefreshCcwIcon/> {t("dash.barcode.reset")}
           </button>
 
           <button
-            className="bg-red-600 hover:bg-red-500 px-5 py-2 text-white rounded"
+            className="bg-red-500 hover:bg-red-600 px-5 py-2 text-white rounded"
             onClick={() => setModalOpen(true)}
           >
             <Printer/> {t("dash.barcode.print")}

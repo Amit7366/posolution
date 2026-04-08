@@ -93,12 +93,12 @@ export default function CategoryPage() {
   const loadErr = isError ? getQueryErrorMessage(error) ?? t("dash.category.failedLoad") : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#0b0b0b] to-black text-slate-200 p-6">
+    <div className="min-h-screen p-6 text-gray-900 dark:text-gray-200">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-semibold">{t("dash.category.title")}</h1>
-          <p className="text-sm text-slate-400">{t("dash.category.manage")}</p>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{t("dash.category.title")}</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t("dash.category.manage")}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export default function CategoryPage() {
           <IconButton icon={<ChevronUp size={16} />} />
           <button
             onClick={() => setAddOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-400 px-4 py-2 text-sm font-medium text-black shadow-lg hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-400 px-4 py-2 text-sm font-medium text-white shadow-lg hover:opacity-90"
           >
             <Plus size={16} /> {t("dash.category.add")}
           </button>
@@ -120,9 +120,9 @@ export default function CategoryPage() {
       </div>
 
       {/* Card */}
-      <div className="rounded-xl border border-white/10 bg-black/60 backdrop-blur-xl shadow-2xl">
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
         {loadErr ? (
-          <div className="mx-4 mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          <div className="mx-4 mt-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-200">
             {loadErr}
           </div>
         ) : null}
@@ -130,28 +130,28 @@ export default function CategoryPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 p-4">
           <div className="relative w-64">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
               size={16}
             />
             <input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("dash.common.search")}
-              className="w-full rounded-lg border border-white/10 bg-black/70 py-2 pl-9 pr-3 text-sm outline-none focus:border-orange-500"
+              className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none"
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
           >
             <option value="">{t("dash.common.allStatus")}</option>
             <option value="active">{t("dash.common.active")}</option>
             <option value="inactive">{t("dash.common.inactive")}</option>
           </select>
           {typeof total === "number" && (
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               {t("dash.category.totalShown", { count: total })}
             </span>
           )}
@@ -161,7 +161,7 @@ export default function CategoryPage() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="bg-white/5 text-slate-300">
+              <tr className="bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
                 <th className="px-4 py-3 text-left">
                   <input type="checkbox" />
                 </th>
@@ -177,7 +177,7 @@ export default function CategoryPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-4 py-6 text-center text-slate-400"
+                    className="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
                   >
                     {t("dash.category.loadingCategories")}
                   </td>
@@ -186,7 +186,7 @@ export default function CategoryPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-4 py-6 text-center text-slate-400"
+                    className="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
                   >
                     {t("dash.category.noCategoriesFound")}
                   </td>
@@ -195,22 +195,22 @@ export default function CategoryPage() {
                 categories.map((c) => (
                   <tr
                     key={c._id}
-                    className="border-t border-white/10 hover:bg-white/5 transition"
+                    className="border-t border-gray-200 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50"
                   >
                     <td className="px-4 py-3">
                       <input type="checkbox" />
                     </td>
-                    <td className="px-4 py-3 font-medium text-slate-100">
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
                       {c.name}
                     </td>
-                    <td className="px-4 py-3 text-slate-400">{c.slug}</td>
-                    <td className="px-4 py-3 text-slate-400">
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{c.slug}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
                       {c.createdAt
                         ? new Date(c.createdAt).toLocaleDateString()
                         : "-"}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="rounded-md bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-400">
+                      <span className="rounded-md bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-emerald-500/20 dark:text-emerald-400">
                         {c.status === "active" ? t("dash.common.active") : t("dash.common.inactive")}
                       </span>
                     </td>
@@ -274,10 +274,10 @@ function IconButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-lg border border-white/10 bg-black/60 p-2 text-slate-300 hover:bg-white/10"
+      className="rounded-lg border border-gray-300 bg-white p-2 text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
     >
       {loading ? (
-        <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-500 border-t-transparent inline-block" />
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent inline-block dark:border-gray-500" />
       ) : (
         icon
       )}
@@ -297,7 +297,7 @@ function StatusToggle({
       type="button"
       onClick={() => setEnabled(!enabled)}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-        enabled ? "bg-emerald-500" : "bg-gray-600"
+        enabled ? "bg-emerald-500" : "bg-gray-300 dark:bg-gray-600"
       }`}
     >
       <span
@@ -323,8 +323,8 @@ function ActionButton({
       onClick={onClick}
       className={`rounded-lg p-2 transition ${
         danger
-          ? "bg-red-500/10 text-red-400 hover:bg-red-500/20"
-          : "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
+          ? "bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
+          : "bg-blue-50 text-blue-500 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20"
       }`}
     >
       {icon}
@@ -370,19 +370,18 @@ function DeleteModal({
       await deleteCategory(item._id).unwrap();
       onClose();
     } catch (e) {
-      // optionally handle error (toast, etc.)
       console.error("Failed to delete category", e);
     }
   };
 
   return (
     <Modal title={t("dash.category.deleteTitle")} onClose={onClose}>
-      <p className="text-sm text-slate-300">
+      <p className="text-sm text-gray-600 dark:text-gray-300">
         {t("dash.category.deleteIntro")}{" "}
         <span className="font-semibold">{item.name}</span>?
       </p>
       <div className="flex justify-end gap-2 mt-6">
-        <button onClick={onClose} className="btn-secondary">
+        <button onClick={onClose} className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
           {t("dash.common.cancel")}
         </button>
         <button
@@ -407,11 +406,11 @@ function Modal({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="w-full max-w-md rounded-xl border border-white/10 bg-[#0b0b0b] p-5 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/70">
+      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-5 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-700 dark:hover:text-white">
             ✕
           </button>
         </div>
@@ -509,9 +508,3 @@ function generateSlug(value: string) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }
-
-// ------------------ Tailwind Utilities ------------------
-// Add to globals.css if desired:
-// .input { @apply w-full rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none focus:border-orange-500; }
-// .btn-primary { @apply rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-black; }
-// .btn-secondary { @apply rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300; }

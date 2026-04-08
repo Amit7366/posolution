@@ -70,10 +70,10 @@ export default function EditExpiredModal({ product, onClose, onSave }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/70 backdrop-blur p-4">
-      <div className="w-full max-w-md rounded-xl bg-[#0b0b0b] border border-white/10 p-5 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/50 backdrop-blur p-4 dark:bg-black/70">
+      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-5 shadow-2xl max-h-[90vh] overflow-y-auto dark:border-gray-700 dark:bg-gray-900">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-slate-100">{t("dash.expired.editModalTitle")}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{t("dash.expired.editModalTitle")}</h3>
           <button type="button" onClick={onClose} className={ui.dangerBtn} disabled={busy} aria-label={t("dash.common.close")}>
             <X size={16} />
           </button>
@@ -120,10 +120,10 @@ export default function EditExpiredModal({ product, onClose, onSave }: Props) {
               className={ui.input}
               disabled={busy}
             />
-            <p className="mt-1 text-xs text-slate-500">{t("dash.expired.expiryHint")}</p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{t("dash.expired.expiryHint")}</p>
           </div>
 
-          {error ? <p className="text-sm text-red-400">{error}</p> : null}
+          {error ? <p className="text-sm text-red-600 dark:text-red-400">{error}</p> : null}
 
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className={ui.btnSecondary} disabled={busy}>
