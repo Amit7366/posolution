@@ -21,9 +21,10 @@ const LanguageContext = createContext<LanguageContextValue | undefined>(
 );
 
 const STORAGE_KEY = "app-language";
+const DEFAULT_LANGUAGE: Language = "bn";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
+  const [language, setLanguageState] = useState<Language>(DEFAULT_LANGUAGE);
 
   useEffect(() => {
     if (typeof window === "undefined") return;

@@ -51,7 +51,7 @@ export default function NumberedFeatures() {
             className="relative aspect-[4/3] overflow-hidden rounded-2xl"
           >
             <Image
-              src="https://images.unsplash.com/photo-1563013547-5ae162c22ecc?w=800&q=80"
+              src="https://images.unsplash.com/photo-1556742111-a301076d9d18?w=800&q=80"
               alt="Mobile POS payment"
               fill
               className="object-cover"

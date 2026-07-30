@@ -8,7 +8,7 @@ const INDUSTRY_IMAGES = [
   "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80",
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
   "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80",
-  "https://images.unsplash.com/photo-1576602976037-6e88717b17dd?w=600&q=80",
+  "https://images.unsplash.com/photo-1584515933487-779824d29309?w=600&q=80",
   "https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=600&q=80",
   "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80",
 ];

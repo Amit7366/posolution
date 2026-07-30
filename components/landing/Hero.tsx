@@ -6,13 +6,12 @@ import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  ArrowRight,
-  Play,
   ShoppingCart,
   Package,
   BarChart3,
   Zap,
   TrendingUp,
+  Star,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 
@@ -78,56 +77,87 @@ export default function Hero() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-8">
-          <div>
-            <motion.h1
+          <div className="max-w-xl">
+            <motion.div
               custom={0}
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="text-4xl font-black tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white"
-              style={{ lineHeight: 1.1 }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-blue-50/80 px-4 py-2 dark:border-blue-800/50 dark:bg-blue-950/40"
             >
-              {t("landing.hero.title").split(t("landing.hero.titleHighlight"))[0]}
-              <span className="bg-linear-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
-                {t("landing.hero.titleHighlight")}
+              <Star size={14} className="text-blue-600 fill-blue-600 dark:text-blue-400 dark:fill-blue-400" />
+              <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                {t("landing.hero.badgeTag")}
               </span>
-              {t("landing.hero.title").split(t("landing.hero.titleHighlight"))[1]}
-            </motion.h1>
+            </motion.div>
 
-            <motion.p
+            <motion.h1
               custom={1}
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mt-6 text-lg leading-relaxed text-gray-500 dark:text-gray-400"
+              className="text-4xl font-black leading-[1.15] tracking-tight text-gray-900 sm:text-5xl lg:text-[3.25rem] dark:text-white"
+            >
+              <span className="block">{t("landing.hero.titleLine1")}</span>
+              <span className="block">
+                {t("landing.hero.titleLine2")}{" "}
+                <span className="text-gray-900 dark:text-white">{t("landing.hero.titleLine2Brand")}</span>
+              </span>
+              <span className="mt-1 block bg-linear-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
+                {t("landing.hero.titleHighlight")}
+              </span>
+            </motion.h1>
+
+            <motion.p
+              custom={2}
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              className="mt-6 text-base leading-relaxed text-gray-500 sm:text-lg dark:text-gray-400"
             >
               {t("landing.hero.subtitle")}
             </motion.p>
 
             <motion.div
-              custom={2}
+              custom={3}
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mt-8 flex flex-col gap-4 sm:flex-row"
+              className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center"
             >
               <Link
                 href="/register"
-                className="group relative flex items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-all hover:shadow-blue-500/50 hover:scale-[1.03]"
+                className="inline-flex items-center justify-center rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-blue-500/45 hover:scale-[1.02]"
               >
-                <span className="absolute inset-0 bg-linear-to-r from-indigo-600 to-purple-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="relative">{t("landing.hero.cta")}</span>
-                <ArrowRight size={18} className="relative transition-transform group-hover:translate-x-1" />
+                {t("landing.hero.cta")}
               </Link>
               <button
                 type="button"
-                className="flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-8 py-4 text-base font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md dark:border-gray-700/60 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/8"
+                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-transparent px-8 py-4 text-base font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:border-gray-500 dark:hover:bg-white/5"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
-                  <Play size={14} className="ml-0.5 text-blue-600 dark:text-blue-400" fill="currentColor" />
-                </span>
                 {t("landing.hero.demo")}
               </button>
+            </motion.div>
+
+            <motion.div
+              custom={4}
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              className="mt-10 border-t border-gray-200/80 pt-8 dark:border-gray-800/80"
+            >
+              <div className="flex flex-wrap gap-8 sm:gap-10">
+                {[
+                  { top: t("landing.hero.feature1Top"), bottom: t("landing.hero.feature1Bottom") },
+                  { top: t("landing.hero.feature2Top"), bottom: t("landing.hero.feature2Bottom") },
+                  { top: t("landing.hero.feature3Top"), bottom: t("landing.hero.feature3Bottom") },
+                ].map(({ top, bottom }, i) => (
+                  <div key={i}>
+                    <p className="text-lg font-black text-blue-600 dark:text-blue-400">{top}</p>
+                    <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{bottom}</p>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           </div>
 

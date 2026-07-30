@@ -101,11 +101,14 @@ const en = {
   landing: {
     hero: {
       badge: "Trusted by 10,000+ businesses in Bangladesh",
-      title: "The Smartest POS System for Your Business",
-      titleHighlight: "POS System",
+      badgeTag: "#1 POS Solution",
+      titleLine1: "Digitize Your",
+      titleLine2: "Business Growth with",
+      titleLine2Brand: "Sohoj POS",
+      titleHighlight: "Smart Solutions",
       subtitle:
-        "Manage sales, inventory, invoices, and reports — all from one powerful dashboard. Built for small shops to enterprise retailers.",
-      cta: "Start Free Trial",
+        "Sohoj POS is a smart solution for your business. Checkout is now faster, easier, and more modern. From sales to inventory and customer management — get everything on one platform.",
+      cta: "Start Free",
       demo: "Watch Demo",
       trustedBy: "Join thousands of businesses already growing with Sohoj POS",
       stat1: "10K+",
@@ -115,6 +118,12 @@ const en = {
       stat3: "99.9%",
       stat3Label: "Uptime",
       partners: "Trusted by leading businesses",
+      feature1Top: "24/7",
+      feature1Bottom: "Support",
+      feature2Top: "Multi",
+      feature2Bottom: "Store Ready",
+      feature3Top: "Real-time",
+      feature3Bottom: "Analytics",
     },
     showcase: {
       title: "Powerful Tools for Every Retail Need",
@@ -511,11 +520,14 @@ const bn = {
   landing: {
     hero: {
       badge: "বাংলাদেশে ১০,০০০+ ব্যবসার বিশ্বাস",
-      title: "আপনার ব্যবসার জন্য সবচেয়ে স্মার্ট পিওএস সিস্টেম",
-      titleHighlight: "পিওএস সিস্টেম",
+      badgeTag: "#১ POS সমাধান",
+      titleLine1: "ডিজিটাল করুন আপনার",
+      titleLine2: "ব্যবসার বিকাশ",
+      titleLine2Brand: "সহজ পিওএস-এর",
+      titleHighlight: "স্মার্ট সমাধানে",
       subtitle:
-        "বিক্রয়, ইনভেন্টরি, ইনভয়েস এবং রিপোর্ট — সব কিছু এক শক্তিশালী ড্যাশবোর্ড থেকে পরিচালনা করুন। ছোট দোকান থেকে বড় খুচরা প্রতিষ্ঠানের জন্য।",
-      cta: "বিনামূল্যে শুরু করুন",
+        "সহজ পিওএস (POS) আপনার ব্যবসার জন্য এক স্মার্ট সমাধান। এখন চেকআউট অভিজ্ঞতা হবে আরও দ্রুত, সহজ এবং আধুনিক। বিক্রয় থেকে শুরু করে পণ্য মজুদ ও গ্রাহকের তথ্য ব্যবস্থাপনা সবকিছুই পাবেন এক প্ল্যাটফর্মে।",
+      cta: "ফ্রি শুরু করুন",
       demo: "ডেমো দেখুন",
       trustedBy: "হাজার হাজার ব্যবসা ইতিমধ্যে সহজ পিওএস দিয়ে এগিয়ে চলছে",
       stat1: "১০ হাজার+",
@@ -525,6 +537,12 @@ const bn = {
       stat3: "৯৯.৯%",
       stat3Label: "আপটাইম",
       partners: "প্রভাবশালী ব্যবসার বিশ্বাস",
+      feature1Top: "২৪/৭",
+      feature1Bottom: "সাপোর্ট",
+      feature2Top: "মাল্টি",
+      feature2Bottom: "স্টোর রেডি",
+      feature3Top: "রিয়েল-টাইম",
+      feature3Bottom: "অ্যানালিটিক্স",
     },
     showcase: {
       title: "প্রতিটি খুচরা ব্যবসার জন্য শক্তিশালী টুলস",
