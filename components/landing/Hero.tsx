@@ -14,6 +14,7 @@ import {
   Star,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/useTranslation";
+import PartnerLogoMarquee from "./PartnerLogoMarquee";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -27,8 +28,6 @@ const fadeUp = {
     transition: { duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
   }),
 };
-
-const PARTNER_LOGOS = ["FreshMart", "StyleHub", "TechZone", "GreenGrocers", "QuickPay", "DhakaMart"];
 
 export default function Hero() {
   const { t } = useTranslation();
@@ -304,19 +303,10 @@ export default function Hero() {
           animate="visible"
           className="mt-16 border-t border-gray-200/60 pt-10 dark:border-gray-800/60"
         >
-          <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">
+          <p className="mb-4 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">
             {t("landing.hero.partners")}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
-            {PARTNER_LOGOS.map((name) => (
-              <span
-                key={name}
-                className="text-sm font-bold text-gray-400 opacity-60 dark:text-gray-500"
-              >
-                {name}
-              </span>
-            ))}
-          </div>
+          <PartnerLogoMarquee />
         </motion.div>
       </div>
     </section>

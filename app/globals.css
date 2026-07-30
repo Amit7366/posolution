@@ -10,6 +10,19 @@
 .btn-secondary {
   @apply rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300;
 }
+@keyframes partner-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.partner-marquee-track {
+  animation: partner-marquee 30s linear infinite;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
