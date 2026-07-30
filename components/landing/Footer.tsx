@@ -33,7 +33,7 @@ export default function Footer() {
         { label: t("landing.footer.features"), href: "#features" },
         { label: t("landing.footer.pricing"), href: "#pricing" },
         { label: t("landing.footer.changelog"), href: "#" },
-        { label: "Integrations", href: "#" },
+        { label: t("marketing.industry"), href: "#industry" },
       ],
     },
     {
@@ -49,7 +49,7 @@ export default function Footer() {
       heading: t("landing.footer.support"),
       items: [
         { label: t("landing.footer.helpCenter"), href: "#" },
-        { label: t("landing.footer.contact"), href: "#" },
+        { label: t("landing.footer.contact"), href: "#contact" },
         { label: t("landing.footer.status"), href: "#" },
         { label: "Community", href: "#" },
       ],

@@ -1,12 +1,12 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/landing/Hero";
-import Features from "@/components/landing/Features";
-import HowItWorks from "@/components/landing/HowItWorks";
-import Stats from "@/components/landing/Stats";
-import Pricing from "@/components/landing/Pricing";
-import Testimonials from "@/components/landing/Testimonials";
-import FAQ from "@/components/landing/FAQ";
+import CoreFeatures from "@/components/landing/CoreFeatures";
+import FeatureShowcase from "@/components/landing/FeatureShowcase";
+import NumberedFeatures from "@/components/landing/NumberedFeatures";
+import IndustryGallery from "@/components/landing/IndustryGallery";
 import CTABanner from "@/components/landing/CTABanner";
+import FAQ from "@/components/landing/FAQ";
+import ContactSection from "@/components/landing/ContactSection";
 import Footer from "@/components/landing/Footer";
 
 export default function HomePage() {
@@ -14,13 +14,13 @@ export default function HomePage() {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
-      <Features />
-      <HowItWorks />
-      <Stats />
-      <Pricing />
-      <Testimonials />
-      <FAQ />
+      <CoreFeatures />
+      <FeatureShowcase />
+      <NumberedFeatures />
+      <IndustryGallery />
       <CTABanner />
+      <FAQ />
+      <ContactSection />
       <Footer />
     </main>
   );
