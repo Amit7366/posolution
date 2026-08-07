@@ -1,45 +1,38 @@
 "use client";
 
-import AuthTabs from "@/components/auth/AuthTabs";
-import ThemeToggle from "@/components/ThemeToggle";
-import NavbarLanguageSwitcher from "@/components/NavbarLanguageSwitcher";
-import { StepBack } from "lucide-react";
 import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
+import AuthMarketingPanel from "@/components/auth/AuthMarketingPanel";
+import AuthFormShell from "@/components/auth/AuthFormShell";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 transition-colors duration-500 bg-white dark:bg-neutral-950">
-      <div className="w-full max-w-lg rounded-2xl border border-neutral-800 bg-white dark:bg-neutral-900 shadow-2xl p-10 transition-colors duration-500">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              {t("auth.welcomeBack")}
-            </h1>
-            <p className="mt-1 text-sm text-slate-600 dark:text-neutral-400">{t("auth.subtitle")}</p>
-
-            <Link
-              href="/"
-              className="mt-2 flex items-center gap-2 text-sm text-slate-900 hover:underline dark:text-amber-300"
-            >
-              <StepBack size={16} /> <span>{t("auth.backHome")}</span>
-            </Link>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-2">
-            <NavbarLanguageSwitcher variant="compact" />
-            <ThemeToggle />
-          </div>
+    <div className="flex min-h-dvh w-full bg-white">
+      {/* Mobile brand strip */}
+      <div className="fixed inset-x-0 top-0 z-20 border-b border-blue-500/30 bg-blue-600 lg:hidden">
+        <div className="flex h-14 items-center px-4">
+          <Link href="/" className="flex items-center gap-2.5 text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 bg-white/10">
+              <ShoppingCart size={14} />
+            </span>
+            <span className="text-base font-semibold tracking-tight">
+              {t("auth.marketing.brand")}
+            </span>
+          </Link>
         </div>
+      </div>
 
-        {/* Tabs */}
-        <AuthTabs />
+      <aside className="hidden w-[46%] max-w-xl shrink-0 lg:block xl:w-[48%] xl:max-w-none">
+        <div className="sticky top-0 h-dvh">
+          <AuthMarketingPanel />
+        </div>
+      </aside>
 
-        {/* Form */}
-        <div className="mt-10">{children}</div>
+      <div className="flex min-h-dvh flex-1 flex-col pt-14 lg:pt-0">
+        <AuthFormShell>{children}</AuthFormShell>
       </div>
     </div>
   );

@@ -17,9 +17,14 @@ export function createRegisterSchema(t: TFn) {
       email: z.string().email(t("auth.validation.invalidEmail")),
       password: z.string().min(6, t("auth.validation.minPassword6")),
       confirmPassword: z.string().min(6, t("auth.validation.minPassword6")),
+      acceptTerms: z.boolean(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       path: ["confirmPassword"],
       message: t("auth.validation.passwordsMismatch"),
+    })
+    .refine((data) => data.acceptTerms === true, {
+      path: ["acceptTerms"],
+      message: t("auth.validation.termsRequired"),
     });
 }

@@ -15,7 +15,7 @@ export default function AuthTabs() {
   const { t } = useTranslation();
 
   return (
-    <div className="relative flex gap-6 border-b border-neutral-800 pb-3">
+    <div className="relative flex gap-8 border-b border-gray-200">
       {tabs.map((tab) => {
         const active = pathname === tab.href;
 
@@ -23,8 +23,8 @@ export default function AuthTabs() {
           <Link
             key={tab.href}
             href={tab.href}
-            className={`relative text-sm font-medium transition ${
-              active ? "text-white" : "text-neutral-400 hover:text-neutral-200"
+            className={`relative pb-3 text-sm font-semibold transition ${
+              active ? "text-blue-600" : "text-gray-400 hover:text-gray-600"
             }`}
           >
             {t(tab.labelKey)}
@@ -32,7 +32,8 @@ export default function AuthTabs() {
             {active && (
               <motion.span
                 layoutId="authTab"
-                className="absolute -bottom-3 left-0 right-0 h-[2px] rounded-full bg-blue-500"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-blue-600"
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
               />
             )}
           </Link>

@@ -1,18 +1,22 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { usePathname } from "next/navigation"
+import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+
+const AUTH_PATHS = new Set(["/login", "/register"]);
 
 export default function PageTransition({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  // Keep auth shell mounted so Login ↔ Register use the in-layout form transition
+  const transitionKey = AUTH_PATHS.has(pathname) ? "auth" : pathname;
 
   return (
     <motion.div
-      key={pathname}
+      key={transitionKey}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
@@ -23,5 +27,5 @@ export default function PageTransition({
     >
       {children}
     </motion.div>
-  )
+  );
 }
