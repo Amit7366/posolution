@@ -46,15 +46,15 @@ export default function AuthMarketingPanel() {
   const current = testimonials[index];
 
   return (
-    <div className="relative flex h-full min-h-[280px] flex-col overflow-hidden bg-linear-to-b from-blue-600 to-blue-800 text-white lg:min-h-0">
+    <div className="relative flex h-full min-h-[280px] flex-col overflow-hidden bg-linear-to-b from-blue-600 to-blue-800 text-white transition-colors duration-300 dark:from-blue-950 dark:to-neutral-950 lg:min-h-0">
       {/* Soft glow accents */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-20 top-1/4 h-72 w-72 rounded-full bg-blue-400/30 blur-3xl"
+        className="pointer-events-none absolute -left-20 top-1/4 h-72 w-72 rounded-full bg-blue-400/30 blur-3xl dark:bg-blue-500/20"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-16 bottom-1/3 h-64 w-64 rounded-full bg-indigo-500/25 blur-3xl"
+        className="pointer-events-none absolute -right-16 bottom-1/3 h-64 w-64 rounded-full bg-indigo-500/25 blur-3xl dark:bg-indigo-600/15"
       />
 
       {/* Brand */}

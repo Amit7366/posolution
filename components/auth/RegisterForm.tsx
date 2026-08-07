@@ -20,7 +20,7 @@ type RegisterData = {
 };
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
+  "mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500";
 
 export default function RegisterForm() {
   const { t } = useTranslation();
@@ -67,14 +67,14 @@ export default function RegisterForm() {
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">
           {t("auth.registerForm.fullNameLabel")}
         </label>
         <input
           {...register("name")}
           autoComplete="name"
           placeholder={t("auth.registerForm.fullNamePlaceholder")}
-          className={cn(inputClass, errors.name && "border-red-400")}
+          className={cn(inputClass, errors.name && "border-red-400 dark:border-red-500")}
         />
         {errors.name && (
           <p className="mt-1.5 text-xs text-red-500">{errors.name.message}</p>
@@ -82,14 +82,14 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">
           {t("auth.registerForm.usernameLabel")}
         </label>
         <input
           {...register("userName")}
           autoComplete="username"
           placeholder={t("auth.registerForm.usernamePlaceholder")}
-          className={cn(inputClass, errors.userName && "border-red-400")}
+          className={cn(inputClass, errors.userName && "border-red-400 dark:border-red-500")}
         />
         {errors.userName && (
           <p className="mt-1.5 text-xs text-red-500">{errors.userName.message}</p>
@@ -97,7 +97,7 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">
           {t("auth.registerForm.emailLabel")}
         </label>
         <input
@@ -105,7 +105,7 @@ export default function RegisterForm() {
           type="email"
           autoComplete="email"
           placeholder={t("auth.registerForm.emailPlaceholder")}
-          className={cn(inputClass, errors.email && "border-red-400")}
+          className={cn(inputClass, errors.email && "border-red-400 dark:border-red-500")}
         />
         {errors.email && (
           <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>
@@ -113,7 +113,7 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">
           {t("auth.registerForm.passwordLabel")}
         </label>
         <PasswordInput
@@ -128,7 +128,7 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">
           {t("auth.registerForm.confirmPasswordLabel")}
         </label>
         <PasswordInput
@@ -147,11 +147,11 @@ export default function RegisterForm() {
           <input
             type="checkbox"
             {...register("acceptTerms")}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-900"
           />
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-neutral-400">
             {t("auth.registerForm.termsPrefix")}{" "}
-            <span className="font-medium text-blue-600 underline underline-offset-2">
+            <span className="font-medium text-blue-600 underline underline-offset-2 dark:text-blue-400">
               {t("auth.registerForm.termsLink")}
             </span>
           </span>
@@ -162,30 +162,33 @@ export default function RegisterForm() {
       </div>
 
       {serverError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2">
-          <p className="text-sm text-red-600">{serverError}</p>
+        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 dark:border-red-500/30 dark:bg-red-500/10">
+          <p className="text-sm text-red-600 dark:text-red-400">{serverError}</p>
         </div>
       )}
 
       {successMessage && (
-        <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2">
-          <p className="text-sm text-green-700">{successMessage}</p>
+        <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 dark:border-green-500/30 dark:bg-green-500/10">
+          <p className="text-sm text-green-700 dark:text-green-400">{successMessage}</p>
         </div>
       )}
 
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/25 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-lg bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/25 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-400"
       >
         {submitting
           ? t("auth.registerForm.creatingAccount")
           : t("auth.registerForm.createAccount")}
       </button>
 
-      <p className="text-center text-sm text-gray-500">
+      <p className="text-center text-sm text-gray-500 dark:text-neutral-400">
         {t("auth.alreadyHaveAccount")}{" "}
-        <Link href="/login" className="font-semibold text-blue-600 hover:underline">
+        <Link
+          href="/login"
+          className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
+        >
           {t("auth.logIn")}
         </Link>
       </p>

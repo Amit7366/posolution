@@ -56,11 +56,11 @@ export default function SocialAuthButtons() {
   return (
     <div className="space-y-4">
       <div className="relative flex items-center gap-3">
-        <div className="h-px flex-1 bg-gray-200" />
-        <span className="text-xs font-medium uppercase tracking-wider text-gray-400">
+        <div className="h-px flex-1 bg-gray-200 dark:bg-neutral-800" />
+        <span className="text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-neutral-500">
           {t("auth.or")}
         </span>
-        <div className="h-px flex-1 bg-gray-200" />
+        <div className="h-px flex-1 bg-gray-200 dark:bg-neutral-800" />
       </div>
 
       <div className="grid grid-cols-3 gap-3">
@@ -71,7 +71,7 @@ export default function SocialAuthButtons() {
             disabled
             title={t("auth.socialComingSoon")}
             aria-label={label}
-            className="flex h-11 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex h-11 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-70 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
           >
             <Icon />
           </button>
