@@ -2,13 +2,13 @@
 @variant dark (&:where(.dark, .dark *));
 
 .input {
-  @apply w-full rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none focus:border-orange-500;
+  @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200;
 }
 .btn-primary {
-  @apply rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-black;
+  @apply rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white;
 }
 .btn-secondary {
-  @apply rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300;
+  @apply rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700;
 }
 @keyframes partner-marquee {
   from {

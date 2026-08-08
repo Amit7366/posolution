@@ -106,13 +106,13 @@ export function AddEditBrandModal({
     >
       <div className="grid gap-6 md:grid-cols-[220px_1fr]">
         <div className="flex flex-col gap-3">
-          <div className="relative grid h-[170px] w-full place-items-center rounded-xl border border-dashed border-white/20 bg-white/[0.02]">
+          <div className="relative grid h-[170px] w-full place-items-center rounded-xl border border-dashed border-gray-300 dark:border-white/20 bg-gray-50 dark:bg-white/[0.02]">
             {logoDataUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={logoDataUrl} alt={t("dash.brands.logoAlt")} className="h-full w-full rounded-xl object-contain p-3" />
             ) : (
-              <div className="flex flex-col items-center gap-2 text-slate-400">
-                <div className="grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-white/[0.03]">
+              <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-slate-400">
+                <div className="grid h-12 w-12 place-items-center rounded-full border border-gray-300 dark:border-white/15 bg-gray-50 dark:bg-white/[0.03]">
                   <PlusIcon />
                 </div>
                 <div className="text-sm font-medium">{t("dash.brands.addImage")}</div>
@@ -123,27 +123,27 @@ export function AddEditBrandModal({
           <Button variant="primary" onClick={handlePickFile} className="rounded-lg">
             {t("dash.brands.uploadImage")}
           </Button>
-          <p className="text-xs text-slate-400">{t("dash.brands.jpegHint2mb")}</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">{t("dash.brands.jpegHint2mb")}</p>
 
           <input ref={fileRef} type="file" accept="image/png,image/jpeg" className="hidden" onChange={handleFileChange} />
         </div>
 
         <div className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200">
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">
               {t("dash.brands.brandFieldStar")} <span className="text-orange-400">*</span>
             </label>
             <input
               name="brand"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+              className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
             />
             {error && <p className="mt-2 text-sm text-red-300">{error}</p>}
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-            <div className="text-sm font-medium text-slate-200">{t("dash.common.status")}</div>
+          <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/[0.02] px-4 py-3">
+            <div className="text-sm font-medium text-gray-700 dark:text-slate-200">{t("dash.common.status")}</div>
             <Toggle value={status} onChange={setStatus} ariaLabel={t("dash.common.status")} />
           </div>
         </div>

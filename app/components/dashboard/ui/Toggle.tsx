@@ -17,8 +17,8 @@ export function Toggle({
       type="button"
       onClick={() => onChange(!value)}
       className={cn(
-        "relative h-6 w-11 rounded-full border border-white/10 transition",
-        value ? "bg-emerald-500/40" : "bg-white/10"
+        "relative h-6 w-11 rounded-full border border-gray-300 transition dark:border-gray-600",
+        value ? "bg-emerald-500" : "bg-gray-200 dark:bg-white/10"
       )}
       aria-label={ariaLabel ?? "Toggle"}
       title={ariaLabel ?? "Toggle"}

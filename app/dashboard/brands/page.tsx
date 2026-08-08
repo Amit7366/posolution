@@ -261,20 +261,20 @@ export default function BrandsPage() {
   const errMsg = isError ? (getQueryErrorMessage(error) ?? t("dash.brands.failedLoad")) : null;
 
   return (
-    <div className="min-h-screen bg-[#0b0f14] text-slate-100">
+    <div className="min-h-screen text-gray-900 dark:text-gray-200">
       <div className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(60%_40%_at_50%_0%,rgba(249,115,22,0.18),transparent_60%)]" />
 
       <div className="relative mx-auto w-full max-w-[1600px] px-6 py-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-semibold tracking-tight">{t("dash.brands.title")}</h1>
-            <p className="mt-1 text-sm text-slate-400">{t("dash.brands.manage")}</p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{t("dash.brands.manage")}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={exportPDF}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
               title={t("dash.common.exportPdf")}
               type="button"
             >
@@ -282,7 +282,7 @@ export default function BrandsPage() {
             </button>
             <button
               onClick={exportXLS}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
               title={t("dash.common.exportXls")}
               type="button"
             >
@@ -290,7 +290,7 @@ export default function BrandsPage() {
             </button>
             <button
               onClick={exportCSV}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
               title={t("dash.common.exportCsv")}
               type="button"
             >
@@ -299,7 +299,7 @@ export default function BrandsPage() {
 
             <button
               onClick={refresh}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
               title={t("dash.common.refresh")}
               type="button"
             >
@@ -323,9 +323,9 @@ export default function BrandsPage() {
           </div>
         ) : null}
 
-        <div className="relative mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
+        <div className="relative mt-6 rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
           {isLoading || isFetching ? (
-            <div className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-[#0b0f14]/40" />
+            <div className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-white/60 dark:bg-gray-950/40" />
           ) : null}
 
           <BrandToolbar
@@ -363,8 +363,8 @@ export default function BrandsPage() {
             onDelete={deleteOne}
           />
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4">
-            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-400">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 px-5 py-4">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
               <span>{t("dash.common.rowPerPage")}</span>
               <select
                 value={rowsPerPage}
@@ -372,7 +372,7 @@ export default function BrandsPage() {
                   setRowsPerPage(parseInt(e.target.value, 10));
                   setPage(1);
                 }}
-                className="rounded-lg border border-white/10 bg-[#0b0f14] px-2 py-1.5 text-slate-200 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
+                className="rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-2 py-1.5 text-gray-700 dark:text-slate-200 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
               >
                 {[5, 10, 20, 50].map((n) => (
                   <option key={n} value={n}>
@@ -381,7 +381,7 @@ export default function BrandsPage() {
                 ))}
               </select>
               <span>{t("dash.common.entries")}</span>
-              <span className="text-slate-500">{total > 0 ? t("dash.common.totalCount", { count: total }) : ""}</span>
+              <span className="text-gray-500 dark:text-slate-500">{total > 0 ? t("dash.common.totalCount", { count: total }) : ""}</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -439,8 +439,8 @@ function PageNavButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/[0.02] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]",
-        disabled && "cursor-not-allowed opacity-40 hover:bg-white/[0.02] active:translate-y-0"
+        "grid h-8 w-8 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.02] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]",
+        disabled && "cursor-not-allowed opacity-40 hover:bg-gray-50 dark:bg-white/[0.02] active:translate-y-0"
       )}
     >
       {children}

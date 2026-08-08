@@ -31,7 +31,7 @@ export function BrandTable({
     <div className="w-full overflow-x-auto">
       <table className="w-full min-w-[980px]">
         <thead>
-          <tr className="text-left text-sm text-slate-400">
+          <tr className="text-left text-sm text-gray-500 dark:text-slate-400">
             <th className="w-12 px-5 py-4">
               <Checkbox
               checked={allSelected}
@@ -49,7 +49,7 @@ export function BrandTable({
 
         <tbody className="divide-y divide-white/10">
           {brands.map((b) => (
-            <tr key={b.id} className="group hover:bg-white/[0.03]">
+            <tr key={b.id} className="group hover:bg-gray-50 dark:bg-white/[0.03]">
               <td className="px-5 py-4">
                 <Checkbox
                   checked={!!selected[b.id]}
@@ -61,11 +61,11 @@ export function BrandTable({
               <td className="px-5 py-4">
                 <div className="flex items-center gap-3">
                   <LogoChip name={b.name} logoUrl={b.logoUrl} />
-                  <span className="text-sm font-semibold text-slate-100">{b.name}</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-900 dark:text-slate-100">{b.name}</span>
                 </div>
               </td>
 
-              <td className="px-5 py-4 text-sm text-slate-300">{formatDate(b.createdAt)}</td>
+              <td className="px-5 py-4 text-sm text-gray-600 dark:text-slate-300">{formatDate(b.createdAt)}</td>
 
               <td className="px-5 py-4">
                 <StatusPill status={b.status} />
@@ -86,7 +86,7 @@ export function BrandTable({
 
           {brands.length === 0 && (
             <tr>
-              <td colSpan={5} className="px-5 py-14 text-center text-sm text-slate-400">
+              <td colSpan={5} className="px-5 py-14 text-center text-sm text-gray-500 dark:text-slate-400">
                 {t("dash.brands.noBrandsFound")}
               </td>
             </tr>
@@ -125,7 +125,7 @@ function StatusPill({ status }: { status: "Active" | "Inactive" }) {
     <span
       className={cn(
         "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold",
-        isActive ? "bg-emerald-500/15 text-emerald-300" : "bg-slate-500/15 text-slate-300"
+        isActive ? "bg-emerald-500/15 text-emerald-300" : "bg-slate-500/15 text-gray-600 dark:text-slate-300"
       )}
     >
       <span className={cn("h-2 w-2 rounded-full", isActive ? "bg-emerald-400" : "bg-slate-400")} />

@@ -594,7 +594,7 @@ export const baseApi = createApi({
         page?: number;
         limit?: number;
         search?: string;
-        status?: "all" | "paid" | "unpaid" | "overdue";
+        status?: "all" | "paid" | "unpaid" | "overdue" | "due";
         since?: string;
         customer?: string;
       }
@@ -633,7 +633,24 @@ export const baseApi = createApi({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: ["Invoice", "Product"],
+      invalidatesTags: ["Invoice", "Product", "Dashboard"],
+    }),
+
+    collectInvoiceDue: builder.mutation<
+      any,
+      { id: string; body: { amount: number; paymentType?: string; note?: string } }
+    >({
+      query: ({ id, body }) => ({
+        url: `/invoice/${id}/collect`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Invoice", "Dashboard"],
+    }),
+
+    getInvoiceCollections: builder.query<any, string>({
+      query: (id) => `/invoice/${id}/collections`,
+      providesTags: ["Invoice"],
     }),
 
     deleteInvoice: builder.mutation<any, string>({
@@ -879,6 +896,9 @@ export const {
   useLazyGetInvoiceByIdQuery,
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
+  useCollectInvoiceDueMutation,
+  useGetInvoiceCollectionsQuery,
+  useLazyGetInvoiceCollectionsQuery,
   useDeleteInvoiceMutation,
 
   useGetCustomersQuery,

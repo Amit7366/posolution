@@ -80,19 +80,19 @@ export function AddEditVariantModal({
     >
       <div className="space-y-5">
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">
+          <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">
             Variant <span className="text-orange-400">*</span>
           </label>
           <input
             name="variantName"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+            className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">
+          <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">
             Values <span className="text-orange-400">*</span>
           </label>
 
@@ -102,11 +102,11 @@ export function AddEditVariantModal({
             placeholder="Enter value separated by comma"
           />
 
-          <p className="mt-2 text-sm text-slate-400">Enter value separated by comma</p>
+          <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">Enter value separated by comma</p>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-          <div className="text-sm font-medium text-slate-200">Status</div>
+        <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/[0.02] px-4 py-3">
+          <div className="text-sm font-medium text-gray-700 dark:text-slate-200">Status</div>
           <Toggle value={status} onChange={setStatus} ariaLabel="Variant status" />
         </div>
 
@@ -158,7 +158,7 @@ function TagInput({
   return (
     <div
       className={cn(
-        "min-h-[54px] w-full rounded-xl border border-white/10 bg-[#070a0f] px-3 py-2",
+        "min-h-[54px] w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-3 py-2",
         "outline-none ring-orange-500/30 transition focus-within:border-orange-500/30 focus-within:ring-4"
       )}
       onClick={() => inputRef.current?.focus()}
@@ -176,7 +176,7 @@ function TagInput({
                 e.stopPropagation();
                 removeAt(i);
               }}
-              className="grid h-4 w-4 place-items-center rounded bg-black/10 text-slate-900 hover:bg-black/20"
+              className="grid h-4 w-4 place-items-center rounded bg-gray-100 dark:bg-black/10 text-slate-900 hover:bg-gray-100 dark:bg-black/20"
               aria-label={`Remove ${v}`}
               title="Remove"
             >
@@ -190,7 +190,7 @@ function TagInput({
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder={values.length === 0 ? placeholder : ""}
-          className="min-w-[180px] flex-1 bg-transparent px-2 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500"
+          className="min-w-[180px] flex-1 bg-transparent px-2 py-2 text-sm text-gray-900 dark:text-slate-100 outline-none placeholder:text-gray-400 dark:placeholder:text-slate-500"
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === ",") {
               e.preventDefault();

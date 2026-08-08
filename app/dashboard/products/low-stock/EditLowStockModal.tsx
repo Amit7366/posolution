@@ -53,10 +53,10 @@ export default function EditLowStockModal({ product, defaultThreshold, onClose, 
   }
 
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/70 backdrop-blur p-4">
-      <div className="w-full max-w-lg rounded-xl bg-[#0b0b0b] border border-white/10 p-6 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/50 backdrop-blur p-4 dark:bg-black/70">
+      <div className="w-full max-w-lg rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="font-semibold text-base text-slate-100">{t("dash.lowStock.updateModalTitle")}</h3>
+          <h3 className="font-semibold text-base text-gray-900 dark:text-slate-100">{t("dash.lowStock.updateModalTitle")}</h3>
           <button type="button" onClick={onClose} className={ui.dangerBtn} disabled={busy} aria-label={t("dash.common.close")}>
             <X size={16} />
           </button>
@@ -112,7 +112,7 @@ export default function EditLowStockModal({ product, defaultThreshold, onClose, 
                 className={ui.input}
                 disabled={busy}
               />
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-slate-500">
                 {t("dash.lowStock.alertHint", { defaultThreshold })}
               </p>
             </div>

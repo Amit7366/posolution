@@ -374,7 +374,7 @@ export default function PrintQrCodePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0f14] text-slate-100">
+    <div className="min-h-screen text-gray-900 dark:text-gray-200">
       <div className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(60%_40%_at_50%_0%,rgba(249,115,22,0.18),transparent_60%)]" />
 
       <div className="relative mx-auto w-full max-w-[1600px] px-6 py-7">
@@ -382,7 +382,7 @@ export default function PrintQrCodePage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-semibold tracking-tight">{t("dash.qr.title")}</h1>
-            <p className="mt-1 text-sm text-slate-400">{t("dash.qr.manage")}</p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{t("dash.qr.manage")}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -396,7 +396,7 @@ export default function PrintQrCodePage() {
         </div>
 
         {/* Card */}
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
           {!collapsed && (
             <div className="px-6 py-6">
               {/* Warehouse + Store */}
@@ -432,7 +432,7 @@ export default function PrintQrCodePage() {
               <div className="mt-7">
                 <Field label={t("dash.qr.product")} required>
                   <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-400">
                       <SearchIcon />
                     </span>
                     <input
@@ -445,41 +445,41 @@ export default function PrintQrCodePage() {
                       className={cn(inputClass, "pl-10")}
                     />
                   </div>
-                  <div className="mt-2 text-xs text-slate-500">
+                  <div className="mt-2 text-xs text-gray-500 dark:text-slate-500">
                     {t("dash.qr.tipEnter")}{" "}
-                    <span className="text-slate-300">{t("dash.qr.tipExample")}</span>
+                    <span className="text-gray-600 dark:text-slate-300">{t("dash.qr.tipExample")}</span>
                     {t("dash.qr.tipThen")}
                   </div>
                 </Field>
               </div>
 
               {/* Items table */}
-              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-black/20 p-4">
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[950px]">
                     <thead>
-                      <tr className="text-left text-sm text-slate-300">
-                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colProduct")}</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colSku")}</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colCode")}</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colRef")}</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100">{t("dash.qr.colQty")}</th>
-                        <th className="px-4 py-4 font-semibold text-slate-100"></th>
+                      <tr className="text-left text-sm text-gray-600 dark:text-slate-300">
+                        <th className="px-4 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.qr.colProduct")}</th>
+                        <th className="px-4 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.qr.colSku")}</th>
+                        <th className="px-4 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.qr.colCode")}</th>
+                        <th className="px-4 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.qr.colRef")}</th>
+                        <th className="px-4 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.qr.colQty")}</th>
+                        <th className="px-4 py-4 font-semibold text-gray-900 dark:text-slate-100"></th>
                       </tr>
                     </thead>
 
                     <tbody className="divide-y divide-white/10">
                       {items.map((it) => (
-                        <tr key={it.id} className="hover:bg-white/[0.03]">
+                        <tr key={it.id} className="hover:bg-gray-50 dark:bg-white/[0.03]">
                           <td className="px-4 py-4">
                             <div className="flex items-center gap-3">
                               <ProductIcon name={it.product.name} iconUrl={it.product.iconUrl} />
-                              <div className="text-sm font-semibold text-slate-100">{it.product.name}</div>
+                              <div className="text-sm font-semibold text-gray-900 dark:text-slate-100">{it.product.name}</div>
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-sm text-slate-400">{it.product.sku}</td>
-                          <td className="px-4 py-4 text-sm text-slate-400">{it.product.code}</td>
-                          <td className="px-4 py-4 text-sm text-slate-400">{it.product.referenceNumber}</td>
+                          <td className="px-4 py-4 text-sm text-gray-500 dark:text-slate-400">{it.product.sku}</td>
+                          <td className="px-4 py-4 text-sm text-gray-500 dark:text-slate-400">{it.product.code}</td>
+                          <td className="px-4 py-4 text-sm text-gray-500 dark:text-slate-400">{it.product.referenceNumber}</td>
                           <td className="px-4 py-4">
                             <QtyStepper
                               value={it.qty}
@@ -505,7 +505,7 @@ export default function PrintQrCodePage() {
 
                       {items.length === 0 && (
                         <tr>
-                          <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-500">
+                          <td colSpan={6} className="px-4 py-10 text-center text-sm text-gray-500 dark:text-slate-500">
                             {t("dash.qr.emptyNoProducts")}
                           </td>
                         </tr>
@@ -530,7 +530,7 @@ export default function PrintQrCodePage() {
 
                 <div className="flex items-end justify-start">
                   <div className="flex items-center gap-3 pb-1">
-                    <div className="text-sm font-medium text-slate-200">{t("dash.qr.refNumber")}</div>
+                    <div className="text-sm font-medium text-gray-700 dark:text-slate-200">{t("dash.qr.refNumber")}</div>
                     <Toggle
                       value={includeRef}
                       onChange={setIncludeRef}
@@ -547,7 +547,7 @@ export default function PrintQrCodePage() {
                 </div>
               )}
 
-              <div className="mt-7 border-t border-white/10 pt-5">
+              <div className="mt-7 border-t border-gray-200 dark:border-gray-700 pt-5">
                 <div className="flex flex-wrap items-center justify-end gap-3">
                   <button
                     type="button"
@@ -600,7 +600,7 @@ export default function PrintQrCodePage() {
         {previewItem ? (
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-3">
-              <div className="text-lg font-semibold text-slate-100">{previewItem.product.name}</div>
+              <div className="text-lg font-semibold text-gray-900 dark:text-slate-100">{previewItem.product.name}</div>
               <button
                 type="button"
                 onClick={() => printSingle(previewItem)}
@@ -611,29 +611,29 @@ export default function PrintQrCodePage() {
               </button>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-black/20 p-5">
+            <div className="rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-black/20 p-5">
               <div className="flex items-center gap-4">
-                <div className="grid h-[110px] w-[170px] place-items-center rounded-xl border border-white/10 bg-white/5">
+                <div className="grid h-[110px] w-[170px] place-items-center rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-white/5">
                   {previewItem.qrDataUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={previewItem.qrDataUrl} alt="QR" className="h-[85px] w-[85px] object-contain" />
                   ) : (
-                    <div className="text-sm text-slate-400">{t("dash.common.notGenerated")}</div>
+                    <div className="text-sm text-gray-500 dark:text-slate-400">{t("dash.common.notGenerated")}</div>
                   )}
                 </div>
 
-                <div className="text-sm text-slate-400">
+                <div className="text-sm text-gray-500 dark:text-slate-400">
                   {includeRef && (
                     <div className="mt-1">
                       {t("dash.qr.refNoPrint")}{" "}
-                      <span className="text-slate-200">{previewItem.product.referenceNumber}</span>
+                      <span className="text-gray-700 dark:text-slate-200">{previewItem.product.referenceNumber}</span>
                     </div>
                   )}
                   <div className="mt-1">
-                    {t("dash.qr.codeLabel")} <span className="text-slate-200">{previewItem.product.code}</span>
+                    {t("dash.qr.codeLabel")} <span className="text-gray-700 dark:text-slate-200">{previewItem.product.code}</span>
                   </div>
                   <div className="mt-1">
-                    {t("dash.qr.qtyLabel")} <span className="text-slate-200">{previewItem.qty}</span>
+                    {t("dash.qr.qtyLabel")} <span className="text-gray-700 dark:text-slate-200">{previewItem.qty}</span>
                   </div>
                 </div>
               </div>
@@ -650,8 +650,8 @@ export default function PrintQrCodePage() {
                     className={cn(
                       "rounded-lg border px-3 py-2 text-sm transition",
                       x.id === previewItem.id
-                        ? "border-orange-500/40 bg-orange-500/10 text-slate-100"
-                        : "border-white/10 bg-white/[0.02] text-slate-300 hover:bg-white/[0.06]"
+                        ? "border-orange-500/40 bg-orange-500/10 text-gray-900 dark:text-slate-100"
+                        : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/[0.02] text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/[0.06]"
                     )}
                   >
                     {x.product.name}
@@ -661,7 +661,7 @@ export default function PrintQrCodePage() {
             )}
           </div>
         ) : (
-          <div className="py-8 text-center text-sm text-slate-400">{t("dash.common.noPreview")}</div>
+          <div className="py-8 text-center text-sm text-gray-500 dark:text-slate-400">{t("dash.common.noPreview")}</div>
         )}
       </Modal>
     </div>
@@ -671,15 +671,15 @@ export default function PrintQrCodePage() {
 /* ----------------------------- UI Components ----------------------------- */
 
 const inputClass =
-  "w-full rounded-xl border border-white/10 bg-[#0b0f14] px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4";
+  "w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4";
 
 const selectClass =
-  "w-full appearance-none rounded-xl border border-white/10 bg-[#0b0f14] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4";
+  "w-full appearance-none rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4";
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-semibold text-slate-200">
+      <label className="mb-2 block text-sm font-semibold text-gray-700 dark:text-slate-200">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
@@ -693,7 +693,7 @@ function IconButton({ children, title, onClick }: { children: React.ReactNode; t
       type="button"
       title={title}
       onClick={onClick}
-      className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+      className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
     >
       {children}
     </button>
@@ -716,8 +716,8 @@ function Toggle({
       type="button"
       onClick={() => onChange(!value)}
       className={cn(
-        "relative h-6 w-11 rounded-full border border-white/10 transition",
-        value ? "bg-emerald-500/40" : "bg-white/10"
+        "relative h-6 w-11 rounded-full border border-gray-200 dark:border-gray-700 transition",
+        value ? "bg-emerald-500/40" : "bg-gray-100 dark:bg-white/10"
       )}
       aria-label={ariaLabel}
       title={title}
@@ -744,20 +744,20 @@ function QtyStepper({
   incTitle: string;
 }) {
   return (
-    <div className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-black/20 px-3 py-2">
+    <div className="inline-flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-50 dark:border-white/20 dark:bg-black/20 px-3 py-2">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, value - 1))}
-        className="grid h-7 w-7 place-items-center rounded-full border border-white/15 text-slate-200 hover:bg-white/10"
+        className="grid h-7 w-7 place-items-center rounded-full border border-gray-300 dark:border-white/15 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-white/10"
         title={decTitle}
       >
         <MinusIcon />
       </button>
-      <div className="min-w-6 text-center text-sm font-semibold text-slate-100">{value}</div>
+      <div className="min-w-6 text-center text-sm font-semibold text-gray-900 dark:text-slate-100">{value}</div>
       <button
         type="button"
         onClick={() => onChange(value + 1)}
-        className="grid h-7 w-7 place-items-center rounded-full border border-white/15 text-slate-200 hover:bg-white/10"
+        className="grid h-7 w-7 place-items-center rounded-full border border-gray-300 dark:border-white/15 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-white/10"
         title={incTitle}
       >
         <PlusIconSmall />
@@ -829,17 +829,17 @@ function Modal({
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center px-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/70" onClick={onClose} />
       <div
         ref={panelRef}
         className={cn(
-          "relative w-full rounded-2xl border border-white/10 bg-[#0b0f14] shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)]",
+          "relative w-full rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900 dark:shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)]",
           size === "md" ? "max-w-[700px]" : "max-w-[860px]"
         )}
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <h2 className="text-lg font-semibold">{title}</h2>
           <button
             type="button"

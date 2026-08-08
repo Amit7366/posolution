@@ -117,14 +117,14 @@ export default function InvoicesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f14] text-slate-100">
+    <div className="min-h-screen text-gray-900 dark:text-gray-200">
       <div className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(60%_40%_at_50%_0%,rgba(249,115,22,0.18),transparent_60%)]" />
 
       <div className="relative mx-auto w-full max-w-[1600px] px-6 py-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-semibold tracking-tight">{t("dash.invoices.title")}</h1>
-            <p className="mt-1 text-sm text-slate-400">{t("dash.invoices.manage")}</p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{t("dash.invoices.manage")}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -150,10 +150,10 @@ export default function InvoicesPage() {
 
         <CreateInvoiceModal open={createOpen} onClose={() => setCreateOpen(false)} onCreated={() => void refetch()} />
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 dark:border-gray-700 px-5 py-4">
             <div className="relative w-full max-w-xs">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-400">
                 <SearchIcon />
               </span>
               <input
@@ -163,7 +163,7 @@ export default function InvoicesPage() {
                   setPage(1);
                 }}
                 placeholder={t("dash.common.search")}
-                className="w-full rounded-xl border border-white/10 bg-[#0b0f14] py-2.5 pl-10 pr-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+                className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 py-2.5 pl-10 pr-3 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
               />
             </div>
 
@@ -175,7 +175,7 @@ export default function InvoicesPage() {
                   setPage(1);
                 }}
                 placeholder={t("dash.invoices.customerFilterPh")}
-                className="h-10 w-48 rounded-lg border border-white/10 bg-[#0b0f14] px-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
+                className="h-10 w-48 rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-3 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
               />
               <FilterSelect
                 value={status}
@@ -207,43 +207,43 @@ export default function InvoicesPage() {
           <div className="w-full overflow-x-auto">
             <table className="w-full min-w-[1200px]">
               <thead>
-                <tr className="text-left text-sm text-slate-300">
+                <tr className="text-left text-sm text-gray-600 dark:text-slate-300">
                   <th className="w-12 px-5 py-4" />
-                  <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.invoices.colInvoiceNo")}</th>
-                  <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.invoices.colCustomer")}</th>
-                  <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.invoices.colDueDate")}</th>
-                  <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.invoices.colAmount")}</th>
-                  <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.invoices.colPaid")}</th>
-                  <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.invoices.colAmountDue")}</th>
-                  <th className="px-5 py-4 font-semibold text-slate-100">{t("dash.invoices.colStatus")}</th>
-                  <th className="w-40 px-5 py-4 text-right font-semibold text-slate-100" />
+                  <th className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.invoices.colInvoiceNo")}</th>
+                  <th className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.invoices.colCustomer")}</th>
+                  <th className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.invoices.colDueDate")}</th>
+                  <th className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.invoices.colAmount")}</th>
+                  <th className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.invoices.colPaid")}</th>
+                  <th className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.invoices.colAmountDue")}</th>
+                  <th className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{t("dash.invoices.colStatus")}</th>
+                  <th className="w-40 px-5 py-4 text-right font-semibold text-gray-900 dark:text-slate-100" />
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-white/10">
                 {isLoading || isFetching ? (
                   <tr>
-                    <td colSpan={9} className="px-5 py-14 text-center text-sm text-slate-400">
+                    <td colSpan={9} className="px-5 py-14 text-center text-sm text-gray-500 dark:text-slate-400">
                       {t("dash.common.loading")}
                     </td>
                   </tr>
                 ) : (
                   rows.map((r) => (
-                    <tr key={r.id} className="hover:bg-white/[0.03]">
+                    <tr key={r.id} className="hover:bg-gray-50 dark:bg-white/[0.03]">
                       <td className="px-5 py-4">
-                        <div className="h-5 w-5 rounded-md border border-white/15 bg-black/20" />
+                        <div className="h-5 w-5 rounded-md border border-gray-300 dark:border-white/15 bg-gray-100 dark:bg-black/20" />
                       </td>
-                      <td className="px-5 py-4 text-sm font-semibold text-slate-100">{r.invoiceNo}</td>
+                      <td className="px-5 py-4 text-sm font-semibold text-gray-900 dark:text-slate-100">{r.invoiceNo}</td>
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <Avatar name={r.customer.name} />
-                          <div className="text-sm font-semibold text-slate-100">{r.customer.name}</div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-slate-100">{r.customer.name}</div>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-sm text-slate-300">{formatDate(r.dueDate)}</td>
-                      <td className="px-5 py-4 text-sm text-slate-400">{money(r.amount)}</td>
-                      <td className="px-5 py-4 text-sm text-slate-400">{money(r.paid)}</td>
-                      <td className="px-5 py-4 text-sm text-slate-400">{money(r.amountDue)}</td>
+                      <td className="px-5 py-4 text-sm text-gray-600 dark:text-slate-300">{formatDate(r.dueDate)}</td>
+                      <td className="px-5 py-4 text-sm text-gray-500 dark:text-slate-400">{money(r.amount)}</td>
+                      <td className="px-5 py-4 text-sm text-gray-500 dark:text-slate-400">{money(r.paid)}</td>
+                      <td className="px-5 py-4 text-sm text-gray-500 dark:text-slate-400">{money(r.amountDue)}</td>
                       <td className="px-5 py-4">
                         <InvoiceBadge status={r.status} t={t} />
                       </td>
@@ -251,7 +251,7 @@ export default function InvoicesPage() {
                         <div className="flex justify-end gap-2">
                           <Link
                             href={`/dashboard/sales/invoices/${r.id}`}
-                            className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-black/20 text-white transition hover:bg-white/[0.06] active:translate-y-[1px]"
+                            className="grid h-9 w-9 place-items-center rounded-lg border border-gray-300 bg-gray-100 text-gray-700 transition hover:bg-gray-200 dark:border-gray-600 dark:bg-black/20 dark:text-white dark:hover:bg-white/[0.06] active:translate-y-[1px]"
                             title={t("dash.invoices.view")}
                           >
                             <EyeIcon />
@@ -259,7 +259,7 @@ export default function InvoicesPage() {
                           <button
                             type="button"
                             disabled={deleting}
-                            className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-black/20 text-white transition hover:bg-white/[0.06] active:translate-y-[1px] disabled:opacity-40"
+                            className="grid h-9 w-9 place-items-center rounded-lg border border-gray-300 bg-gray-100 text-gray-700 transition hover:bg-gray-200 dark:border-gray-600 dark:bg-black/20 dark:text-white dark:hover:bg-white/[0.06] active:translate-y-[1px] disabled:opacity-40"
                             title={t("dash.common.delete")}
                             onClick={() => void onDelete(r.id)}
                           >
@@ -273,7 +273,7 @@ export default function InvoicesPage() {
 
                 {!isLoading && !isFetching && rows.length === 0 && (
                   <tr>
-                    <td colSpan={9} className="px-5 py-14 text-center text-sm text-slate-400">
+                    <td colSpan={9} className="px-5 py-14 text-center text-sm text-gray-500 dark:text-slate-400">
                       {t("dash.invoices.empty")}
                     </td>
                   </tr>
@@ -282,8 +282,8 @@ export default function InvoicesPage() {
             </table>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4">
-            <div className="flex items-center gap-2 text-sm text-slate-400">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 px-5 py-4">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
               <span>{t("dash.common.rowPerPage")}</span>
               <select
                 value={rowsPerPage}
@@ -291,7 +291,7 @@ export default function InvoicesPage() {
                   setRowsPerPage(parseInt(e.target.value, 10));
                   setPage(1);
                 }}
-                className="rounded-lg border border-white/10 bg-[#0b0f14] px-2 py-1.5 text-slate-200 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
+                className="rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-2 py-1.5 text-gray-700 dark:text-slate-200 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
               >
                 {[5, 10, 20, 50].map((n) => (
                   <option key={n} value={n}>
@@ -300,7 +300,7 @@ export default function InvoicesPage() {
                 ))}
               </select>
               <span>{t("dash.common.entries")}</span>
-              <span className="text-slate-500">{t("dash.common.totalCount", { count: total })}</span>
+              <span className="text-gray-500 dark:text-slate-500">{t("dash.common.totalCount", { count: total })}</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -336,7 +336,7 @@ function Avatar({ name }: { name: string }) {
     .map((w) => w[0]?.toUpperCase())
     .join("");
   return (
-    <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-lg bg-white/10 text-xs font-bold text-slate-100 ring-1 ring-white/10">
+    <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-lg bg-gray-100 dark:bg-white/10 text-xs font-bold text-gray-900 dark:text-slate-100 ring-1 ring-white/10">
       <span>{initials}</span>
     </div>
   );
@@ -356,7 +356,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-10 rounded-lg border border-white/10 bg-[#0b0f14] px-3 pr-9 text-sm font-semibold text-slate-100 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
+        className="h-10 rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-3 pr-9 text-sm font-semibold text-gray-900 dark:text-slate-100 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -364,7 +364,7 @@ function FilterSelect({
           </option>
         ))}
       </select>
-      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-400">
         <ChevronDownIcon />
       </span>
     </div>
@@ -377,7 +377,7 @@ function TopIconButton({ children, title, onClick }: { children: React.ReactNode
       type="button"
       title={title}
       onClick={onClick}
-      className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+      className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
     >
       {children}
     </button>
@@ -402,8 +402,8 @@ function PageNavButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/[0.02] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]",
-        disabled && "cursor-not-allowed opacity-40 hover:bg-white/[0.02] active:translate-y-0"
+        "grid h-8 w-8 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.02] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]",
+        disabled && "cursor-not-allowed opacity-40 hover:bg-gray-50 dark:bg-white/[0.02] active:translate-y-0"
       )}
     >
       {children}

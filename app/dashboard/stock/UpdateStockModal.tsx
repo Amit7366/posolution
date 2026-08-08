@@ -79,20 +79,20 @@ export function UpdateStockModal({
       }
     >
       <div className="space-y-4 text-sm">
-        <div className="grid grid-cols-2 gap-3 text-slate-200">
+        <div className="grid grid-cols-2 gap-3 text-gray-700 dark:text-slate-200">
           <div>
-            <div className="text-xs text-slate-400">{t("dash.stock.colWarehouse")}</div>
+            <div className="text-xs text-gray-500 dark:text-slate-400">{t("dash.stock.colWarehouse")}</div>
             <div className="font-medium">{row.warehouse}</div>
           </div>
           <div>
-            <div className="text-xs text-slate-400">{t("dash.stock.colStore")}</div>
+            <div className="text-xs text-gray-500 dark:text-slate-400">{t("dash.stock.colStore")}</div>
             <div className="font-medium">{row.store}</div>
           </div>
         </div>
         <div>
-          <div className="text-xs text-slate-400">{t("dash.stock.colProduct")}</div>
+          <div className="text-xs text-gray-500 dark:text-slate-400">{t("dash.stock.colProduct")}</div>
           <div className="mt-1 flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/10 text-xs font-bold">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 dark:bg-white/10 text-xs font-bold">
               {row.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={row.imageUrl} alt="" className="h-full w-full object-cover" />
@@ -101,25 +101,25 @@ export function UpdateStockModal({
               )}
             </div>
             <div>
-              <div className="font-semibold text-slate-100">{row.name}</div>
-              <div className="text-xs text-slate-400">
+              <div className="font-semibold text-gray-900 dark:text-slate-100">{row.name}</div>
+              <div className="text-xs text-gray-500 dark:text-slate-400">
                 {row.sku} · {row.category}
               </div>
             </div>
           </div>
         </div>
-        <div className="text-xs text-slate-500">
+        <div className="text-xs text-gray-500 dark:text-slate-500">
           {t("dash.stock.lastUpdated")} {row.updatedLabel}
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-300">{t("dash.stock.quantityLabel")}</label>
+          <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-slate-300">{t("dash.stock.quantityLabel")}</label>
           <input
             type="number"
             min={0}
             value={qty}
             onChange={(e) => setQty(e.target.value)}
             disabled={busy}
-            className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-slate-100 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
+            className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-slate-100 outline-none focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/20"
           />
         </div>
         {error ? <p className="text-sm text-red-300">{error}</p> : null}

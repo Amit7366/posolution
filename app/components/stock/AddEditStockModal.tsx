@@ -156,10 +156,10 @@ export function AddEditStockModal({
 
         {/* Selected product summary like screenshot (shows in edit; we show whenever product selected) */}
         {product && (
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-black/20">
             <div className="overflow-x-auto">
               <div className="min-w-[520px]">
-                <div className="grid grid-cols-[1.7fr_0.8fr_0.9fr_0.6fr] gap-3 rounded-xl bg-white/[0.04] px-4 py-3 text-sm font-semibold text-slate-200">
+                <div className="grid grid-cols-[1.7fr_0.8fr_0.9fr_0.6fr] gap-3 rounded-xl bg-white/[0.04] px-4 py-3 text-sm font-semibold text-gray-700 dark:text-slate-200">
                   <div>Product</div>
                   <div>SKU</div>
                   <div>Category</div>
@@ -169,10 +169,10 @@ export function AddEditStockModal({
                 <div className="grid grid-cols-[1.7fr_0.8fr_0.9fr_0.6fr] items-center gap-3 px-4 py-4">
                   <div className="flex items-center gap-3">
                     <ProductIcon name={product.name} iconUrl={product.iconUrl} />
-                    <div className="text-sm font-semibold text-slate-100">{product.name}</div>
+                    <div className="text-sm font-semibold text-gray-900 dark:text-slate-100">{product.name}</div>
                   </div>
-                  <div className="text-sm text-slate-400">{product.sku}</div>
-                  <div className="text-sm text-slate-400">{product.category}</div>
+                  <div className="text-sm text-gray-500 dark:text-slate-400">{product.sku}</div>
+                  <div className="text-sm text-gray-500 dark:text-slate-400">{product.category}</div>
                   <div className="flex justify-end">
                     <QtyStepper value={qty} onChange={setQty} />
                   </div>
@@ -194,12 +194,12 @@ export function AddEditStockModal({
 /* -------- small UI parts -------- */
 
 const selectClass =
-  "w-full appearance-none rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4";
+  "w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none ring-orange-500/30 transition focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-slate-100";
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-slate-200">
+      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-700 dark:text-slate-200">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
@@ -209,20 +209,20 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 function QtyStepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
-    <div className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-black/20 px-3 py-2">
+    <div className="inline-flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-50 px-3 py-2 dark:border-white/20 dark:bg-black/20">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, value - 1))}
-        className="grid h-7 w-7 place-items-center rounded-full border border-white/15 text-slate-200 hover:bg-white/10"
+        className="grid h-7 w-7 place-items-center rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-white/15 dark:text-slate-200 dark:hover:bg-white/10"
         title="Decrease"
       >
         <MinusIcon />
       </button>
-      <div className="min-w-6 text-center text-sm font-semibold text-slate-100">{value}</div>
+      <div className="min-w-6 text-center text-sm font-semibold text-gray-900 dark:text-slate-100">{value}</div>
       <button
         type="button"
         onClick={() => onChange(value + 1)}
-        className="grid h-7 w-7 place-items-center rounded-full border border-white/15 text-slate-200 hover:bg-white/10"
+        className="grid h-7 w-7 place-items-center rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-white/15 dark:text-slate-200 dark:hover:bg-white/10"
         title="Increase"
       >
         <PlusIconSmall />
@@ -288,7 +288,7 @@ function ProductPicker({
   return (
     <div ref={wrapRef} className="relative">
       <div className="relative">
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-400">
           <SearchIcon />
         </span>
 
@@ -304,16 +304,16 @@ function ProductPicker({
           }}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-xl border border-white/10 bg-[#070a0f] py-3 pl-10 pr-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition",
+            "w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 py-3 pl-10 pr-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition",
             "focus:border-orange-500/30 focus:ring-4"
           )}
         />
       </div>
 
       {open && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-white/10 bg-[#0b0f14] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.95)]">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.95)]">
           {filtered.length === 0 ? (
-            <div className="px-4 py-3 text-sm text-slate-400">No products</div>
+            <div className="px-4 py-3 text-sm text-gray-500 dark:text-slate-400">No products</div>
           ) : (
             <div className="max-h-64 overflow-auto">
               {filtered.map((p) => (
@@ -329,8 +329,8 @@ function ProductPicker({
                 >
                   <ProductIcon name={p.name} iconUrl={p.iconUrl} />
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-slate-100">{p.name}</div>
-                    <div className="text-xs text-slate-400">
+                    <div className="truncate text-sm font-semibold text-gray-900 dark:text-slate-100">{p.name}</div>
+                    <div className="text-xs text-gray-500 dark:text-slate-400">
                       {p.sku} • {p.category}
                     </div>
                   </div>

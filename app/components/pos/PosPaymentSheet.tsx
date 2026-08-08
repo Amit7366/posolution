@@ -27,6 +27,7 @@ export default function PosPaymentSheet({ open, onClose }: Props) {
   const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
 
   const [paymentType, setPaymentType] = useState<PaymentType>("cash");
+  const [amountReceived, setAmountReceived] = useState("");
   const [cashAmount, setCashAmount] = useState("");
   const [notes, setNotes] = useState("");
   const [customerNote, setCustomerNote] = useState("");
@@ -34,26 +35,88 @@ export default function PosPaymentSheet({ open, onClose }: Props) {
   useEffect(() => {
     if (!open) return;
     setPaymentType("cash");
+    setAmountReceived(String(grandTotal));
     setCashAmount(String(grandTotal));
     setNotes("");
     setCustomerNote("");
   }, [open, grandTotal]);
 
+  const receivedNum = Math.min(
+    grandTotal,
+    Math.max(0, Math.round((Number(amountReceived) || 0) * 100) / 100)
+  );
+  const amountDue = useMemo(
+    () => Math.round((grandTotal - receivedNum) * 100) / 100,
+    [grandTotal, receivedNum]
+  );
   const cashNum = Number(cashAmount) || 0;
   const changeAmount = useMemo(
-    () => Math.max(0, Math.round((cashNum - grandTotal) * 100) / 100),
-    [cashNum, grandTotal]
+    () => Math.max(0, Math.round((cashNum - receivedNum) * 100) / 100),
+    [cashNum, receivedNum]
   );
 
   if (!open) return null;
 
-  async function submit(status: "paid" | "unpaid") {
+  async function submitConfirm() {
     if (items.length === 0) {
       toast.error("Cart is empty");
       return;
     }
-    if (status === "paid" && paymentType === "cash" && cashNum < grandTotal) {
-      toast.error("Cash amount is less than order total");
+    if (receivedNum < 0 || receivedNum > grandTotal) {
+      toast.error("Received amount must be between 0 and order total");
+      return;
+    }
+    if (paymentType === "cash" && cashNum < receivedNum) {
+      toast.error("Cash amount is less than amount received");
+      return;
+    }
+
+    const lineItems = items.map((i, idx) => ({
+      productId: i.productId,
+      qty: i.qty,
+      unitPrice: i.price,
+      discount: idx === 0 ? cartDiscount : 0,
+    }));
+
+    const status = receivedNum >= grandTotal ? "paid" : "unpaid";
+
+    try {
+      await createInvoice({
+        ...(customer.id ? { customerId: customer.id } : {}),
+        customerName: customer.name || "Walking Customer",
+        customerPhone: customer.phone ?? "",
+        customerEmail: customer.email ?? "",
+        customerAddress: customer.address ?? "",
+        title: "POS Sale",
+        items: lineItems,
+        vatPercent,
+        paid: receivedNum,
+        status,
+        hold: false,
+        dueDate: todayDueDate(),
+        notes,
+        customerNote,
+        paymentType,
+        cashAmount: paymentType === "cash" ? cashNum : receivedNum,
+        changeAmount: paymentType === "cash" ? changeAmount : 0,
+      }).unwrap();
+
+      if (status === "paid") toast.success("Order confirmed (paid)");
+      else if (receivedNum > 0) toast.success(`Order confirmed — due ${formatTaka(amountDue)}`);
+      else toast.success("Order confirmed as due");
+      clearCart();
+      onClose();
+    } catch (err: unknown) {
+      const msg =
+        (err as { data?: { message?: string } })?.data?.message ||
+        "Failed to place order";
+      toast.error(msg);
+    }
+  }
+
+  async function submitHold() {
+    if (items.length === 0) {
+      toast.error("Cart is empty");
       return;
     }
 
@@ -66,6 +129,7 @@ export default function PosPaymentSheet({ open, onClose }: Props) {
 
     try {
       await createInvoice({
+        ...(customer.id ? { customerId: customer.id } : {}),
         customerName: customer.name || "Walking Customer",
         customerPhone: customer.phone ?? "",
         customerEmail: customer.email ?? "",
@@ -73,23 +137,24 @@ export default function PosPaymentSheet({ open, onClose }: Props) {
         title: "POS Sale",
         items: lineItems,
         vatPercent,
-        paid: status === "paid" ? grandTotal : 0,
-        status,
+        paid: 0,
+        status: "unpaid",
+        hold: true,
         dueDate: todayDueDate(),
         notes,
         customerNote,
         paymentType,
-        cashAmount: status === "paid" ? cashNum : 0,
-        changeAmount: status === "paid" && paymentType === "cash" ? changeAmount : 0,
+        cashAmount: 0,
+        changeAmount: 0,
       }).unwrap();
 
-      toast.success(status === "paid" ? "Order confirmed" : "Order held (unpaid)");
+      toast.success("Order held (no stock deducted)");
       clearCart();
       onClose();
     } catch (err: unknown) {
       const msg =
         (err as { data?: { message?: string } })?.data?.message ||
-        "Failed to place order";
+        "Failed to hold order";
       toast.error(msg);
     }
   }
@@ -138,10 +203,36 @@ export default function PosPaymentSheet({ open, onClose }: Props) {
             </select>
           </label>
 
+          <label className="block text-sm">
+            <span className="mb-1 block text-gray-600">Amount Received</span>
+            <input
+              type="number"
+              min={0}
+              max={grandTotal}
+              step="0.01"
+              value={amountReceived}
+              onChange={(e) => {
+                setAmountReceived(e.target.value);
+                if (paymentType === "cash") setCashAmount(e.target.value);
+              }}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 outline-none focus:border-orange-500"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Enter 0 for full due, or less than total for partial pay
+            </p>
+          </label>
+
+          <div className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2.5 text-sm">
+            <div className="flex justify-between text-gray-700">
+              <span>Due</span>
+              <span className="font-semibold text-orange-700">{formatTaka(amountDue)}</span>
+            </div>
+          </div>
+
           {paymentType === "cash" && (
             <>
               <label className="block text-sm">
-                <span className="mb-1 block text-gray-600">Cash Amount*</span>
+                <span className="mb-1 block text-gray-600">Cash Tendered</span>
                 <input
                   type="number"
                   min={0}
@@ -151,7 +242,7 @@ export default function PosPaymentSheet({ open, onClose }: Props) {
                 />
               </label>
               <label className="block text-sm">
-                <span className="mb-1 block text-gray-600">Change Amount*</span>
+                <span className="mb-1 block text-gray-600">Change</span>
                 <input
                   readOnly
                   value={formatTaka(changeAmount)}
@@ -186,18 +277,22 @@ export default function PosPaymentSheet({ open, onClose }: Props) {
           <button
             type="button"
             disabled={isLoading}
-            onClick={() => void submit("paid")}
+            onClick={() => void submitConfirm()}
             className="w-full rounded-lg bg-orange-500 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-orange-600 disabled:opacity-60"
           >
-            {isLoading ? "Processing…" : "Confirm"}
+            {isLoading
+              ? "Processing…"
+              : amountDue > 0
+                ? `Confirm${receivedNum > 0 ? " (Partial)" : " (Due)"}`
+                : "Confirm (Paid)"}
           </button>
           <button
             type="button"
             disabled={isLoading}
-            onClick={() => void submit("unpaid")}
+            onClick={() => void submitHold()}
             className="w-full rounded-lg border border-gray-300 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
           >
-            Hold / Unpaid
+            Hold (no stock)
           </button>
         </div>
       </aside>

@@ -59,16 +59,16 @@ export default function InvoiceDetailsPage() {
 
   if (!id) {
     return (
-      <div className="min-h-screen bg-[#0b0f14] text-slate-100 grid place-items-center">
-        <div className="text-slate-400">Invalid id</div>
+      <div className="min-h-screen grid place-items-center text-gray-900 dark:text-gray-200">
+        <div className="text-gray-500 dark:text-slate-400">Invalid id</div>
       </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0b0f14] text-slate-100 grid place-items-center">
-        <div className="text-slate-400">{t("dash.common.loading")}</div>
+      <div className="min-h-screen grid place-items-center text-gray-900 dark:text-gray-200">
+        <div className="text-gray-500 dark:text-slate-400">{t("dash.common.loading")}</div>
       </div>
     );
   }
@@ -76,8 +76,8 @@ export default function InvoiceDetailsPage() {
   const errMsg = getQueryErrorMessage(error);
   if (errMsg || !invoice || !rawDoc) {
     return (
-      <div className="min-h-screen bg-[#0b0f14] text-slate-100 grid place-items-center">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+      <div className="min-h-screen grid place-items-center text-gray-900 dark:text-gray-200">
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/[0.03] p-6">
           <div className="text-lg font-semibold">{t("dash.invoiceDetail.notFound")}</div>
           {errMsg ? <p className="mt-2 text-sm text-red-300">{errMsg}</p> : null}
           <Link className="mt-3 inline-block text-orange-400 hover:text-orange-300" href="/dashboard/sales/invoices">
@@ -91,7 +91,7 @@ export default function InvoiceDetailsPage() {
   const amountDue = Math.round((rawDoc.totalAmount - rawDoc.paid) * 100) / 100;
 
   return (
-    <div className="min-h-screen bg-[#0b0f14] text-slate-100">
+    <div className="min-h-screen text-gray-900 dark:text-gray-200">
       <div className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(60%_40%_at_50%_0%,rgba(249,115,22,0.18),transparent_60%)]" />
 
       <div className="relative mx-auto w-full max-w-[1600px] px-6 py-7">
@@ -121,41 +121,41 @@ export default function InvoiceDetailsPage() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
-          <div className="flex flex-col gap-6 border-b border-white/10 px-6 py-6 lg:flex-row lg:items-start lg:justify-between">
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+          <div className="flex flex-col gap-6 border-b border-gray-200 dark:border-gray-700 px-6 py-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-[280px]">
               <div className="flex items-center gap-3">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-white/10 ring-1 ring-white/10">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-gray-100 dark:bg-white/10 ring-1 ring-white/10">
                   <span className="text-lg font-black text-white">D</span>
                 </div>
                 <div>
                   <div className="text-2xl font-bold tracking-tight">
                     Dreams <span className="text-xs font-semibold text-orange-400">POS</span>
                   </div>
-                  <div className="text-sm text-slate-400">3099 Kennedy Court Framingham, MA 01702</div>
+                  <div className="text-sm text-gray-500 dark:text-slate-400">3099 Kennedy Court Framingham, MA 01702</div>
                 </div>
               </div>
             </div>
 
             <div className="text-right">
-              <div className="text-sm text-slate-400">
+              <div className="text-sm text-gray-500 dark:text-slate-400">
                 {t("dash.invoiceDetail.invoiceNo")}{" "}
                 <span className="font-semibold text-orange-400">#{invoice.invoiceNo}</span>
               </div>
-              <div className="mt-2 space-y-1 text-sm text-slate-300">
+              <div className="mt-2 space-y-1 text-sm text-gray-600 dark:text-slate-300">
                 <div>
                   {t("dash.invoiceDetail.created")}{" "}
-                  <span className="text-slate-100">{formatDate(invoice.createdAt)}</span>
+                  <span className="text-gray-900 dark:text-slate-100">{formatDate(invoice.createdAt)}</span>
                 </div>
                 <div>
                   {t("dash.invoiceDetail.due")}{" "}
-                  <span className="text-slate-100">{formatDate(invoice.dueDate)}</span>
+                  <span className="text-gray-900 dark:text-slate-100">{formatDate(invoice.dueDate)}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid gap-8 border-b border-white/10 px-6 py-6 lg:grid-cols-3">
+          <div className="grid gap-8 border-b border-gray-200 dark:border-gray-700 px-6 py-6 lg:grid-cols-3">
             <InfoBlock
               title={t("dash.invoiceDetail.from")}
               name={invoice.from.name}
@@ -176,17 +176,17 @@ export default function InvoiceDetailsPage() {
             />
 
             <div>
-              <div className="text-sm font-semibold text-slate-200">{t("dash.invoiceDetail.paymentStatus")}</div>
+              <div className="text-sm font-semibold text-gray-700 dark:text-slate-200">{t("dash.invoiceDetail.paymentStatus")}</div>
               <div className="mt-3">
                 <InvoiceBadge status={displayStatus} t={t} />
               </div>
 
-              <div className="mt-5 space-y-2 rounded-xl border border-white/10 bg-black/20 p-4">
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <div className="mt-5 space-y-2 rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-black/20 p-4">
+                <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
                   {t("dash.invoiceDetail.changeStatus")}
                 </div>
                 <select
-                  className="w-full rounded-lg border border-white/10 bg-[#0b0f14] px-3 py-2 text-sm text-slate-100 outline-none focus:border-orange-500/30"
+                  className="w-full rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-slate-100 outline-none focus:border-orange-500/30"
                   value={apiStatus ?? rawDoc.status}
                   onChange={(e) => setApiStatus(e.target.value as "unpaid" | "paid")}
                 >
@@ -201,16 +201,16 @@ export default function InvoiceDetailsPage() {
                 >
                   {t("dash.invoiceDetail.statusSave")}
                 </button>
-                <p className="text-xs text-slate-500">{t("dash.invoiceDetail.paymentUpdateHint")}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-500">{t("dash.invoiceDetail.paymentUpdateHint")}</p>
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-                <div className="rounded-lg border border-white/10 bg-black/15 px-3 py-2">
-                  <div className="text-xs text-slate-500">{t("dash.invoiceDetail.amountPaidLabel")}</div>
-                  <div className="font-semibold text-slate-100">{money(rawDoc.paid)}</div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-50 dark:bg-black/15 px-3 py-2">
+                  <div className="text-xs text-gray-500 dark:text-slate-500">{t("dash.invoiceDetail.amountPaidLabel")}</div>
+                  <div className="font-semibold text-gray-900 dark:text-slate-100">{money(rawDoc.paid)}</div>
                 </div>
-                <div className="rounded-lg border border-white/10 bg-black/15 px-3 py-2">
-                  <div className="text-xs text-slate-500">{t("dash.invoiceDetail.amountDueLabel")}</div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-50 dark:bg-black/15 px-3 py-2">
+                  <div className="text-xs text-gray-500 dark:text-slate-500">{t("dash.invoiceDetail.amountDueLabel")}</div>
                   <div className="font-semibold text-orange-200">{money(amountDue)}</div>
                 </div>
               </div>
@@ -221,23 +221,23 @@ export default function InvoiceDetailsPage() {
             </div>
           </div>
 
-          <div className="px-6 py-5 text-sm text-slate-300">
+          <div className="px-6 py-5 text-sm text-gray-600 dark:text-slate-300">
             {t("dash.invoiceDetail.invoiceFor")}{" "}
-            <span className="font-semibold text-slate-100">{invoice.title}</span>
+            <span className="font-semibold text-gray-900 dark:text-slate-100">{invoice.title}</span>
           </div>
 
           {rawDoc.notes ? (
-            <div className="border-b border-white/10 px-6 pb-5 text-sm text-slate-400">
-              <span className="font-semibold text-slate-300">{t("dash.invoiceDetail.notesLabel")}: </span>
+            <div className="border-b border-gray-200 dark:border-gray-700 px-6 pb-5 text-sm text-gray-500 dark:text-slate-400">
+              <span className="font-semibold text-gray-600 dark:text-slate-300">{t("dash.invoiceDetail.notesLabel")}: </span>
               {rawDoc.notes}
             </div>
           ) : null}
 
           <div className="px-6 pb-6">
-            <div className="overflow-x-auto rounded-2xl border border-white/10 bg-black/20">
+            <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-black/20">
               <table className="w-full min-w-[900px]">
                 <thead>
-                  <tr className="bg-white/[0.04] text-left text-sm text-slate-200">
+                  <tr className="bg-gray-50 dark:bg-white/[0.04] text-left text-sm text-gray-700 dark:text-slate-200">
                     <th className="px-5 py-4">{t("dash.invoiceDetail.jobDesc")}</th>
                     <th className="px-5 py-4">{t("dash.invoiceDetail.qty")}</th>
                     <th className="px-5 py-4">{t("dash.invoiceDetail.cost")}</th>
@@ -248,11 +248,11 @@ export default function InvoiceDetailsPage() {
                 <tbody className="divide-y divide-white/10">
                   {invoice.items.map((it) => (
                     <tr key={it.id} className="text-sm">
-                      <td className="px-5 py-4 font-semibold text-slate-100">{it.description}</td>
-                      <td className="px-5 py-4 text-slate-300">{it.qty}</td>
-                      <td className="px-5 py-4 text-slate-300">{money(it.cost)}</td>
-                      <td className="px-5 py-4 text-slate-300">{money(it.discount)}</td>
-                      <td className="px-5 py-4 text-right font-semibold text-slate-100">{money(it.total)}</td>
+                      <td className="px-5 py-4 font-semibold text-gray-900 dark:text-slate-100">{it.description}</td>
+                      <td className="px-5 py-4 text-gray-600 dark:text-slate-300">{it.qty}</td>
+                      <td className="px-5 py-4 text-gray-600 dark:text-slate-300">{money(it.cost)}</td>
+                      <td className="px-5 py-4 text-gray-600 dark:text-slate-300">{money(it.discount)}</td>
+                      <td className="px-5 py-4 text-right font-semibold text-gray-900 dark:text-slate-100">{money(it.total)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -261,7 +261,7 @@ export default function InvoiceDetailsPage() {
 
             <div className="mt-8 grid gap-8 lg:grid-cols-2">
               <div />
-              <div className="space-y-4 border-t border-white/10 pt-6">
+              <div className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-6">
                 <Row label={t("dash.invoiceDetail.subTotal")} value={money(invoice.subTotal)} />
                 <Row
                   label={t("dash.invoiceDetail.discountPercent", { percent: discountPct })}
@@ -272,13 +272,13 @@ export default function InvoiceDetailsPage() {
                   value={money(invoice.vatAmount)}
                 />
                 <div className="flex items-center justify-between pt-2">
-                  <div className="text-base font-semibold text-slate-200">{t("dash.invoiceDetail.totalAmount")}</div>
-                  <div className="text-xl font-bold text-slate-100">{money(invoice.totalAmount)}</div>
+                  <div className="text-base font-semibold text-gray-700 dark:text-slate-200">{t("dash.invoiceDetail.totalAmount")}</div>
+                  <div className="text-xl font-bold text-gray-900 dark:text-slate-100">{money(invoice.totalAmount)}</div>
                 </div>
 
-                <div className="pt-2 text-xs text-slate-400">
+                <div className="pt-2 text-xs text-gray-500 dark:text-slate-400">
                   {t("dash.invoiceDetail.amountWords")}{" "}
-                  <span className="text-slate-200">{numberToWordsUSD(invoice.totalAmount)}</span>
+                  <span className="text-gray-700 dark:text-slate-200">{numberToWordsUSD(invoice.totalAmount)}</span>
                 </div>
               </div>
             </div>
@@ -308,10 +308,10 @@ function InfoBlock({
 }) {
   return (
     <div>
-      <div className="text-sm font-semibold text-slate-200">{title}</div>
-      <div className="mt-2 text-lg font-bold text-slate-100">{name || "—"}</div>
-      <div className="mt-1 text-sm text-slate-400">{address || "—"}</div>
-      <div className="mt-3 space-y-1 text-sm text-slate-300">
+      <div className="text-sm font-semibold text-gray-700 dark:text-slate-200">{title}</div>
+      <div className="mt-2 text-lg font-bold text-gray-900 dark:text-slate-100">{name || "—"}</div>
+      <div className="mt-1 text-sm text-gray-500 dark:text-slate-400">{address || "—"}</div>
+      <div className="mt-3 space-y-1 text-sm text-gray-600 dark:text-slate-300">
         <div>
           {emailPrefix} {email || "—"}
         </div>
@@ -326,8 +326,8 @@ function InfoBlock({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between text-sm">
-      <div className="text-slate-300">{label}</div>
-      <div className="font-semibold text-slate-100">{value}</div>
+      <div className="text-gray-600 dark:text-slate-300">{label}</div>
+      <div className="font-semibold text-gray-900 dark:text-slate-100">{value}</div>
     </div>
   );
 }
@@ -338,7 +338,7 @@ function TopIconButton({ children, title, onClick }: { children: React.ReactNode
       type="button"
       title={title}
       onClick={onClick}
-      className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+      className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
     >
       {children}
     </button>

@@ -19,6 +19,7 @@ import {
   CreditCard,
   Receipt,
   Monitor,
+  Wallet,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -133,6 +134,12 @@ export const sidebarMenus: MenuItem[] = [
     link: "/dashboard/sales",
     role: "all",
     children: [
+      {
+        titleKey: "sidebar.dues",
+        icon: Wallet,
+        link: "/dashboard/sales/dues",
+        role: "all",
+      },
       {
         titleKey: "sidebar.invoices",
         icon: FileText,

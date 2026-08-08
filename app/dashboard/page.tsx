@@ -10,6 +10,8 @@ import {
   X,
   Calendar,
   Settings,
+  Phone,
+  Banknote,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -20,6 +22,7 @@ import TopSellingProducts, { mapTopProductsToRows } from "../components/dashboar
 import LowStockProducts from "../components/dashboard/LowStockProducts";
 import RecentSales, { mapRecentInvoicesToRows } from "../components/dashboard/RecentSales";
 import DashboardWidgetsDemo from "../components/dashboard/DashobardWidgets";
+import CollectDueModal, { type CollectDueTarget } from "@/app/components/dues/CollectDueModal";
 import { useGetDashboardSummaryQuery } from "@/redux/api/baseApi";
 import { parseDashboardSummaryPayload } from "@/app/types/dashboard-summary";
 import { money } from "@/app/lib/money";
@@ -52,8 +55,9 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(true);
   const [chartRange, setChartRange] = useState<SalesChartRange>("1W");
+  const [collectTarget, setCollectTarget] = useState<CollectDueTarget | null>(null);
 
-  const { data: raw, isLoading, isFetching, error } = useGetDashboardSummaryQuery({ chartRange });
+  const { data: raw, isLoading, isFetching, error, refetch } = useGetDashboardSummaryQuery({ chartRange });
 
   const summary = useMemo(() => parseDashboardSummaryPayload(raw), [raw]);
 
@@ -175,12 +179,97 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+            {t("dash.dashboard.dueReceivables")}
+          </h2>
+          <Link
+            href="/dashboard/sales/dues"
+            className="text-sm font-medium text-blue-600 hover:underline"
+          >
+            {t("dash.dashboard.viewAll")}
+          </Link>
+        </div>
+        {busy ? (
+          <div className="px-5 py-8 text-sm text-gray-500">{t("dash.common.loading")}</div>
+        ) : !summary?.dueInvoices?.length ? (
+          <div className="px-5 py-8 text-sm text-gray-500">{t("dash.dashboard.noDues")}</div>
+        ) : (
+          <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+            {summary.dueInvoices.map((d) => (
+              <li
+                key={d.id}
+                className="flex flex-wrap items-center justify-between gap-3 px-5 py-3"
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{d.invoiceNo}</span>
+                    {d.overdue ? (
+                      <span className="rounded bg-red-100 px-2 py-0.5 text-[11px] font-medium text-red-700 dark:bg-red-500/20 dark:text-red-300">
+                        {t("dash.dues.overdue")}
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="truncate text-sm text-gray-500">
+                    {d.customerName || "—"}
+                    {d.customerPhone ? ` · ${d.customerPhone}` : ""}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold text-orange-600 dark:text-orange-400">
+                    {money(d.amountDue)}
+                  </span>
+                  {d.customerPhone ? (
+                    <a
+                      href={`tel:${d.customerPhone}`}
+                      className="inline-flex items-center gap-1 rounded-md border border-gray-300 px-2 py-1.5 text-xs hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800"
+                    >
+                      <Phone size={14} />
+                      {t("dash.dashboard.call")}
+                    </a>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCollectTarget({
+                        id: d.id,
+                        invoiceNo: d.invoiceNo,
+                        customerName: d.customerName,
+                        amountDue: d.amountDue,
+                      })
+                    }
+                    className="inline-flex items-center gap-1 rounded-md bg-orange-500 px-2 py-1.5 text-xs font-medium text-white hover:bg-orange-600"
+                  >
+                    <Banknote size={14} />
+                    {t("dash.dashboard.collect")}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
           <h3 className="text-xl font-semibold">{busy ? "…" : money(summary?.totals.profit ?? 0)}</h3>
           <p className="text-gray-600 text-sm mt-1">{t("dash.dashboard.profit")}</p>
           {busy ? <p className="text-sm mt-3">…</p> : <TrendLine value={summary?.trends.profitPctVsLastMonth ?? null} variant="onLight" />}
           <Link href="/dashboard/sales/invoices" className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline">
+            {t("dash.dashboard.viewAll")}
+          </Link>
+        </div>
+
+        <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
+          <h3 className="text-xl font-semibold">{busy ? "…" : money(summary?.totals.collectedIncome ?? 0)}</h3>
+          <p className="text-gray-600 text-sm mt-1">{t("dash.dashboard.collectedIncome")}</p>
+          {busy ? (
+            <p className="text-sm mt-3">…</p>
+          ) : (
+            <TrendLine value={summary?.trends.collectedIncomePctVsLastMonth ?? null} variant="onLight" />
+          )}
+          <Link href="/dashboard/sales/dues" className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline">
             {t("dash.dashboard.viewAll")}
           </Link>
         </div>
@@ -193,16 +282,9 @@ export default function DashboardPage() {
           ) : (
             <TrendLine value={summary?.trends.invoiceDuePctVsLastMonth ?? null} variant="onLight" />
           )}
-          <Link href="/dashboard/sales/invoices" className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline">
+          <Link href="/dashboard/sales/dues" className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline">
             {t("dash.dashboard.viewAll")}
           </Link>
-        </div>
-
-        <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold">{busy ? "…" : money(summary?.totals.totalExpenses ?? 0)}</h3>
-          <p className="text-gray-600 text-sm mt-1">{t("dash.dashboard.totalExpenses")}</p>
-          <p className="text-gray-400 text-sm mt-3">—</p>
-          <span className="mt-3 inline-block text-sm font-medium text-gray-400">{t("dash.dashboard.viewAll")}</span>
         </div>
 
         <div className="p-5 bg-white dark:bg-gray-900 border rounded-xl shadow-sm">
@@ -252,6 +334,13 @@ export default function DashboardPage() {
         productCount={summary?.categoryStats.productCount ?? 0}
         heatmap={summary?.orderHeatmap ?? []}
         isLoading={busy}
+      />
+
+      <CollectDueModal
+        open={!!collectTarget}
+        target={collectTarget}
+        onClose={() => setCollectTarget(null)}
+        onCollected={() => void refetch()}
       />
     </div>
   );

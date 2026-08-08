@@ -107,20 +107,20 @@ export function AddEditWarrantyModal({
     >
       <div className="space-y-5">
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">
+          <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">
             Warranty <span className="text-orange-400">*</span>
           </label>
           <input
             name="warrantyName"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+            className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
           />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200">
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">
               Duration <span className="text-orange-400">*</span>
             </label>
             <input
@@ -128,18 +128,18 @@ export function AddEditWarrantyModal({
               min={1}
               value={duration}
               onChange={(e) => setDuration(Math.max(1, Number(e.target.value || 1)))}
-              className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+              className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200">
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">
               Period <span className="text-orange-400">*</span>
             </label>
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value as WarrantyPeriod)}
-              className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+              className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
             >
               <option value="">Select</option>
               <option value="Day">Day</option>
@@ -151,19 +151,19 @@ export function AddEditWarrantyModal({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">
+          <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">
             Description <span className="text-orange-400">*</span>
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full resize-none rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+            className="w-full resize-none rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
           />
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-          <div className="text-sm font-medium text-slate-200">Active status</div>
+        <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/[0.02] px-4 py-3">
+          <div className="text-sm font-medium text-gray-700 dark:text-slate-200">Active status</div>
           <Toggle value={status} onChange={setStatus} ariaLabel="Warranty active status" />
         </div>
 

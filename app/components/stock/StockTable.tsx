@@ -169,7 +169,7 @@ function ActionButton({
       type="button"
       title={title}
       onClick={onClick}
-      className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-black/20 text-white transition hover:bg-white/[0.06] active:translate-y-[1px]"
+      className="grid h-9 w-9 place-items-center rounded-lg border border-gray-300 bg-gray-100 text-gray-700 transition hover:bg-gray-200 dark:border-gray-600 dark:bg-black/20 dark:text-white dark:hover:bg-white/[0.06] active:translate-y-[1px]"
     >
       {children}
     </button>

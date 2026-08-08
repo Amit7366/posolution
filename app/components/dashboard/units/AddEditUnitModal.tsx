@@ -86,27 +86,27 @@ export function AddEditUnitModal({
     >
       <div className="space-y-5">
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">{t("dash.units.unitLabel")}</label>
+          <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">{t("dash.units.unitLabel")}</label>
           <input
             name="unit"
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+            className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-200">{t("dash.units.shortNameLabel")}</label>
+          <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-200">{t("dash.units.shortNameLabel")}</label>
           <input
             name="shortName"
             value={shortName}
             onChange={(e) => setShortName(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-[#070a0f] px-4 py-3 text-sm text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+            className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-slate-100 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
           />
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-          <div className="text-sm font-medium text-slate-200">{t("dash.units.statusLabel")}</div>
+        <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/[0.02] px-4 py-3">
+          <div className="text-sm font-medium text-gray-700 dark:text-slate-200">{t("dash.units.statusLabel")}</div>
           <Toggle value={status} onChange={setStatus} ariaLabel={t("dash.units.statusLabel")} />
         </div>
 

@@ -35,16 +35,16 @@ export function UnitToolbar({
   t: TFn;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 dark:border-gray-700 px-5 py-4">
       <div className="relative w-full max-w-xs">
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-400">
           <SearchIcon />
         </span>
         <input
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder={t("dash.common.search")}
-          className="w-full rounded-xl border border-white/10 bg-[#0b0f14] py-2.5 pl-10 pr-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
+          className="w-full rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 py-2.5 pl-10 pr-3 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 outline-none ring-orange-500/30 transition focus:border-orange-500/30 focus:ring-4"
         />
       </div>
 
@@ -95,7 +95,7 @@ function IconButton({
       type="button"
       title={title}
       onClick={onClick}
-      className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06] active:translate-y-[1px]"
+      className="grid h-10 w-10 place-items-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-white/[0.06] active:translate-y-[1px]"
     >
       {children}
     </button>

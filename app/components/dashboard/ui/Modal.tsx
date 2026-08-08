@@ -84,7 +84,7 @@ export function Modal({ open, title, onClose, children, footer, className, initi
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center px-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/70" onClick={onClose} />
 
       <div
         ref={panelRef}
@@ -92,12 +92,12 @@ export function Modal({ open, title, onClose, children, footer, className, initi
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
         className={cn(
-          "relative w-full max-w-[760px] rounded-2xl border border-white/10 bg-[#0b0f14] shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)]",
+          "relative w-full max-w-[760px] rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900 dark:shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)]",
           className
         )}
       >
         {title && (
-          <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
             <h2 id={titleId} className="text-lg font-semibold">
               {title}
             </h2>
@@ -115,7 +115,7 @@ export function Modal({ open, title, onClose, children, footer, className, initi
 
         <div className="px-6 py-6">{children}</div>
 
-        {footer && <div className="flex items-center justify-end gap-3 border-t border-white/10 px-6 py-4">{footer}</div>}
+        {footer && <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 px-6 py-4">{footer}</div>}
       </div>
     </div>
   );

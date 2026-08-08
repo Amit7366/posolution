@@ -24,11 +24,11 @@ export function BaseModalForm({
   submitting = false,
 }: BaseModalFormProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-fadeIn">
-      <div className="w-full max-w-xl rounded-xl border border-white/10 bg-[#0b0b0b] animate-scaleIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/70 animate-fadeIn">
+      <div className="w-full max-w-xl rounded-xl border border-gray-200 bg-white animate-scaleIn dark:border-gray-700 dark:bg-gray-900">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-5 py-4">
           <h2 className="text-lg font-semibold">{title}</h2>
           <button
             onClick={onClose}
@@ -42,7 +42,7 @@ export function BaseModalForm({
         <div className="space-y-4 px-5 py-4">{children}</div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-white/10 px-5 py-4">
+        <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-5 py-4">
           <div className="flex items-center gap-3">
             <span className="text-sm">Status</span>
             <StatusToggle enabled={status} setEnabled={setStatus} />
@@ -52,7 +52,7 @@ export function BaseModalForm({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg bg-blue-900/60 px-4 py-2 text-sm text-white hover:bg-blue-900"
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               Cancel
             </button>

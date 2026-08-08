@@ -1,5 +1,17 @@
 export type DashboardChartPoint = { label: string; sales: number; purchase: number };
 
+export type DashboardDueInvoice = {
+  id: string;
+  invoiceNo: string;
+  customerName: string;
+  customerPhone: string;
+  totalAmount: number;
+  paid: number;
+  amountDue: number;
+  dueDate: string;
+  overdue: boolean;
+};
+
 export type DashboardSummary = {
   totals: {
     totalSales: number;
@@ -7,6 +19,7 @@ export type DashboardSummary = {
     totalPurchase: number;
     totalPurchaseReturn: number;
     profit: number;
+    collectedIncome: number;
     invoiceDue: number;
     totalExpenses: number;
     totalPaymentReturns: number;
@@ -15,6 +28,7 @@ export type DashboardSummary = {
     salesPctVsLastMonth: number | null;
     salesReturnPctVsLastMonth: number | null;
     profitPctVsLastMonth: number | null;
+    collectedIncomePctVsLastMonth: number | null;
     invoiceDuePctVsLastMonth: number | null;
   };
   counts: {
@@ -55,6 +69,7 @@ export type DashboardSummary = {
     isToday: boolean;
     imageUrl: string;
   }>;
+  dueInvoices: DashboardDueInvoice[];
   topCustomers: Array<{
     name: string;
     orders: number;

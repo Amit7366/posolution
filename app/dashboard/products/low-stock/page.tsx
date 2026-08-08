@@ -156,13 +156,13 @@ export default function LowStockPage() {
   const endIdx = Math.min(page * perPage, total);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#0c0c0c] to-black p-6 text-slate-200">
+    <div className="min-h-screen p-6 text-gray-900 dark:text-gray-200">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold flex items-center gap-2">
           <AlertTriangle className="text-orange-500" />
           {t("dash.lowStock.title")}
         </h1>
-        <p className="text-sm text-slate-400">{t("dash.lowStock.subtitle")}</p>
+        <p className="text-sm text-gray-500 dark:text-slate-400">{t("dash.lowStock.subtitle")}</p>
       </div>
 
       {errMsg ? (
@@ -173,17 +173,17 @@ export default function LowStockPage() {
 
       <div className="mb-4 flex flex-wrap items-end gap-4">
         <div>
-          <label className="block text-xs text-slate-400 mb-1">{t("dash.lowStock.thresholdLabel")}</label>
+          <label className="block text-xs text-gray-500 dark:text-slate-400 mb-1">{t("dash.lowStock.thresholdLabel")}</label>
           <input
             type="number"
             min={0}
             value={thresholdDraft}
             onChange={(e) => setThresholdDraft(e.target.value)}
-            className="w-28 rounded-md bg-black/60 border border-white/10 px-3 py-2 text-sm"
+            className="w-28 rounded-md border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-3 py-2 text-sm"
           />
         </div>
         <div className="relative flex-1 min-w-[200px] max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-slate-400" />
           <input
             value={searchInput}
             onChange={(e) => {
@@ -191,26 +191,26 @@ export default function LowStockPage() {
               setPage(1);
             }}
             placeholder={t("dash.lowStock.searchPlaceholder")}
-            className="w-full rounded-md bg-black/60 pl-9 pr-3 py-2 text-sm border border-white/10 focus:border-orange-500/50 outline-none"
+            className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 focus:border-orange-500/50 outline-none"
           />
         </div>
         <button
           type="button"
           onClick={() => void refetch()}
-          className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-black/60 px-3 py-2 text-sm hover:bg-white/10"
+          className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-white/10"
         >
           <RotateCcw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           {t("dash.common.refresh")}
         </button>
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur overflow-x-auto">
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-x-auto dark:border-gray-700 dark:bg-gray-900">
         {(isLoading || isFetching) && !listPayload ? (
-          <div className="p-8 text-center text-sm text-slate-400">{t("dash.common.loading")}</div>
+          <div className="p-8 text-center text-sm text-gray-500 dark:text-slate-400">{t("dash.common.loading")}</div>
         ) : null}
 
         <table className="w-full text-sm min-w-[900px]">
-          <thead className="bg-white/5 text-slate-300">
+          <thead className="bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-slate-300">
             <tr>
               <th className="px-4 py-3 text-left">{t("dash.stock.colWarehouse")}</th>
               <th className="px-4 py-3 text-left">{t("dash.stock.colStore")}</th>
@@ -224,31 +224,31 @@ export default function LowStockPage() {
           </thead>
           <tbody>
             {rows.map((p) => (
-              <tr key={p.id} className="border-t border-white/5 hover:bg-white/5">
-                <td className="px-4 py-3 text-slate-300">{p.warehouse}</td>
-                <td className="px-4 py-3 text-slate-300">{p.store}</td>
+              <tr key={p.id} className="border-t border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5">
+                <td className="px-4 py-3 text-gray-600 dark:text-slate-300">{p.warehouse}</td>
+                <td className="px-4 py-3 text-gray-600 dark:text-slate-300">{p.store}</td>
                 <td className="px-4 py-3 font-medium">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="h-7 w-7 shrink-0 rounded bg-white/10 overflow-hidden flex items-center justify-center">
+                    <div className="h-7 w-7 shrink-0 rounded bg-gray-100 dark:bg-white/10 overflow-hidden flex items-center justify-center">
                       {p.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.imageUrl} alt="" className="h-full w-full object-cover" />
                       ) : (
-                        <span className="text-[10px] text-slate-500">—</span>
+                        <span className="text-[10px] text-gray-500 dark:text-slate-500">—</span>
                       )}
                     </div>
                     <span className="truncate">{p.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-slate-400">{p.category}</td>
-                <td className="px-4 py-3 text-slate-400 font-mono text-xs">{p.sku}</td>
+                <td className="px-4 py-3 text-gray-500 dark:text-slate-400">{p.category}</td>
+                <td className="px-4 py-3 text-gray-500 dark:text-slate-400 font-mono text-xs">{p.sku}</td>
                 <td className="px-4 py-3">
                   <span className="text-red-400 font-semibold">{p.quantity}</span>
                 </td>
                 <td className="px-4 py-3 text-orange-400">
                   {p.lowStockThreshold ?? listThreshold}
                   {p.lowStockThreshold == null ? (
-                    <span className="ml-1 text-xs text-slate-500">{t("dash.lowStock.defaultSuffix")}</span>
+                    <span className="ml-1 text-xs text-gray-500 dark:text-slate-500">{t("dash.lowStock.defaultSuffix")}</span>
                   ) : null}
                 </td>
                 <td className="px-4 py-3 text-right">
@@ -265,7 +265,7 @@ export default function LowStockPage() {
             ))}
             {!isLoading && rows.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-12 text-center text-slate-500">
+                <td colSpan={8} className="px-4 py-12 text-center text-gray-500 dark:text-slate-500">
                   {t("dash.lowStock.emptyState")}
                 </td>
               </tr>
@@ -273,7 +273,7 @@ export default function LowStockPage() {
           </tbody>
         </table>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-t border-white/10 text-sm text-slate-400">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span>{t("dash.common.rowsPerPage")}</span>
             <select
@@ -282,7 +282,7 @@ export default function LowStockPage() {
                 setPerPage(Number(e.target.value));
                 setPage(1);
               }}
-              className="rounded-md bg-black/60 border border-white/10 px-2 py-1.5 text-slate-200"
+              className="rounded-md border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 px-2 py-1.5 text-gray-700 dark:text-slate-200"
             >
               {[5, 10, 20, 50].map((n) => (
                 <option key={n} value={n}>
@@ -296,7 +296,7 @@ export default function LowStockPage() {
             <button
               type="button"
               title={t("dash.common.previous")}
-              className="rounded-md border border-white/10 bg-black/60 p-2 disabled:opacity-40"
+              className="rounded-md border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 p-2 disabled:opacity-40"
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
@@ -308,7 +308,7 @@ export default function LowStockPage() {
             <button
               type="button"
               title={t("dash.common.next")}
-              className="rounded-md border border-white/10 bg-black/60 p-2 disabled:opacity-40"
+              className="rounded-md border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 p-2 disabled:opacity-40"
               disabled={page >= pages}
               onClick={() => setPage((p) => Math.min(pages, p + 1))}
             >

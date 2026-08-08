@@ -138,11 +138,11 @@ export default function SubCategoryPage() {
   const catErr = isCatError ? (catErrMsg ?? t("dash.category.failedLoad")) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#0b0b0b] to-black text-slate-200 p-6">
+    <div className="min-h-screen p-6 text-gray-900 dark:text-gray-200">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">{t("dash.subCategory.title")}</h1>
-          <p className="text-sm text-slate-400">{t("dash.subCategory.manage")}</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">{t("dash.subCategory.manage")}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <IconButton icon={<FileText size={16} />} />
@@ -163,7 +163,7 @@ export default function SubCategoryPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-black/60 backdrop-blur-xl shadow-2xl">
+      <div className="rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 backdrop-blur-xl shadow-2xl">
         {subErr ? (
           <div className="mx-4 mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             {subErr}
@@ -178,21 +178,21 @@ export default function SubCategoryPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 p-4">
           <div className="relative w-64">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-400"
               size={16}
             />
             <input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("dash.common.search")}
-              className="w-full rounded-lg border border-white/10 bg-black/70 py-2 pl-9 pr-3 text-sm outline-none focus:border-orange-500"
+              className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 pl-9 pr-3 text-sm outline-none focus:border-orange-500"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none"
+              className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm outline-none"
             >
               <option value="">{t("dash.subCategory.allCategories")}</option>
               {categories.map((c) => (
@@ -204,14 +204,14 @@ export default function SubCategoryPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none"
+              className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm outline-none"
             >
               <option value="">{t("dash.common.allStatus")}</option>
               <option value="active">{t("dash.common.active")}</option>
               <option value="inactive">{t("dash.common.inactive")}</option>
             </select>
             {typeof total === "number" && (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-gray-500 dark:text-slate-500">
                 {t("dash.subCategory.totalItems", { count: total })}
               </span>
             )}
@@ -221,7 +221,7 @@ export default function SubCategoryPage() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="bg-white/5 text-slate-300">
+              <tr className="bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-slate-300">
                 <th className="px-4 py-3 text-left">{t("dash.subCategory.colImage")}</th>
                 <th className="px-4 py-3 text-left">{t("dash.subCategory.colCategory")}</th>
                 <th className="px-4 py-3 text-left">{t("dash.subCategory.colSubCategory")}</th>
@@ -235,7 +235,7 @@ export default function SubCategoryPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-4 py-6 text-center text-slate-400"
+                    className="px-4 py-6 text-center text-gray-500 dark:text-slate-400"
                   >
                     {t("dash.common.loading")}
                   </td>
@@ -244,7 +244,7 @@ export default function SubCategoryPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-4 py-6 text-center text-slate-400"
+                    className="px-4 py-6 text-center text-gray-500 dark:text-slate-400"
                   >
                     {t("dash.subCategory.empty")}
                   </td>
@@ -253,25 +253,25 @@ export default function SubCategoryPage() {
                 items.map((item) => (
                   <tr
                     key={item._id}
-                    className="border-t border-white/10 hover:bg-white/5 transition"
+                    className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/5 transition"
                   >
                     <td className="px-4 py-3">
                       <img
                         src={item.imageUrl || "/images/placeholder.png"}
                         alt=""
-                        className="h-10 w-10 rounded object-cover bg-white/10"
+                        className="h-10 w-10 rounded object-cover bg-gray-100 dark:bg-white/10"
                       />
                     </td>
-                    <td className="px-4 py-3 text-slate-200">
+                    <td className="px-4 py-3 text-gray-700 dark:text-slate-200">
                       {categoryDisplayName(item)}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-medium text-slate-100">
+                      <div className="font-medium text-gray-900 dark:text-slate-100">
                         {item.subCategoryName}
                       </div>
-                      <div className="text-xs text-slate-400">{item.code}</div>
+                      <div className="text-xs text-gray-500 dark:text-slate-400">{item.code}</div>
                     </td>
-                    <td className="px-4 py-3 text-slate-400">{item.slug}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-slate-400">{item.slug}</td>
                     <td className="px-4 py-3">
                       <span
                         className={`rounded-md px-3 py-1 text-xs font-medium ${
@@ -346,7 +346,7 @@ function IconButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-lg border border-white/10 bg-black/60 p-2 text-slate-300 hover:bg-white/10"
+      className="rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800 p-2 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10"
     >
       {loading ? (
         <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-slate-500 border-t-transparent" />
@@ -367,9 +367,9 @@ function ModalShell({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-fadeIn">
-      <div className="w-full max-w-xl rounded-xl border border-white/10 bg-[#0b0b0b] p-5 animate-scaleIn max-h-[90vh] overflow-y-auto">
-        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/70 animate-fadeIn">
+      <div className="w-full max-w-xl rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 animate-scaleIn max-h-[90vh] overflow-y-auto">
+        <div className="mb-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-3">
           <h2 className="text-lg font-semibold">{title}</h2>
           <button
             type="button"
@@ -490,7 +490,7 @@ function SubCategoryModal({
   return (
     <ModalShell title={title} onClose={onClose}>
       <div className="flex gap-4 mb-4">
-        <label className="flex h-28 w-28 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-white/20 text-xs text-slate-400">
+        <label className="flex h-28 w-28 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-300 dark:border-white/20 text-xs text-gray-500 dark:text-slate-400">
           {previewSrc ? (
             <img
               src={previewSrc}
@@ -499,7 +499,7 @@ function SubCategoryModal({
             />
           ) : (
             <>
-              <span className="text-xl text-slate-300">＋</span>
+              <span className="text-xl text-gray-600 dark:text-slate-300">＋</span>
               {t("dash.common.addImage")}
             </>
           )}
@@ -511,15 +511,15 @@ function SubCategoryModal({
           />
         </label>
         <div className="flex flex-col justify-center">
-          <p className="text-xs text-slate-400">{t("dash.common.uploadHint")}</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">{t("dash.common.uploadHint")}</p>
         </div>
       </div>
 
-      <label className="mb-1 block text-xs text-slate-400">{t("dash.subCategory.catLabel")}</label>
+      <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">{t("dash.subCategory.catLabel")}</label>
       <select
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
-        className="mb-3 w-full rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none focus:border-orange-500"
+        className="mb-3 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm outline-none focus:border-orange-500"
       >
         <option value="">{t("dash.common.selectCategory")}</option>
         {categories.map((c) => (
@@ -529,7 +529,7 @@ function SubCategoryModal({
         ))}
       </select>
 
-      <label className="mb-1 block text-xs text-slate-400">{t("dash.subCategory.nameLabel")}</label>
+      <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">{t("dash.subCategory.nameLabel")}</label>
       <input
         value={name}
         onChange={(e) => {
@@ -538,31 +538,31 @@ function SubCategoryModal({
             setSlug(generateSlug(e.target.value));
           }
         }}
-        className="mb-3 w-full rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none focus:border-orange-500"
+        className="mb-3 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm outline-none focus:border-orange-500"
       />
 
-      <label className="mb-1 block text-xs text-slate-400">{t("dash.subCategory.slugLabel")}</label>
+      <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">{t("dash.subCategory.slugLabel")}</label>
       <input
         value={slug}
         onChange={(e) => {
           setSlugTouched(true);
           setSlug(generateSlug(e.target.value));
         }}
-        className="mb-3 w-full rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none focus:border-orange-500"
+        className="mb-3 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm outline-none focus:border-orange-500"
       />
 
-      <label className="mb-1 block text-xs text-slate-400">{t("dash.subCategory.codeLabel")}</label>
+      <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">{t("dash.subCategory.codeLabel")}</label>
       <input
         value={code}
         onChange={(e) => setCode(e.target.value)}
-        className="mb-3 w-full rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none focus:border-orange-500"
+        className="mb-3 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm outline-none focus:border-orange-500"
       />
 
-      <label className="mb-1 block text-xs text-slate-400">{t("dash.common.description")}</label>
+      <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">{t("dash.common.description")}</label>
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="mb-3 min-h-[88px] w-full resize-none rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-sm outline-none focus:border-orange-500"
+        className="mb-3 min-h-[88px] w-full resize-none rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm outline-none focus:border-orange-500"
       />
 
       <div className="mb-4 flex items-center justify-between">
@@ -574,7 +574,7 @@ function SubCategoryModal({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/5"
+          className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5"
         >
           {t("dash.common.cancel")}
         </button>
@@ -617,7 +617,7 @@ function DeleteModal({
 
   return (
     <ModalShell title={t("dash.subCategory.deleteModal")} onClose={onClose}>
-      <p className="text-sm text-slate-300">
+      <p className="text-sm text-gray-600 dark:text-slate-300">
         {t("dash.subCategory.deleteConfirm")}{" "}
         <span className="font-semibold">{item.subCategoryName}</span>?
       </p>
@@ -625,7 +625,7 @@ function DeleteModal({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300"
+          className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-slate-300"
         >
           {t("dash.common.cancel")}
         </button>
