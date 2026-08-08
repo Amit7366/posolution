@@ -32,6 +32,7 @@ export const baseApi = createApi({
     "Warehouse",
     "Warranty",
     "Invoice",
+    "Customer",
     "SalesReturn",
     "Dashboard",
     "Payment",
@@ -643,6 +644,58 @@ export const baseApi = createApi({
       invalidatesTags: ["Invoice", "Product", "Dashboard"],
     }),
 
+    getCustomers: builder.query<
+      any,
+      {
+        page?: number;
+        limit?: number;
+        search?: string;
+        status?: string;
+      }
+    >({
+      query: ({ page = 1, limit = 50, search = "", status = "" }) => ({
+        url: "/customer",
+        params: {
+          page,
+          limit,
+          ...(search ? { search } : {}),
+          ...(status ? { status } : {}),
+        },
+      }),
+      providesTags: ["Customer"],
+    }),
+
+    getCustomerById: builder.query<any, string>({
+      query: (id) => `/customer/${id}`,
+      providesTags: ["Customer"],
+    }),
+
+    createCustomer: builder.mutation<any, Record<string, unknown>>({
+      query: (body) => ({
+        url: "/customer",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Customer"],
+    }),
+
+    updateCustomer: builder.mutation<any, { id: string; body: Record<string, unknown> }>({
+      query: ({ id, body }) => ({
+        url: `/customer/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Customer"],
+    }),
+
+    deleteCustomer: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/customer/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Customer"],
+    }),
+
     getSalesReturns: builder.query<
       any,
       {
@@ -821,10 +874,19 @@ export const {
   useDeleteProductMutation,
 
   useGetInvoicesQuery,
+  useLazyGetInvoicesQuery,
   useGetInvoiceByIdQuery,
+  useLazyGetInvoiceByIdQuery,
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
+
+  useGetCustomersQuery,
+  useLazyGetCustomersQuery,
+  useGetCustomerByIdQuery,
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+  useDeleteCustomerMutation,
 
   useGetSalesReturnsQuery,
   useGetSalesReturnByIdQuery,

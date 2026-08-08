@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ChevronDown, Search, Bell, Mail, Settings, PlusCircle, Monitor } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NavbarLanguageSwitcher from "@/components/NavbarLanguageSwitcher";
@@ -80,14 +81,18 @@ export default function DashboardNavbar() {
         </button>
 
         {/* POS Button */}
-        <button className="
+        <Link
+          href="/pos"
+          className="
           hidden md:flex items-center gap-2 
           bg-[#0d1b3e] text-white px-4 py-2 
           rounded-xl text-sm font-medium
           dark:bg-slate-800 dark:ring-1 dark:ring-slate-600
-        ">
+          hover:opacity-90
+        "
+        >
           <Monitor size={18} className="shrink-0" /> {t("nav.pos")}
-        </button>
+        </Link>
 
         <NavbarLanguageSwitcher />
 

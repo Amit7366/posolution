@@ -1,13 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { UserRound } from "lucide-react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import AuthTabs from "./AuthTabs";
 import SocialAuthButtons from "./SocialAuthButtons";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import NavbarLanguageSwitcher from "@/components/NavbarLanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
+import { AUTH_FORM_PROFILE_SRC } from "./authDemoData";
 
 type AuthFormShellProps = {
   children: React.ReactNode;
@@ -20,7 +21,6 @@ export default function AuthFormShell({ children }: AuthFormShellProps) {
 
   return (
     <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-y-auto bg-white transition-colors duration-300 dark:bg-neutral-950">
-      {/* Subtle grid pattern — light */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.4] dark:hidden"
@@ -32,7 +32,6 @@ export default function AuthFormShell({ children }: AuthFormShellProps) {
           WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 55%)",
         }}
       />
-      {/* Subtle grid pattern — dark */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 hidden opacity-[0.25] dark:block"
@@ -57,9 +56,17 @@ export default function AuthFormShell({ children }: AuthFormShellProps) {
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 border-gray-200 text-gray-400 transition-colors dark:border-neutral-700 dark:text-neutral-500"
+            className="mb-4 h-16 w-16 overflow-hidden rounded-full border-2 border-gray-200 shadow-md ring-2 ring-orange-500/20 transition-colors dark:border-neutral-700"
           >
-            <UserRound size={28} strokeWidth={1.5} />
+            <Image
+              src={AUTH_FORM_PROFILE_SRC}
+              alt=""
+              width={128}
+              height={128}
+              className="h-full w-full object-cover"
+              unoptimized
+              priority
+            />
           </motion.div>
 
           <AnimatePresence mode="wait">

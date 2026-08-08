@@ -3,16 +3,10 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ShoppingCart, Star } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/useTranslation";
-
-const AVATARS = [
-  { top: "8%", left: "12%", delay: 0, initials: "RA", tone: "bg-amber-300 text-amber-900" },
-  { top: "18%", right: "10%", delay: 0.4, initials: "FK", tone: "bg-rose-300 text-rose-900" },
-  { top: "48%", left: "6%", delay: 0.8, initials: "KB", tone: "bg-emerald-300 text-emerald-900" },
-  { top: "55%", right: "8%", delay: 1.2, initials: "NS", tone: "bg-violet-300 text-violet-900" },
-  { bottom: "22%", left: "18%", delay: 1.6, initials: "MA", tone: "bg-sky-300 text-sky-900" },
-];
+import { AUTH_DEMO_AVATARS, AUTH_TESTIMONIAL_PHOTOS } from "./authDemoData";
 
 export default function AuthMarketingPanel() {
   const { t } = useTranslation();
@@ -20,19 +14,22 @@ export default function AuthMarketingPanel() {
 
   const testimonials = [
     {
-      text: t("marketing.testimonials.t1Text"),
-      name: t("marketing.testimonials.t1Name"),
-      role: t("marketing.testimonials.t1Role"),
+      text: t("landing.testimonials.t1Text"),
+      name: t("landing.testimonials.t1Name"),
+      role: t("landing.testimonials.t1Role"),
+      photo: AUTH_TESTIMONIAL_PHOTOS[0],
     },
     {
-      text: t("marketing.testimonials.t2Text"),
-      name: t("marketing.testimonials.t2Name"),
-      role: t("marketing.testimonials.t2Role"),
+      text: t("landing.testimonials.t2Text"),
+      name: t("landing.testimonials.t2Name"),
+      role: t("landing.testimonials.t2Role"),
+      photo: AUTH_TESTIMONIAL_PHOTOS[1],
     },
     {
-      text: t("marketing.testimonials.t3Text"),
-      name: t("marketing.testimonials.t3Name"),
-      role: t("marketing.testimonials.t3Role"),
+      text: t("landing.testimonials.t3Text"),
+      name: t("landing.testimonials.t3Name"),
+      role: t("landing.testimonials.t3Role"),
+      photo: AUTH_TESTIMONIAL_PHOTOS[2],
     },
   ];
 
@@ -47,7 +44,6 @@ export default function AuthMarketingPanel() {
 
   return (
     <div className="relative flex h-full min-h-[280px] flex-col overflow-hidden bg-linear-to-b from-blue-600 to-blue-800 text-white transition-colors duration-300 dark:from-blue-950 dark:to-neutral-950 lg:min-h-0">
-      {/* Soft glow accents */}
       <div
         aria-hidden
         className="pointer-events-none absolute -left-20 top-1/4 h-72 w-72 rounded-full bg-blue-400/30 blur-3xl dark:bg-blue-500/20"
@@ -57,7 +53,6 @@ export default function AuthMarketingPanel() {
         className="pointer-events-none absolute -right-16 bottom-1/3 h-64 w-64 rounded-full bg-indigo-500/25 blur-3xl dark:bg-indigo-600/15"
       />
 
-      {/* Brand */}
       <div className="relative z-10 flex items-center justify-between px-6 pt-6 sm:px-8 lg:px-10">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-white/10 backdrop-blur-sm">
@@ -69,10 +64,8 @@ export default function AuthMarketingPanel() {
         </Link>
       </div>
 
-      {/* Globe + avatars — desktop focus */}
       <div className="relative z-10 flex flex-1 items-center justify-center px-6 py-8 lg:py-4">
         <div className="relative h-48 w-48 sm:h-56 sm:w-56 lg:h-64 lg:w-64">
-          {/* Connection arcs */}
           <svg
             aria-hidden
             className="absolute inset-0 h-full w-full overflow-visible"
@@ -105,7 +98,6 @@ export default function AuthMarketingPanel() {
             animate={{ scale: [1, 1.03, 1] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           >
-            {/* Globe grid lines */}
             <div className="absolute inset-0 overflow-hidden rounded-full opacity-40">
               <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/50" />
               <div className="absolute left-1/4 top-0 h-full w-px bg-white/30" />
@@ -118,15 +110,15 @@ export default function AuthMarketingPanel() {
             </div>
           </motion.div>
 
-          {AVATARS.map((avatar, i) => (
+          {AUTH_DEMO_AVATARS.map((avatar, i) => (
             <motion.div
-              key={i}
-              className={`absolute flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border-2 border-white text-xs font-bold shadow-lg sm:h-11 sm:w-11 ${avatar.tone}`}
+              key={avatar.name}
+              className="absolute h-10 w-10 overflow-hidden rounded-lg border-2 border-white shadow-lg sm:h-11 sm:w-11"
               style={{
-                top: avatar.top,
-                left: avatar.left,
-                right: avatar.right,
-                bottom: avatar.bottom,
+                top: "top" in avatar ? avatar.top : undefined,
+                left: "left" in avatar ? avatar.left : undefined,
+                right: "right" in avatar ? avatar.right : undefined,
+                bottom: "bottom" in avatar ? avatar.bottom : undefined,
               }}
               animate={{ y: [0, -8, 0] }}
               transition={{
@@ -135,14 +127,21 @@ export default function AuthMarketingPanel() {
                 ease: "easeInOut",
                 delay: avatar.delay,
               }}
+              title={avatar.name}
             >
-              {avatar.initials}
+              <Image
+                src={avatar.src}
+                alt={avatar.name}
+                width={88}
+                height={88}
+                className="h-full w-full object-cover"
+                unoptimized
+              />
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Testimonial */}
       <div className="relative z-10 mt-auto px-6 pb-8 sm:px-8 lg:px-10 lg:pb-10">
         <AnimatePresence mode="wait">
           <motion.div
@@ -156,13 +155,25 @@ export default function AuthMarketingPanel() {
               &ldquo;{current.text}&rdquo;
             </blockquote>
             <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="font-semibold">{current.name}</p>
-                <p className="mt-0.5 text-sm text-blue-100/80">{current.role}</p>
-                <div className="mt-2 flex gap-0.5" aria-hidden>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={14} className="fill-white text-white" />
-                  ))}
+              <div className="flex items-center gap-3">
+                <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white/60 shadow-md">
+                  <Image
+                    src={current.photo}
+                    alt={current.name}
+                    width={96}
+                    height={96}
+                    className="h-full w-full object-cover"
+                    unoptimized
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold">{current.name}</p>
+                  <p className="mt-0.5 text-sm text-blue-100/80">{current.role}</p>
+                  <div className="mt-2 flex gap-0.5" aria-hidden>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={14} className="fill-white text-white" />
+                    ))}
+                  </div>
                 </div>
               </div>
 

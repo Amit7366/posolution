@@ -18,6 +18,7 @@ import {
   Undo2,
   CreditCard,
   Receipt,
+  Monitor,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -37,6 +38,12 @@ export const sidebarMenus: MenuItem[] = [
     titleKey: "sidebar.dashboard",
     icon: Home,
     link: "/dashboard",
+    role: "all",
+  },
+  {
+    titleKey: "sidebar.pos",
+    icon: Monitor,
+    link: "/pos",
     role: "all",
   },
   {

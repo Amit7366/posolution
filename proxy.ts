@@ -2,51 +2,66 @@ import { jwtDecode } from "jwt-decode";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Public routes that don't require auth
+// Public marketing/content routes — allowed with or without auth
 const publicRoutes = [
   "/",
-  "/login",
-  "/register",
   "/about",
   "/our-plan",
   "/blog",
   "/contact",
 ];
 
+const authPages = ["/login", "/register"];
+
+function isPublicPath(pathname: string) {
+  return publicRoutes.some((route) => pathname === route);
+}
+
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get("accessToken")?.value;
 
-  // Allow public routes without token
+  // No token: allow public pages, otherwise require login
   if (!accessToken) {
-    const isPublic = publicRoutes.some((route) => pathname === route);
-    if (isPublic) {
+    if (isPublicPath(pathname) || authPages.includes(pathname)) {
       return NextResponse.next();
     }
-    // Not public and no token → send to login
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Redirect logged-in users away from auth pages
-  if (["/login", "/register"].includes(pathname)) {
+  // Invalid token cookie → clear path by sending to login (avoid silent loops)
+  let role: string | undefined;
+  try {
+    const decoded = jwtDecode(accessToken) as { role?: string };
+    role = decoded?.role;
+  } catch {
+    if (isPublicPath(pathname) || authPages.includes(pathname)) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Logged-in users should not stay on auth pages
+  if (authPages.includes(pathname)) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Protect dashboard: require valid token; sidebar links stay /dashboard/... (no forced /dashboard/user).
-  if (pathname.startsWith("/dashboard")) {
-    let decodedData: { role?: string } | null = null;
-    try {
-      decodedData = jwtDecode(accessToken) as { role?: string };
-    } catch {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  // Public pages are fine while logged in (home, about, etc.)
+  if (isPublicPath(pathname)) {
+    return NextResponse.next();
+  }
 
-    const role = decodedData?.role;
+  // POS: any authenticated role
+  if (pathname.startsWith("/pos")) {
+    return NextResponse.next();
+  }
+
+  // Dashboard role gates
+  if (pathname.startsWith("/dashboard")) {
     if (!role) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // Optional admin-area page: only admin / superAdmin
     if (pathname.startsWith("/dashboard/admin")) {
       if (role !== "admin" && role !== "superAdmin") {
         return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -54,7 +69,6 @@ export default function proxy(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // User-specific stub page
     if (pathname.startsWith("/dashboard/user")) {
       if (role !== "user") {
         return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -62,12 +76,11 @@ export default function proxy(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // POS routes (products, category, sales, etc.): any authenticated role
     return NextResponse.next();
   }
 
-  // Fallback for any other non-public route.
-  return NextResponse.redirect(new URL("/", request.url));
+  // Matched but unhandled path — never redirect to self
+  return NextResponse.next();
 }
 
 export const config = {
@@ -81,5 +94,7 @@ export const config = {
     "/contact",
     "/dashboard",
     "/dashboard/:path*",
+    "/pos",
+    "/pos/:path*",
   ],
 };

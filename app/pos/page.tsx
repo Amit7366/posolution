@@ -1,17 +1,83 @@
-import PosCart from "../components/PosCart";
-import PosProductGrid from "../components/PosProductGrid";
+"use client";
 
+import { useState } from "react";
+import { ShoppingCart } from "lucide-react";
+import PosHeader from "../components/pos/PosHeader";
+import PosProductPanel from "../components/pos/PosProductPanel";
+import PosCartPanel from "../components/pos/PosCartPanel";
+import PosPaymentSheet from "../components/pos/PosPaymentSheet";
+import PosTransactionsSheet from "../components/pos/PosTransactionsSheet";
+import { usePosCart } from "../components/pos/PosCartContext";
+import { formatTaka } from "../components/pos/formatTaka";
 
 export default function PosPage() {
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [txOpen, setTxOpen] = useState(false);
+  const [mobileCartOpen, setMobileCartOpen] = useState(false);
+  const { productCount, grandTotal, items } = usePosCart();
+
   return (
-    <div className="flex flex-1">
-      <div className="flex-1 p-4">
-        <PosProductGrid />
+    <>
+      <PosHeader onOpenTransactions={() => setTxOpen(true)} />
+
+      <div className="flex min-h-0 flex-1 gap-3 p-3 sm:p-4">
+        <div className="min-h-0 min-w-0 flex-1">
+          <PosProductPanel />
+        </div>
+
+        {/* Desktop cart */}
+        <div className="hidden w-[360px] shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm lg:flex lg:flex-col">
+          <PosCartPanel onPlaceOrder={() => setPaymentOpen(true)} />
+        </div>
       </div>
 
-      <div className="w-[350px] border-l dark:border-gray-800">
-        <PosCart />
+      {/* Mobile sticky cart bar */}
+      <div className="shrink-0 border-t border-gray-200 bg-white p-3 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileCartOpen(true)}
+          className="flex w-full items-center justify-between rounded-xl bg-gray-900 px-4 py-3 text-white"
+        >
+          <span className="inline-flex items-center gap-2 text-sm font-medium">
+            <ShoppingCart size={18} />
+            {productCount} items
+          </span>
+          <span className="font-bold">{formatTaka(grandTotal)}</span>
+        </button>
+        {items.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setPaymentOpen(true)}
+            className="mt-2 w-full rounded-xl bg-orange-500 py-3 text-sm font-bold uppercase text-white"
+          >
+            Place Order
+          </button>
+        )}
       </div>
-    </div>
+
+      {/* Mobile cart drawer */}
+      {mobileCartOpen && (
+        <div className="fixed inset-0 z-[60] flex justify-end lg:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/40"
+            aria-label="Close cart"
+            onClick={() => setMobileCartOpen(false)}
+          />
+          <div className="relative flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
+            <PosCartPanel
+              compact
+              onPlaceOrder={() => {
+                setMobileCartOpen(false);
+                setPaymentOpen(true);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      <PosPaymentSheet open={paymentOpen} onClose={() => setPaymentOpen(false)} />
+      <PosTransactionsSheet open={txOpen} onClose={() => setTxOpen(false)} />
+    </>
   );
 }
