@@ -15,7 +15,7 @@ export default function FAQ() {
   }));
 
   return (
-    <section className="bg-white py-20 dark:bg-[#060612]">
+    <section id="faq" className="bg-white py-20 dark:bg-[#060612]">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="mb-12 text-center"

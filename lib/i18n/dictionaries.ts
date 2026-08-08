@@ -85,13 +85,16 @@ const en = {
     statusBadgeRejected: "Rejected",
   },
   marketing: {
+    home: "Home",
     features: "Features",
     industry: "Industry",
     pricing: "Pricing",
+    faqs: "FAQs",
     blog: "Blog",
     contact: "Contact",
     login: "Login",
     register: "Get Started",
+    startFreeTrial: "Start Free Trial",
   },
   home: {
     heroTitle: "Build Premium SaaS Apps with Next.js 16",
@@ -526,13 +529,16 @@ const bn = {
     statusBadgeRejected: "প্রত্যাখ্যাত",
   },
   marketing: {
+    home: "হোম",
     features: "বৈশিষ্ট্য",
     industry: "শিল্প",
     pricing: "মূল্য",
+    faqs: "প্রশ্নাবলী",
     blog: "ব্লগ",
     contact: "যোগাযোগ",
     login: "লগইন",
     register: "শুরু করুন",
+    startFreeTrial: "ফ্রি ট্রায়াল শুরু করুন",
   },
   home: {
     heroTitle: "Next.js ১৬ দিয়ে প্রিমিয়াম স্যাস অ্যাপ তৈরি করুন",

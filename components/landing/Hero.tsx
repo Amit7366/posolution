@@ -65,6 +65,7 @@ export default function Hero() {
 
   return (
     <section
+      id="home"
       ref={scrollRef}
       className="relative overflow-hidden bg-white pt-12 pb-16 dark:bg-[#060612]"
     >
