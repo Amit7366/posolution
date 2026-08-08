@@ -6,7 +6,6 @@ import {
   Gift,
   Shield,
   RotateCcw,
-  DollarSign,
   X,
   Calendar,
   Settings,
@@ -137,7 +136,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         <div className="rounded-xl p-5 bg-orange-500 text-white shadow-sm">
           <div className="flex items-center gap-3 text-white/90">
-            <DollarSign size={24} />
+            <Banknote size={24} />
             <span className="font-medium text-sm">{t("dash.dashboard.totalSales")}</span>
           </div>
           <div className="text-3xl font-bold mt-2">{busy ? "…" : money(summary?.totals.totalSales ?? 0)}</div>

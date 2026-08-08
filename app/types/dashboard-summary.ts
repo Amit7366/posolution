@@ -71,6 +71,7 @@ export type DashboardSummary = {
   }>;
   dueInvoices: DashboardDueInvoice[];
   topCustomers: Array<{
+    id?: string;
     name: string;
     orders: number;
     revenue: number;

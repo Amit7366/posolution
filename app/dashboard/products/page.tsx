@@ -135,7 +135,7 @@ function mapProductToRow(p: Record<string, unknown>): ListRow {
   };
 }
 
-const currency = (n: number) => `$${n.toLocaleString()}`;
+const currency = (n: number) => `৳${n.toLocaleString("en-BD")}`;
 
 export default function ProductListPage() {
   const { t } = useTranslation();

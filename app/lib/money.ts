@@ -1,5 +1,9 @@
 export function money(n: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
+  const v = Number.isFinite(n) ? n : 0;
+  return `৳${v.toLocaleString("en-BD", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 }
 
 const ones = [
@@ -24,9 +28,10 @@ function chunkToWords(n: number): string {
   return s.join(" ");
 }
 
-export function numberToWordsUSD(amount: number) {
+/** Amount in words with BDT (Taka). */
+export function numberToWordsBDT(amount: number) {
   const n = Math.floor(amount);
-  if (n === 0) return "Dollar Zero";
+  if (n === 0) return "Taka Zero";
 
   const parts: string[] = [];
 
@@ -40,5 +45,8 @@ export function numberToWordsUSD(amount: number) {
   if (thousands) parts.push(chunkToWords(thousands), "Thousand");
   if (remainder) parts.push(chunkToWords(remainder));
 
-  return `Dollar ${parts.join(" ")}`.replace(/\s+/g, " ").trim();
+  return `Taka ${parts.join(" ")}`.replace(/\s+/g, " ").trim();
 }
+
+/** @deprecated Use numberToWordsBDT */
+export const numberToWordsUSD = numberToWordsBDT;

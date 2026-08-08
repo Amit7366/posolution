@@ -11,8 +11,8 @@ import {
   Users,
   UserCheck,
   Grip,
-  BadgeDollarSign,
-  DollarSign
+  Banknote,
+  Wallet,
 } from "lucide-react";
 import React, { ReactNode } from "react";
 
@@ -190,12 +190,12 @@ export const drawerItems = (role: UserRole): DrawerItems[] => {
         {
           name: "Deposit",
           path: `/dashboard/${role}/deposit`,
-          icon: React.createElement(BadgeDollarSign, { className: "w-6 h-6" }),
+          icon: React.createElement(Banknote, { className: "w-6 h-6" }),
         },
         {
           name: "Withdraw",
           path: `/dashboard/${role}/withdraw`,
-          icon: React.createElement(DollarSign, { className: "w-6 h-6" }),
+          icon: React.createElement(Wallet, { className: "w-6 h-6" }),
         },
         {
           name: "Transaction History",

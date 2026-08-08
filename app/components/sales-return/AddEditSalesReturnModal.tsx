@@ -385,8 +385,8 @@ export default function AddEditSalesReturnModal({ open, mode, initial, onClose, 
           <div>{t("dash.salesReturn.netUnitPrice")}</div>
           <div>{t("dash.invoices.stock")}</div>
           <div>QTY</div>
-          <div>{t("dash.invoiceDetail.discount")} ($)</div>
-          <div className="text-right">{t("dash.invoiceDetail.total")} ($)</div>
+          <div>{t("dash.invoiceDetail.discount")} (৳)</div>
+          <div className="text-right">{t("dash.invoiceDetail.total")} (৳)</div>
         </div>
 
         <div className="max-h-[300px] overflow-auto">

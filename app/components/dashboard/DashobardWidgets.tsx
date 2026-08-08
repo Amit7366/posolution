@@ -21,7 +21,7 @@ function initials(name: string) {
   return (p[0][0] + p[p.length - 1][0]).toUpperCase();
 }
 
-export type TopCustomerRow = { name: string; orders: number; revenue: number };
+export type TopCustomerRow = { id?: string; name: string; orders: number; revenue: number };
 export type TopCategoryRow = { name: string; revenue: number };
 
 type TopCustomersProps = { customers: TopCustomerRow[]; isLoading?: boolean };
@@ -40,7 +40,7 @@ export const TopCustomers: React.FC<TopCustomersProps> = ({ customers, isLoading
           </div>
           <h3 className="text-slate-900 dark:text-slate-100 font-medium">{t("dash.widgets.topCustomers")}</h3>
         </div>
-        <Link className="text-sm text-slate-500 hover:underline dark:text-slate-300" href="/dashboard/sales/invoices">
+        <Link className="text-sm text-slate-500 hover:underline dark:text-slate-300" href="/dashboard/customers">
           {t("dash.dashboard.viewAll")}
         </Link>
       </div>
@@ -51,29 +51,34 @@ export const TopCustomers: React.FC<TopCustomersProps> = ({ customers, isLoading
         <p className="text-slate-400 text-sm py-6 text-center">{t("dash.dashboard.noRecentSales")}</p>
       ) : (
         <ul className="space-y-4">
-          {customers.map((c) => (
-            <li
-              key={c.name}
-              className="flex items-center justify-between py-2 border-t last:border-b-0 border-slate-100 dark:border-slate-700"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-100 font-semibold shrink-0">
-                  {initials(c.name)}
-                </div>
-                <div className="min-w-0">
-                  <div className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
-                    {c.name}
+          {customers.map((c) => {
+            const href = c.id
+              ? `/dashboard/customers/${c.id}`
+              : `/dashboard/customers?search=${encodeURIComponent(c.name)}`;
+            return (
+              <li
+                key={c.id || c.name}
+                className="flex items-center justify-between border-t border-slate-100 py-2 last:border-b-0 dark:border-slate-700"
+              >
+                <Link href={href} className="flex min-w-0 flex-1 items-center gap-3 hover:opacity-90">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 font-semibold text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+                    {initials(c.name)}
                   </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-300">
-                    {t("dash.widgets.ordersCount", { n: c.orders })}
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+                      {c.name}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-300">
+                      {t("dash.widgets.ordersCount", { n: c.orders })}
+                    </div>
                   </div>
+                </Link>
+                <div className="ml-2 shrink-0 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {money(c.revenue)}
                 </div>
-              </div>
-              <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 shrink-0 ml-2">
-                {money(c.revenue)}
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

@@ -19,6 +19,7 @@ import {
   CreditCard,
   Receipt,
   Monitor,
+  Users,
   Wallet,
 } from "lucide-react";
 
@@ -134,6 +135,12 @@ export const sidebarMenus: MenuItem[] = [
     link: "/dashboard/sales",
     role: "all",
     children: [
+      {
+        titleKey: "sidebar.customers",
+        icon: Users,
+        link: "/dashboard/customers",
+        role: "all",
+      },
       {
         titleKey: "sidebar.dues",
         icon: Wallet,

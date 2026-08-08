@@ -7,7 +7,7 @@ export function clampInt(v: number, min: number, max: number) {
 }
 
 export function formatMoney(n: number) {
-  return `$${Number.isFinite(n) ? n.toFixed(2) : "0.00"}`;
+  return `৳${Number.isFinite(n) ? n.toFixed(2) : "0.00"}`;
 }
 
 export function daysAgoISO(days: number) {

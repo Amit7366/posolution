@@ -23,10 +23,10 @@ type InvoiceRow = {
 };
 
 function money(n: number) {
-  return Number(n || 0).toLocaleString(undefined, {
+  return `৳${Number(n || 0).toLocaleString("en-BD", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  });
+  })}`;
 }
 
 function amountDueOf(inv: InvoiceRow) {

@@ -199,24 +199,24 @@ export default function PosReceipt({ detail, store, mode = "screen" }: Props) {
       <Dash />
 
       <div className="space-y-0.5 text-[11px]">
-        <SumRow label="Sub total" value={`BDT ${moneyPlain(subTotal)}`} />
-        <SumRow label="Shipping Charge" value="BDT 0" />
-        <SumRow label="(-) Discount" value={`BDT ${moneyPlain(discount)}`} />
-        <SumRow label="(+) Tax" value={`BDT ${moneyPlain(tax)}`} />
+        <SumRow label="Sub total" value={`৳${moneyPlain(subTotal)}`} />
+        <SumRow label="Shipping Charge" value="৳0" />
+        <SumRow label="(-) Discount" value={`৳${moneyPlain(discount)}`} />
+        <SumRow label="(+) Tax" value={`৳${moneyPlain(tax)}`} />
       </div>
 
       <div className="my-1 border-t border-dashed border-black" />
 
       <SumRow
         label="Net payable"
-        value={`BDT ${moneyPlain(total)}`}
+        value={`৳${moneyPlain(total)}`}
         bold
       />
 
       <Dash />
 
       <SumRow label="Paid By" value={paymentLabel(detail.paymentType)} />
-      <SumRow label="Cash Amount" value={`BDT ${moneyPlain(cash)}`} />
+      <SumRow label="Cash Amount" value={`৳${moneyPlain(cash)}`} />
       <SumRow label="Change Amount" value={formatTaka(change)} />
 
       <Dash />
@@ -387,15 +387,15 @@ export function printPosReceipt(detail: ReceiptInvoice, store?: StoreInfo | null
     <div class="dash"></div>
     ${itemRows || `<p class="center">No items</p>`}
     <div class="dash"></div>
-    <div class="sum"><span>Sub total:</span><span>BDT ${moneyPlain(Number(detail.subTotal) || 0)}</span></div>
-    <div class="sum"><span>Shipping Charge:</span><span>BDT 0</span></div>
-    <div class="sum"><span>(-) Discount:</span><span>BDT ${moneyPlain(Number(detail.discountTotal) || 0)}</span></div>
-    <div class="sum"><span>(+) Tax:</span><span>BDT ${moneyPlain(Number(detail.vatAmount) || 0)}</span></div>
+    <div class="sum"><span>Sub total:</span><span>৳${moneyPlain(Number(detail.subTotal) || 0)}</span></div>
+    <div class="sum"><span>Shipping Charge:</span><span>৳0</span></div>
+    <div class="sum"><span>(-) Discount:</span><span>৳${moneyPlain(Number(detail.discountTotal) || 0)}</span></div>
+    <div class="sum"><span>(+) Tax:</span><span>৳${moneyPlain(Number(detail.vatAmount) || 0)}</span></div>
     <div class="dash"></div>
-    <div class="sum total"><span>Net payable:</span><span>BDT ${moneyPlain(Number(detail.totalAmount) || 0)}</span></div>
+    <div class="sum total"><span>Net payable:</span><span>৳${moneyPlain(Number(detail.totalAmount) || 0)}</span></div>
     <div class="dash"></div>
     <div class="sum"><span>Paid By:</span><span>${escapeHtml(paymentLabel(detail.paymentType))}</span></div>
-    <div class="sum"><span>Cash Amount:</span><span>BDT ${moneyPlain(Number(detail.cashAmount ?? detail.paid) || 0)}</span></div>
+    <div class="sum"><span>Cash Amount:</span><span>৳${moneyPlain(Number(detail.cashAmount ?? detail.paid) || 0)}</span></div>
     <div class="sum"><span>Change Amount:</span><span>${escapeHtml(formatTaka(Number(detail.changeAmount) || 0))}</span></div>
     <div class="dash"></div>
     <p class="footer">Thank you for your business!${

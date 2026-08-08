@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { formatDate } from "@/app/lib/format";
 import { InvoiceBadge } from "@/app/components/invoices/InvoiceBadge";
-import { money, numberToWordsUSD } from "@/app/lib/money";
+import { money, numberToWordsBDT } from "@/app/lib/money";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { apiInvoiceToInvoice, toUiInvoiceStatus, type ApiInvoiceDoc } from "@/app/lib/invoice-api";
 import { useGetInvoiceByIdQuery, useUpdateInvoiceMutation } from "@/redux/api/baseApi";
@@ -36,6 +36,18 @@ export default function InvoiceDetailsPage() {
   useEffect(() => {
     if (rawDoc?.status) setApiStatus(rawDoc.status);
   }, [rawDoc?.status]);
+
+  useEffect(() => {
+    if (!invoice || !rawDoc) return;
+    try {
+      if (new URLSearchParams(window.location.search).get("print") === "1") {
+        const t = setTimeout(() => window.print(), 400);
+        return () => clearTimeout(t);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [invoice, rawDoc]);
 
   const discountPct = invoice
     ? invoice.subTotal > 0
@@ -278,7 +290,7 @@ export default function InvoiceDetailsPage() {
 
                 <div className="pt-2 text-xs text-gray-500 dark:text-slate-400">
                   {t("dash.invoiceDetail.amountWords")}{" "}
-                  <span className="text-gray-700 dark:text-slate-200">{numberToWordsUSD(invoice.totalAmount)}</span>
+                  <span className="text-gray-700 dark:text-slate-200">{numberToWordsBDT(invoice.totalAmount)}</span>
                 </div>
               </div>
             </div>

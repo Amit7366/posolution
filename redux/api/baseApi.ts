@@ -597,9 +597,18 @@ export const baseApi = createApi({
         status?: "all" | "paid" | "unpaid" | "overdue" | "due";
         since?: string;
         customer?: string;
+        customerId?: string;
       }
     >({
-      query: ({ page = 1, limit = 20, search = "", status = "all", since, customer }) => ({
+      query: ({
+        page = 1,
+        limit = 20,
+        search = "",
+        status = "all",
+        since,
+        customer,
+        customerId,
+      }) => ({
         url: "/invoice",
         params: {
           page,
@@ -608,6 +617,7 @@ export const baseApi = createApi({
           ...(status && status !== "all" ? { status } : {}),
           ...(since ? { since } : {}),
           ...(customer ? { customer } : {}),
+          ...(customerId ? { customerId } : {}),
         },
       }),
       providesTags: ["Invoice"],
@@ -685,6 +695,11 @@ export const baseApi = createApi({
     getCustomerById: builder.query<any, string>({
       query: (id) => `/customer/${id}`,
       providesTags: ["Customer"],
+    }),
+
+    getCustomerSummary: builder.query<any, string>({
+      query: (id) => `/customer/${id}/summary`,
+      providesTags: ["Customer", "Invoice"],
     }),
 
     createCustomer: builder.mutation<any, Record<string, unknown>>({
@@ -904,6 +919,7 @@ export const {
   useGetCustomersQuery,
   useLazyGetCustomersQuery,
   useGetCustomerByIdQuery,
+  useGetCustomerSummaryQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
