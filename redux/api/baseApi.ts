@@ -37,6 +37,7 @@ export const baseApi = createApi({
     "Dashboard",
     "Payment",
     "Subscription",
+    "Profile",
   ],
   endpoints: (builder) => ({
     // Example dashboard endpoint (keep if used elsewhere)
@@ -377,6 +378,44 @@ export const baseApi = createApi({
         },
       }),
       providesTags: ["Store"],
+    }),
+
+    createStore: builder.mutation<any, Record<string, unknown>>({
+      query: (body) => ({
+        url: "/store",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Store"],
+    }),
+
+    updateStore: builder.mutation<
+      any,
+      { id: string; body: Record<string, unknown> }
+    >({
+      query: ({ id, body }) => ({
+        url: `/store/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Store"],
+    }),
+
+    getMyProfile: builder.query<any, void>({
+      query: () => "/normal-user/me",
+      providesTags: ["Profile"],
+    }),
+
+    updateMyProfile: builder.mutation<
+      any,
+      { userId: string; normalUser: Record<string, unknown> }
+    >({
+      query: ({ userId, normalUser }) => ({
+        url: `/normal-user/${userId}`,
+        method: "PATCH",
+        body: { normalUser },
+      }),
+      invalidatesTags: ["Profile"],
     }),
 
     getWarehouses: builder.query<
@@ -892,6 +931,10 @@ export const {
   useDeleteVariantAttributeMutation,
 
   useGetStoresQuery,
+  useCreateStoreMutation,
+  useUpdateStoreMutation,
+  useGetMyProfileQuery,
+  useUpdateMyProfileMutation,
   useGetWarehousesQuery,
   useGetWarrantiesQuery,
   useGetWarrantyByIdQuery,

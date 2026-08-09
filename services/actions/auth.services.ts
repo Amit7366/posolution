@@ -40,8 +40,17 @@ type DecodedUser = {
 //   return { accessToken: token, user };
 // };
 
-export const loginUser = async (email: string, password: string) => {
-  const body = { email, password };
+export const loginUser = async (
+  identifier: string,
+  password: string,
+  identifierType: "email" | "phone" | "username" = "email"
+) => {
+  const body =
+    identifierType === "email"
+      ? { email: identifier, password }
+      : identifierType === "phone"
+        ? { contactNo: identifier, password }
+        : { username: identifier, password };
 
   let res: Response;
   try {
@@ -83,6 +92,7 @@ type RegisterPayload = {
   name: string;
   userName: string;
   email: string;
+  contactNo: string;
   password: string;
 };
 
@@ -93,6 +103,7 @@ export const registerUser = async (payload: RegisterPayload) => {
       name: payload.name,
       userName: payload.userName,
       email: payload.email,
+      contactNo: payload.contactNo,
       gender: "male" as const,
       presentAddress: "1234 Elm Street, Los Angeles, CA",
     },

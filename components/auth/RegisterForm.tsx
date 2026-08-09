@@ -1,19 +1,21 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { createRegisterSchema } from "@/schemas/auth";
 import { registerUser } from "@/services/actions/auth.services";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import PasswordInput from "@/components/auth/PasswordInput";
+import PhoneInput from "@/components/auth/PhoneInput";
 import { cn } from "@/app/lib/cn";
 
 type RegisterData = {
   name: string;
   userName: string;
   email: string;
+  contactNo: string;
   password: string;
   confirmPassword: string;
   acceptTerms: boolean;
@@ -33,12 +35,14 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     formState: { errors },
   } = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       acceptTerms: false,
+      contactNo: "",
     },
   });
 
@@ -51,10 +55,11 @@ export default function RegisterForm() {
         name: data.name,
         userName: data.userName,
         email: data.email,
+        contactNo: data.contactNo,
         password: data.password,
       });
       setSuccessMessage(t("auth.registerForm.successMessage"));
-      reset({ acceptTerms: false });
+      reset({ acceptTerms: false, contactNo: "" });
     } catch (error: unknown) {
       setServerError(
         error instanceof Error ? error.message : t("auth.registerForm.failed")
@@ -109,6 +114,30 @@ export default function RegisterForm() {
         />
         {errors.email && (
           <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">
+          {t("auth.registerForm.phoneLabel")}
+        </label>
+        <Controller
+          name="contactNo"
+          control={control}
+          render={({ field }) => (
+            <PhoneInput
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              name={field.name}
+              ref={field.ref}
+              placeholder={t("auth.registerForm.phonePlaceholder")}
+              error={!!errors.contactNo}
+            />
+          )}
+        />
+        {errors.contactNo && (
+          <p className="mt-1.5 text-xs text-red-500">{errors.contactNo.message}</p>
         )}
       </div>
 

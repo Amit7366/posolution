@@ -1,148 +1,202 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Search, Bell, Mail, Settings, PlusCircle, Monitor } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import {
+  ChevronDown,
+  Search,
+  Bell,
+  Mail,
+  Settings,
+  PlusCircle,
+  Monitor,
+  LogOut,
+  UserRound,
+} from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NavbarLanguageSwitcher from "@/components/NavbarLanguageSwitcher";
-import Image from "next/image";
+import UserAvatar from "@/components/UserAvatar";
 import { useTranslation } from "@/lib/i18n/useTranslation";
+import { useAuth } from "@/redux/hook/useAuth";
+import { logoutUser } from "@/services/actions/logoutUser";
+import type { AppDispatch } from "@/redux/store";
+import { useGetMyProfileQuery } from "@/redux/api/baseApi";
 
 export default function DashboardNavbar() {
   const [openStore, setOpenStore] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: profileRes } = useGetMyProfileQuery(undefined, {
+    skip: !user,
+  });
+
+  const profile = profileRes?.data;
+  const displayName =
+    profile?.name || user?.userName || user?.email || t("nav.storeName");
+  const displayEmail = profile?.email || user?.email || "";
+  const profileImg = profile?.profileImg || "";
+
+  useEffect(() => {
+    if (!openProfile) return;
+
+    const onPointerDown = (e: MouseEvent) => {
+      if (!profileRef.current?.contains(e.target as Node)) {
+        setOpenProfile(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenProfile(false);
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [openProfile]);
 
   return (
-    <nav className="
-      w-full flex items-center justify-between gap-4 
-      px-4 md:px-6 py-2 
-      bg-white dark:bg-gray-900 
-      border-b border-gray-200 dark:border-gray-700
-      text-gray-900 dark:text-gray-100
-    ">
-      {/* LEFT SECTION */}
-      <div className="flex items-center gap-4 flex-1">
-        
-        {/* Search */}
-        <div className="
-          hidden md:flex items-center gap-2 
-          bg-gray-100 dark:bg-gray-800 
-          px-3 py-2 rounded-xl w-full max-w-sm 
-          border border-gray-200 dark:border-gray-700
-        ">
+    <nav className="flex w-full items-center justify-between gap-4 border-b border-gray-200 bg-white px-4 py-2 text-gray-900 md:px-6 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+      <div className="flex flex-1 items-center gap-4">
+        <div className="hidden w-full max-w-sm items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-3 py-2 md:flex dark:border-gray-700 dark:bg-gray-800">
           <Search size={18} className="shrink-0 text-gray-500 dark:text-gray-400" />
           <input
             type="text"
             placeholder={t("nav.searchPlaceholder")}
             className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-500 dark:text-gray-100 dark:placeholder:text-gray-500"
           />
-          <div className="
-            text-xs px-2 py-0.5 rounded 
-            bg-white dark:bg-gray-700 
-            border border-gray-300 dark:border-gray-600
-          ">
+          <div className="rounded border border-gray-300 bg-white px-2 py-0.5 text-xs dark:border-gray-600 dark:bg-gray-700">
             {t("nav.shortcutHint")}
           </div>
         </div>
-
       </div>
 
-      {/* RIGHT SECTION */}
       <div className="flex items-center gap-3">
-
-        {/* Store Select */}
         <button
+          type="button"
           onClick={() => setOpenStore(!openStore)}
-          className="
-            hidden md:flex items-center gap-2 
-            bg-gray-100 dark:bg-gray-800 
-            px-3 py-1.5 rounded-xl 
-            border border-gray-200 dark:border-gray-700
-          "
+          className="hidden items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-3 py-1.5 md:flex dark:border-gray-700 dark:bg-gray-800"
         >
-          <Image
-            src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/store/store-01.png"
-            alt="store"
-            width={22}
-            height={22}
-            className="rounded"
-          />
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{t("nav.storeName")}</span>
+          <span className="flex h-[22px] w-[22px] items-center justify-center rounded bg-blue-600 text-[10px] font-bold text-white">
+            S
+          </span>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            {t("nav.storeName")}
+          </span>
           <ChevronDown size={16} />
         </button>
 
-        {/* Add New */}
-        <button className="
-          hidden md:flex items-center gap-2 
-          bg-orange-400 hover:bg-orange-500 text-white 
-          px-4 py-2 rounded-xl text-sm font-medium
-        ">
+        <button
+          type="button"
+          className="hidden items-center gap-2 rounded-xl bg-orange-400 px-4 py-2 text-sm font-medium text-white hover:bg-orange-500 md:flex"
+        >
           <PlusCircle size={18} /> {t("nav.addNew")}
         </button>
 
-        {/* POS Button */}
         <Link
           href="/pos"
-          className="
-          hidden md:flex items-center gap-2 
-          bg-[#0d1b3e] text-white px-4 py-2 
-          rounded-xl text-sm font-medium
-          dark:bg-slate-800 dark:ring-1 dark:ring-slate-600
-          hover:opacity-90
-        "
+          className="hidden items-center gap-2 rounded-xl bg-[#0d1b3e] px-4 py-2 text-sm font-medium text-white hover:opacity-90 md:flex dark:bg-slate-800 dark:ring-1 dark:ring-slate-600"
         >
           <Monitor size={18} className="shrink-0" /> {t("nav.pos")}
         </Link>
 
         <NavbarLanguageSwitcher />
 
-        {/* Message */}
-        <button className="
-          relative flex items-center justify-center
-          bg-gray-100 dark:bg-gray-800
-          w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-700
-        ">
+        <button
+          type="button"
+          className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800"
+        >
           <Mail size={18} className="text-gray-700 dark:text-gray-200" />
         </button>
 
-        {/* Notification */}
-        <button className="
-          relative flex items-center justify-center
-          bg-gray-100 dark:bg-gray-800
-          w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-700
-        ">
+        <button
+          type="button"
+          className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800"
+        >
           <Bell size={18} className="text-gray-700 dark:text-gray-200" />
           <span
-            className="
-            absolute right-1 top-1 
-            h-3 w-3 rounded-full border border-white bg-red-500 dark:border-gray-800
-          "
+            className="absolute right-1 top-1 h-3 w-3 rounded-full border border-white bg-red-500 dark:border-gray-800"
             aria-hidden
           />
         </button>
 
-        {/* Settings */}
-        <button className="
-          hidden md:flex items-center justify-center
-          bg-gray-100 dark:bg-gray-800
-          w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-700
-        ">
+        <button
+          type="button"
+          className="hidden h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-gray-100 md:flex dark:border-gray-700 dark:bg-gray-800"
+        >
           <Settings size={18} className="text-gray-700 dark:text-gray-200" />
         </button>
 
-        {/* Theme Toggle */}
         <ThemeToggle variant="icon" />
 
-        {/* User Profile */}
-        <button className="flex items-center">
-          <Image
-            src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/profiles/avator1.jpg"
-            width={36}
-            height={36}
-            alt={t("nav.userProfileAlt")}
-            className="rounded-xl object-cover"
-          />
-        </button>
+        <div className="relative" ref={profileRef}>
+          <button
+            type="button"
+            onClick={() => setOpenProfile((v) => !v)}
+            aria-expanded={openProfile}
+            aria-haspopup="menu"
+            className="flex items-center gap-2 rounded-xl border border-transparent p-0.5 transition hover:border-gray-200 dark:hover:border-gray-700"
+          >
+            <UserAvatar
+              name={displayName}
+              email={displayEmail}
+              src={profileImg || null}
+              size={36}
+            />
+            <ChevronDown
+              size={14}
+              className={`hidden text-gray-500 transition sm:block ${openProfile ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {openProfile && (
+            <div
+              role="menu"
+              className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900"
+            >
+              <div className="border-b border-gray-100 px-4 py-3 dark:border-gray-800">
+                <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                  {displayName}
+                </p>
+                {displayEmail ? (
+                  <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                    {displayEmail}
+                  </p>
+                ) : null}
+              </div>
+
+              <Link
+                href="/dashboard/profile"
+                role="menuitem"
+                onClick={() => setOpenProfile(false)}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
+                <UserRound size={16} />
+                {t("nav.myProfile")}
+              </Link>
+
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpenProfile(false);
+                  void logoutUser(dispatch, () => router.replace("/login"));
+                }}
+                className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+              >
+                <LogOut size={16} />
+                {t("sidebar.logout")}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
