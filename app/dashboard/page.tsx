@@ -8,12 +8,11 @@ import {
   RotateCcw,
   X,
   Calendar,
-  Settings,
   Phone,
   Banknote,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import SalesPurchaseCard, { type SalesChartRange } from "../components/dashboard/SalesPurchaseCard";
 import OverallInformationCard from "../components/dashboard/OverallInformationCard";
@@ -22,9 +21,34 @@ import LowStockProducts from "../components/dashboard/LowStockProducts";
 import RecentSales, { mapRecentInvoicesToRows } from "../components/dashboard/RecentSales";
 import DashboardWidgetsDemo from "../components/dashboard/DashobardWidgets";
 import CollectDueModal, { type CollectDueTarget } from "@/app/components/dues/CollectDueModal";
+import ProfitLossCard from "../components/dashboard/ProfitLossCard";
 import { useGetDashboardSummaryQuery } from "@/redux/api/baseApi";
 import { parseDashboardSummaryPayload } from "@/app/types/dashboard-summary";
 import { money } from "@/app/lib/money";
+
+function useNowClock(locale: string) {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  return useMemo(() => {
+    const date = now.toLocaleDateString(locale === "bn" ? "bn-BD" : "en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    const time = now.toLocaleTimeString(locale === "bn" ? "bn-BD" : "en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+    return `${date} · ${time}`;
+  }, [now, locale]);
+}
 
 function TrendLine({ value, variant }: { value: number | null; variant: "onDark" | "onLight" }) {
   const { t } = useTranslation();
@@ -51,7 +75,8 @@ function TrendLine({ value, variant }: { value: number | null; variant: "onDark"
 }
 
 export default function DashboardPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const nowLabel = useNowClock(language);
   const [showAlert, setShowAlert] = useState(true);
   const [chartRange, setChartRange] = useState<SalesChartRange>("1W");
   const [collectTarget, setCollectTarget] = useState<CollectDueTarget | null>(null);
@@ -98,13 +123,10 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          className="flex items-center gap-2 border px-4 py-2 rounded-md bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 shadow-sm opacity-80 cursor-default"
-        >
+        <div className="flex items-center gap-2 border px-4 py-2 rounded-md bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 shadow-sm">
           <Calendar size={18} />
-          {t("dash.dashboard.dateRangeSample")}
-        </button>
+          <span className="text-sm tabular-nums">{nowLabel}</span>
+        </div>
       </div>
 
       {error != null ? (
@@ -162,21 +184,24 @@ export default function DashboardPage() {
             <span className="font-medium text-sm">{t("dash.dashboard.totalPurchase")}</span>
           </div>
           <div className="text-3xl font-bold mt-2">{busy ? "…" : money(summary?.totals.totalPurchase ?? 0)}</div>
-          <div className="text-white/80 text-xs mt-2">—</div>
+          <Link href="/dashboard/purchases" className="mt-3 inline-block text-xs font-medium text-white/90 underline-offset-2 hover:underline">
+            {t("dash.dashboard.viewAll")}
+          </Link>
         </div>
 
-        <div className="rounded-xl p-5 bg-blue-600 text-white shadow-sm relative">
+        <div className="rounded-xl p-5 bg-blue-600 text-white shadow-sm">
           <div className="flex items-center gap-3 text-white/90">
             <Shield size={24} />
             <span className="font-medium text-sm">{t("dash.dashboard.totalPurchaseReturn")}</span>
           </div>
           <div className="text-3xl font-bold mt-2">{busy ? "…" : money(summary?.totals.totalPurchaseReturn ?? 0)}</div>
-          <div className="bg-white/20 inline-block px-2 py-[2px] rounded text-xs mt-3">—</div>
-          <div className="absolute -right-3 -top-3 bg-orange-500 p-2 rounded-full shadow">
-            <Settings size={18} className="text-white" />
-          </div>
+          <Link href="/dashboard/purchases/return" className="mt-3 inline-block text-xs font-medium text-white/90 underline-offset-2 hover:underline">
+            {t("dash.dashboard.viewAll")}
+          </Link>
         </div>
       </div>
+
+      <ProfitLossCard />
 
       <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 dark:border-gray-800">
@@ -243,6 +268,66 @@ export default function DashboardPage() {
                     <Banknote size={14} />
                     {t("dash.dashboard.collect")}
                   </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+            Purchase dues
+          </h2>
+          <Link
+            href="/dashboard/purchases/dues"
+            className="text-sm font-medium text-blue-600 hover:underline"
+          >
+            {t("dash.dashboard.viewAll")}
+          </Link>
+        </div>
+        {busy ? (
+          <div className="px-5 py-8 text-sm text-gray-500">{t("dash.common.loading")}</div>
+        ) : !summary?.duePurchases?.length ? (
+          <div className="px-5 py-8 text-sm text-gray-500">No purchase dues</div>
+        ) : (
+          <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+            {summary.duePurchases.map((d) => (
+              <li
+                key={d.id}
+                className="flex flex-wrap items-center justify-between gap-3 px-5 py-3"
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link
+                      href={`/dashboard/purchases/${d.id}`}
+                      className="font-medium text-gray-900 hover:underline dark:text-gray-100"
+                    >
+                      {d.purchaseNo}
+                    </Link>
+                    {d.overdue ? (
+                      <span className="rounded bg-red-100 px-2 py-0.5 text-[11px] font-medium text-red-700 dark:bg-red-500/20 dark:text-red-300">
+                        {t("dash.dues.overdue")}
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="truncate text-sm text-gray-500">
+                    {d.supplierName || "—"}
+                    {d.supplierPhone ? ` · ${d.supplierPhone}` : ""}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold text-teal-600 dark:text-teal-400">
+                    {money(d.amountDue)}
+                  </span>
+                  <Link
+                    href="/dashboard/purchases/dues"
+                    className="inline-flex items-center gap-1 rounded-md bg-teal-600 px-2 py-1.5 text-xs font-medium text-white hover:bg-teal-700"
+                  >
+                    <Banknote size={14} />
+                    Pay
+                  </Link>
                 </div>
               </li>
             ))}

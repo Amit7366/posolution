@@ -21,6 +21,8 @@ import {
   Monitor,
   Users,
   Wallet,
+  Truck,
+  ShoppingBag,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -157,6 +159,39 @@ export const sidebarMenus: MenuItem[] = [
         titleKey: "sidebar.salesReturn",
         icon: Undo2,
         link: "/dashboard/sales/return",
+        role: "all",
+      },
+    ],
+  },
+  {
+    sectionKey: "sidebar.sectionPurchases",
+    titleKey: "sidebar.purchases",
+    icon: ShoppingBag,
+    link: "/dashboard/purchases",
+    role: "all",
+    children: [
+      {
+        titleKey: "sidebar.suppliers",
+        icon: Truck,
+        link: "/dashboard/suppliers",
+        role: "all",
+      },
+      {
+        titleKey: "sidebar.purchaseList",
+        icon: FileText,
+        link: "/dashboard/purchases",
+        role: "all",
+      },
+      {
+        titleKey: "sidebar.purchaseDues",
+        icon: Wallet,
+        link: "/dashboard/purchases/dues",
+        role: "all",
+      },
+      {
+        titleKey: "sidebar.purchaseReturn",
+        icon: Undo2,
+        link: "/dashboard/purchases/return",
         role: "all",
       },
     ],

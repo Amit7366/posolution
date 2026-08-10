@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import {
   ChevronDown,
-  Search,
   Bell,
   Mail,
   Settings,
@@ -17,12 +16,13 @@ import {
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NavbarLanguageSwitcher from "@/components/NavbarLanguageSwitcher";
+import NavbarSearch from "@/components/NavbarSearch";
 import UserAvatar from "@/components/UserAvatar";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { useAuth } from "@/redux/hook/useAuth";
 import { logoutUser } from "@/services/actions/logoutUser";
 import type { AppDispatch } from "@/redux/store";
-import { useGetMyProfileQuery } from "@/redux/api/baseApi";
+import { useGetMyProfileQuery, useGetStoresQuery } from "@/redux/api/baseApi";
 
 export default function DashboardNavbar() {
   const [openStore, setOpenStore] = useState(false);
@@ -35,12 +35,27 @@ export default function DashboardNavbar() {
   const { data: profileRes } = useGetMyProfileQuery(undefined, {
     skip: !user,
   });
+  const { data: storesRes } = useGetStoresQuery(
+    { page: 1, limit: 1 },
+    { skip: !user }
+  );
 
   const profile = profileRes?.data;
   const displayName =
-    profile?.name || user?.userName || user?.email || t("nav.storeName");
+    profile?.name || user?.userName || user?.email || "Sohoj POS";
   const displayEmail = profile?.email || user?.email || "";
   const profileImg = profile?.profileImg || "";
+
+  const primaryStore = useMemo(() => {
+    const raw = storesRes?.data;
+    const list = Array.isArray(raw) ? raw : [];
+    return list[0] as { name?: string } | undefined;
+  }, [storesRes]);
+
+  const shopName =
+    (typeof primaryStore?.name === "string" && primaryStore.name.trim()) ||
+    "Sohoj POS";
+  const shopInitial = (shopName.trim().charAt(0) || "S").toUpperCase();
 
   useEffect(() => {
     if (!openProfile) return;
@@ -65,17 +80,7 @@ export default function DashboardNavbar() {
   return (
     <nav className="flex w-full items-center justify-between gap-4 border-b border-gray-200 bg-white px-4 py-2 text-gray-900 md:px-6 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
       <div className="flex flex-1 items-center gap-4">
-        <div className="hidden w-full max-w-sm items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-3 py-2 md:flex dark:border-gray-700 dark:bg-gray-800">
-          <Search size={18} className="shrink-0 text-gray-500 dark:text-gray-400" />
-          <input
-            type="text"
-            placeholder={t("nav.searchPlaceholder")}
-            className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-500 dark:text-gray-100 dark:placeholder:text-gray-500"
-          />
-          <div className="rounded border border-gray-300 bg-white px-2 py-0.5 text-xs dark:border-gray-600 dark:bg-gray-700">
-            {t("nav.shortcutHint")}
-          </div>
-        </div>
+        <NavbarSearch />
       </div>
 
       <div className="flex items-center gap-3">
@@ -85,10 +90,10 @@ export default function DashboardNavbar() {
           className="hidden items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-3 py-1.5 md:flex dark:border-gray-700 dark:bg-gray-800"
         >
           <span className="flex h-[22px] w-[22px] items-center justify-center rounded bg-blue-600 text-[10px] font-bold text-white">
-            S
+            {shopInitial}
           </span>
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            {t("nav.storeName")}
+          <span className="max-w-[140px] truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+            {shopName}
           </span>
           <ChevronDown size={16} />
         </button>

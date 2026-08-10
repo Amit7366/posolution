@@ -16,9 +16,13 @@ type Props = {
 export function Modal({ open, title, onClose, children, footer, className, initialFocusSelector }: Props) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   const titleId = useMemo(() => `modal-title-${Math.random().toString(36).slice(2)}`, []);
 
+  // Only run open/close lifecycle when `open` changes — not when parent re-renders
+  // with a new onClose callback (that was stealing focus from qty/price inputs).
   useEffect(() => {
     if (!open) return;
 
@@ -28,8 +32,8 @@ export function Modal({ open, title, onClose, children, footer, className, initi
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // focus
-    setTimeout(() => {
+    // focus once on open
+    const focusTimer = window.setTimeout(() => {
       const panel = panelRef.current;
       if (!panel) return;
       const el =
@@ -43,7 +47,7 @@ export function Modal({ open, title, onClose, children, footer, className, initi
     }, 0);
 
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onCloseRef.current();
 
       // basic focus trap
       if (e.key === "Tab") {
@@ -74,11 +78,12 @@ export function Modal({ open, title, onClose, children, footer, className, initi
 
     document.addEventListener("keydown", onKeyDown);
     return () => {
+      window.clearTimeout(focusTimer);
       document.body.style.overflow = prevOverflow;
       document.removeEventListener("keydown", onKeyDown);
       previouslyFocused.current?.focus?.();
     };
-  }, [open, onClose, initialFocusSelector]);
+  }, [open, initialFocusSelector]);
 
   if (!open) return null;
 

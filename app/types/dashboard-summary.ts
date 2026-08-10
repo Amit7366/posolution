@@ -12,6 +12,18 @@ export type DashboardDueInvoice = {
   overdue: boolean;
 };
 
+export type DashboardDuePurchase = {
+  id: string;
+  purchaseNo: string;
+  supplierName: string;
+  supplierPhone: string;
+  totalAmount: number;
+  paid: number;
+  amountDue: number;
+  dueDate: string;
+  overdue: boolean;
+};
+
 export type DashboardSummary = {
   totals: {
     totalSales: number;
@@ -70,6 +82,7 @@ export type DashboardSummary = {
     imageUrl: string;
   }>;
   dueInvoices: DashboardDueInvoice[];
+  duePurchases?: DashboardDuePurchase[];
   topCustomers: Array<{
     id?: string;
     name: string;

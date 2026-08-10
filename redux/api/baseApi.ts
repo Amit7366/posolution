@@ -34,6 +34,9 @@ export const baseApi = createApi({
     "Invoice",
     "Customer",
     "SalesReturn",
+    "Supplier",
+    "Purchase",
+    "PurchaseReturn",
     "Dashboard",
     "Payment",
     "Subscription",
@@ -53,6 +56,25 @@ export const baseApi = createApi({
       query: ({ chartRange = "1W" }) => ({
         url: "/dashboard/summary",
         params: { chartRange },
+      }),
+      providesTags: ["Dashboard"],
+    }),
+
+    getProfitLoss: builder.query<
+      unknown,
+      {
+        preset?: "1D" | "3D" | "7D" | "1M" | "1Y" | "custom";
+        from?: string;
+        to?: string;
+      }
+    >({
+      query: ({ preset = "1D", from, to }) => ({
+        url: "/dashboard/profit-loss",
+        params: {
+          preset,
+          ...(preset === "custom" && from ? { from } : {}),
+          ...(preset === "custom" && to ? { to } : {}),
+        },
       }),
       providesTags: ["Dashboard"],
     }),
@@ -833,6 +855,208 @@ export const baseApi = createApi({
       invalidatesTags: ["SalesReturn", "Product", "Dashboard"],
     }),
 
+    getSuppliers: builder.query<
+      any,
+      { search?: string; status?: string } | void
+    >({
+      query: (args) => ({
+        url: "/supplier",
+        params: {
+          ...(args?.search ? { search: args.search } : {}),
+          ...(args?.status ? { status: args.status } : {}),
+        },
+      }),
+      providesTags: ["Supplier"],
+    }),
+
+    getSupplierById: builder.query<any, string>({
+      query: (supplierId) => `/supplier/${supplierId}`,
+      providesTags: ["Supplier"],
+    }),
+
+    getSupplierSummary: builder.query<any, string>({
+      query: (supplierId) => `/supplier/${supplierId}/summary`,
+      providesTags: ["Supplier", "Purchase"],
+    }),
+
+    createSupplier: builder.mutation<any, Record<string, unknown>>({
+      query: (body) => ({
+        url: "/supplier",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Supplier", "Dashboard"],
+    }),
+
+    updateSupplier: builder.mutation<
+      any,
+      { supplierId: string; body: Record<string, unknown> }
+    >({
+      query: ({ supplierId, body }) => ({
+        url: `/supplier/${supplierId}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Supplier", "Dashboard"],
+    }),
+
+    deleteSupplier: builder.mutation<any, string>({
+      query: (supplierId) => ({
+        url: `/supplier/${supplierId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Supplier", "Dashboard"],
+    }),
+
+    getPurchases: builder.query<
+      any,
+      {
+        page?: number;
+        limit?: number;
+        search?: string;
+        status?: "all" | "paid" | "unpaid" | "overdue" | "due";
+        since?: string;
+        supplier?: string;
+        supplierId?: string;
+      }
+    >({
+      query: ({
+        page = 1,
+        limit = 20,
+        search = "",
+        status = "all",
+        since,
+        supplier,
+        supplierId,
+      }) => ({
+        url: "/purchase",
+        params: {
+          page,
+          limit,
+          ...(search ? { search } : {}),
+          ...(status && status !== "all" ? { status } : {}),
+          ...(since ? { since } : {}),
+          ...(supplier ? { supplier } : {}),
+          ...(supplierId ? { supplierId } : {}),
+        },
+      }),
+      providesTags: ["Purchase"],
+    }),
+
+    getPurchaseById: builder.query<any, string>({
+      query: (id) => `/purchase/${id}`,
+      providesTags: ["Purchase"],
+    }),
+
+    createPurchase: builder.mutation<any, Record<string, unknown>>({
+      query: (body) => ({
+        url: "/purchase",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Purchase", "Product", "Dashboard", "Supplier"],
+    }),
+
+    updatePurchase: builder.mutation<any, { id: string; body: Record<string, unknown> }>({
+      query: ({ id, body }) => ({
+        url: `/purchase/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Purchase", "Product", "Dashboard", "Supplier"],
+    }),
+
+    payPurchaseDue: builder.mutation<
+      any,
+      { id: string; body: { amount: number; paymentType?: string; note?: string } }
+    >({
+      query: ({ id, body }) => ({
+        url: `/purchase/${id}/pay`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Purchase", "Dashboard", "Supplier"],
+    }),
+
+    getPurchasePayments: builder.query<any, string>({
+      query: (id) => `/purchase/${id}/payments`,
+      providesTags: ["Purchase"],
+    }),
+
+    deletePurchase: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/purchase/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Purchase", "Product", "Dashboard", "Supplier"],
+    }),
+
+    getPurchaseReturns: builder.query<
+      any,
+      {
+        page?: number;
+        limit?: number;
+        search?: string;
+        returnStatus?: "all" | "pending" | "received";
+        paymentStatus?: "all" | "paid" | "unpaid" | "overdue";
+        since?: string;
+        supplier?: string;
+      }
+    >({
+      query: ({
+        page = 1,
+        limit = 20,
+        search = "",
+        returnStatus = "all",
+        paymentStatus = "all",
+        since,
+        supplier,
+      }) => ({
+        url: "/purchase-return",
+        params: {
+          page,
+          limit,
+          ...(search ? { search } : {}),
+          ...(returnStatus !== "all" ? { returnStatus } : {}),
+          ...(paymentStatus !== "all" ? { paymentStatus } : {}),
+          ...(since ? { since } : {}),
+          ...(supplier ? { supplier } : {}),
+        },
+      }),
+      providesTags: ["PurchaseReturn"],
+    }),
+
+    getPurchaseReturnById: builder.query<any, string>({
+      query: (id) => `/purchase-return/${id}`,
+      providesTags: ["PurchaseReturn"],
+    }),
+
+    createPurchaseReturn: builder.mutation<any, Record<string, unknown>>({
+      query: (body) => ({
+        url: "/purchase-return",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["PurchaseReturn", "Product", "Dashboard"],
+    }),
+
+    updatePurchaseReturn: builder.mutation<any, { id: string; body: Record<string, unknown> }>({
+      query: ({ id, body }) => ({
+        url: `/purchase-return/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["PurchaseReturn", "Product", "Dashboard"],
+    }),
+
+    deletePurchaseReturn: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/purchase-return/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["PurchaseReturn", "Product", "Dashboard"],
+    }),
+
     // ── Subscription ─────────────────────────────────────────────────────────
     getSubscriptionStatus: builder.query<any, void>({
       query: () => "/subscription",
@@ -903,6 +1127,7 @@ export const baseApi = createApi({
 export const {
   useGetDashboardQuery,
   useGetDashboardSummaryQuery,
+  useGetProfitLossQuery,
   useGetCategoriesQuery,
   useGetCategoryByIdQuery,
   useCreateCategoryMutation,
@@ -972,6 +1197,30 @@ export const {
   useCreateSalesReturnMutation,
   useUpdateSalesReturnMutation,
   useDeleteSalesReturnMutation,
+
+  useGetSuppliersQuery,
+  useLazyGetSuppliersQuery,
+  useGetSupplierByIdQuery,
+  useGetSupplierSummaryQuery,
+  useCreateSupplierMutation,
+  useUpdateSupplierMutation,
+  useDeleteSupplierMutation,
+
+  useGetPurchasesQuery,
+  useLazyGetPurchasesQuery,
+  useGetPurchaseByIdQuery,
+  useCreatePurchaseMutation,
+  useUpdatePurchaseMutation,
+  usePayPurchaseDueMutation,
+  useGetPurchasePaymentsQuery,
+  useLazyGetPurchasePaymentsQuery,
+  useDeletePurchaseMutation,
+
+  useGetPurchaseReturnsQuery,
+  useGetPurchaseReturnByIdQuery,
+  useCreatePurchaseReturnMutation,
+  useUpdatePurchaseReturnMutation,
+  useDeletePurchaseReturnMutation,
 
   useGetSubscriptionStatusQuery,
   useSubmitPaymentMutation,

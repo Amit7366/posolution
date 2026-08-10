@@ -4,9 +4,9 @@ export type AppLocale = "en" | "bn";
 
 const en = {
   nav: {
-    searchPlaceholder: "Search",
+    searchPlaceholder: "Search pages, products, suppliers…",
     shortcutHint: "⌘ K",
-    storeName: "Freshmart",
+    storeName: "Sohoj POS",
     addNew: "Add New",
     pos: "POS",
     userProfileAlt: "User profile",
@@ -19,6 +19,7 @@ const en = {
     sectionInventory: "Inventory",
     sectionStock: "Stock",
     sectionSales: "Sales",
+    sectionPurchases: "Purchases",
     dashboard: "Dashboard",
     pos: "POS",
     products: "Products",
@@ -39,6 +40,11 @@ const en = {
     dues: "Due Receivables",
     invoices: "Invoices",
     salesReturn: "Sales Return",
+    purchases: "Purchases",
+    suppliers: "Suppliers",
+    purchaseList: "Purchase History",
+    purchaseDues: "Purchase Dues",
+    purchaseReturn: "Purchase Return",
     sectionBilling: "Billing",
     billing: "Billing & Payment",
     paymentRequests: "Payment Requests",
@@ -462,9 +468,9 @@ const en = {
 
 const bn = {
   nav: {
-    searchPlaceholder: "খুঁজুন",
+    searchPlaceholder: "পেজ, পণ্য, সাপ্লায়ার খুঁজুন…",
     shortcutHint: "⌘ K",
-    storeName: "ফ্রেশমার্ট",
+    storeName: "সোহজ পিওএস",
     addNew: "নতুন যোগ করুন",
     pos: "পিওএস",
     userProfileAlt: "ব্যবহারকারী প্রোফাইল",
@@ -477,6 +483,7 @@ const bn = {
     sectionInventory: "ইনভেন্টরি",
     sectionStock: "স্টক",
     sectionSales: "বিক্রয়",
+    sectionPurchases: "ক্রয়",
     dashboard: "ড্যাশবোর্ড",
     pos: "পিওএস",
     products: "পণ্য",
@@ -497,6 +504,11 @@ const bn = {
     dues: "বাকি আদায়",
     invoices: "ইনভয়েস",
     salesReturn: "বিক্রয় রিটার্ন",
+    purchases: "ক্রয়",
+    suppliers: "সাপ্লায়ার",
+    purchaseList: "ক্রয় ইতিহাস",
+    purchaseDues: "ক্রয় বাকি",
+    purchaseReturn: "ক্রয় রিটার্ন",
     sectionBilling: "বিলিং",
     billing: "বিলিং ও পেমেন্ট",
     paymentRequests: "পেমেন্ট অনুরোধ",

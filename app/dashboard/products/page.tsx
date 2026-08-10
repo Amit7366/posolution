@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import {
   useDeleteProductMutation,
@@ -139,8 +140,10 @@ const currency = (n: number) => `৳${n.toLocaleString("en-BD")}`;
 
 export default function ProductListPage() {
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const searchParams = useSearchParams();
+  const initialSearch = searchParams.get("search")?.trim() ?? "";
+  const [query, setQuery] = useState(initialSearch);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialSearch);
   const [categoryId, setCategoryId] = useState("");
   const [brandId, setBrandId] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
@@ -149,6 +152,13 @@ export default function ProductListPage() {
   const [perPage, setPerPage] = useState(10);
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
   const [viewingId, setViewingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const next = searchParams.get("search")?.trim() ?? "";
+    setQuery(next);
+    setDebouncedQuery(next);
+    setPage(1);
+  }, [searchParams]);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query.trim()), 400);
