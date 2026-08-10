@@ -9,8 +9,8 @@ import {
   Search,
   Truck,
   Users,
-  type LucideIcon,
 } from "lucide-react";
+import type { ElementType } from "react";
 import { sidebarMenus, type MenuItem } from "@/app/lib/menus";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { useAuth } from "@/redux/hook/useAuth";
@@ -26,7 +26,7 @@ type SearchHit = {
   title: string;
   subtitle?: string;
   href: string;
-  Icon: LucideIcon;
+  Icon: ElementType;
 };
 
 function flattenMenus(
