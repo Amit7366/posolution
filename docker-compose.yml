@@ -1,3 +1,6 @@
+# Unique project name — avoids colliding with other apps in folders named "client".
+name: posulation-client
+
 services:
   client:
     container_name: posulation-client

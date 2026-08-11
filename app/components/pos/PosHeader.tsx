@@ -64,7 +64,7 @@ export default function PosHeader({ onOpenTransactions }: Props) {
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-orange-500 text-sm font-bold text-white">
             S
           </span>
-          <span className="hidden font-semibold tracking-wide sm:inline">Sohoj</span>
+          <span className="hidden font-semibold tracking-wide sm:inline">posulation</span>
         </Link>
 
         <Link

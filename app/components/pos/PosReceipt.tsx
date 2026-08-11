@@ -83,7 +83,7 @@ function paymentLabel(type?: string) {
 export default function PosReceipt({ detail, store, mode = "screen" }: Props) {
   const items = Array.isArray(detail.items) ? detail.items : [];
   const shopName =
-    store?.name || detail.fromParty?.name || "Sohoj POS";
+    store?.name || detail.fromParty?.name || "posulation";
   const shopAddress =
     store?.address || detail.fromParty?.address || "";
   const shopEmail =
@@ -279,7 +279,7 @@ export function printPosReceipt(detail: ReceiptInvoice, store?: StoreInfo | null
   const w = window.open("", "_blank", "noopener,noreferrer,width=320,height=720");
   if (!w) return false;
 
-  const shopName = store?.name || detail.fromParty?.name || "Sohoj POS";
+  const shopName = store?.name || detail.fromParty?.name || "posulation";
   const shopAddress = store?.address || detail.fromParty?.address || "";
   const shopEmail = store?.email || detail.fromParty?.email || "";
   const shopPhone = store?.phone || detail.fromParty?.phone || "";

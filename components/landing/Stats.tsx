@@ -54,7 +54,7 @@ export default function Stats() {
         {/* Bottom quote */}
         <div className="mt-16 border-t border-white/20 pt-10 text-center">
           <p className="mx-auto max-w-xl text-base font-medium text-blue-100">
-            &ldquo;Sohoj POS is the fastest-growing retail management platform in Bangladesh — trusted by shops, restaurants, pharmacies, and wholesalers.&rdquo;
+            &ldquo;posulation is the fastest-growing retail management platform in Bangladesh — trusted by shops, restaurants, pharmacies, and wholesalers.&rdquo;
           </p>
         </div>
       </div>

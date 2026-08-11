@@ -78,7 +78,7 @@ export default function Footer() {
                   <ShoppingCart size={17} className="text-white" />
                 </div>
                 <span className="text-xl font-black bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Sohoj POS
+                  posulation
                 </span>
               </Link>
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-gray-500 dark:text-gray-400">

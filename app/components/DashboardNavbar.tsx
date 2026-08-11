@@ -42,7 +42,7 @@ export default function DashboardNavbar() {
 
   const profile = profileRes?.data;
   const displayName =
-    profile?.name || user?.userName || user?.email || "Sohoj POS";
+    profile?.name || user?.userName || user?.email || "posulation";
   const displayEmail = profile?.email || user?.email || "";
   const profileImg = profile?.profileImg || "";
 
@@ -54,7 +54,7 @@ export default function DashboardNavbar() {
 
   const shopName =
     (typeof primaryStore?.name === "string" && primaryStore.name.trim()) ||
-    "Sohoj POS";
+    "posulation";
   const shopInitial = (shopName.trim().charAt(0) || "S").toUpperCase();
 
   useEffect(() => {

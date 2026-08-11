@@ -54,7 +54,7 @@ export default function Navbar() {
             <ShoppingCart size={15} className="text-white" />
           </div>
           <span className="text-lg font-black bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Sohoj POS
+            posulation
           </span>
         </Link>
 
