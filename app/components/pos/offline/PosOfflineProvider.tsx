@@ -106,7 +106,7 @@ export function PosOfflineProvider({ children }: { children: ReactNode }) {
 
   return (
     <PosOfflineContext.Provider value={value}>
-      <PosOfflineBootstrap onReady={() => void syncNow()} />
+      <PosOfflineBootstrap />
       {children}
     </PosOfflineContext.Provider>
   );
