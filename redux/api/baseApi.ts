@@ -1129,6 +1129,7 @@ export const {
   useGetDashboardSummaryQuery,
   useGetProfitLossQuery,
   useGetCategoriesQuery,
+  useLazyGetCategoriesQuery,
   useGetCategoryByIdQuery,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
@@ -1156,6 +1157,7 @@ export const {
   useDeleteVariantAttributeMutation,
 
   useGetStoresQuery,
+  useLazyGetStoresQuery,
   useCreateStoreMutation,
   useUpdateStoreMutation,
   useGetMyProfileQuery,

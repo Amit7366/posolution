@@ -1,16 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ArrowLeftRight,
   ChevronDown,
+  CloudOff,
   LayoutDashboard,
   LogOut,
   Maximize2,
   Minimize2,
+  RefreshCw,
   Store,
   User,
 } from "lucide-react";
@@ -18,6 +20,9 @@ import { useGetStoresQuery } from "@/redux/api/baseApi";
 import type { RootState } from "@/redux/store";
 import { logoutUser } from "@/services/actions/logoutUser";
 import type { AppDispatch } from "@/redux/store";
+import ThemeToggle from "@/components/ThemeToggle";
+import { getAllCachedStores } from "./offline/posCache";
+import { usePosOffline } from "./offline/PosOfflineProvider";
 
 type Props = {
   onOpenTransactions: () => void;
@@ -29,12 +34,25 @@ export default function PosHeader({ onOpenTransactions }: Props) {
   const user = useSelector((s: RootState) => s.auth.user);
   const [fullscreen, setFullscreen] = useState(false);
   const [storeId, setStoreId] = useState("");
+  const [cachedStores, setCachedStores] = useState<{ _id: string; name: string }[]>([]);
+  const { online, pending, syncing, syncNow } = usePosOffline();
 
-  const { data: storesPayload } = useGetStoresQuery({ page: 1, limit: 50 });
+  const { data: storesPayload } = useGetStoresQuery(
+    { page: 1, limit: 50 },
+    { skip: !online }
+  );
+
+  useEffect(() => {
+    void getAllCachedStores().then((rows) =>
+      setCachedStores(rows.map((s) => ({ _id: s.id, name: s.name })))
+    );
+  }, [online, storesPayload]);
+
   const stores = useMemo(() => {
     const raw = (storesPayload as { data?: unknown[] } | undefined)?.data;
-    return Array.isArray(raw) ? (raw as { _id: string; name: string }[]) : [];
-  }, [storesPayload]);
+    const api = Array.isArray(raw) ? (raw as { _id: string; name: string }[]) : [];
+    return api.length > 0 ? api : cachedStores;
+  }, [storesPayload, cachedStores]);
 
   const selectedStore =
     stores.find((s) => s._id === storeId) ?? stores[0] ?? null;
@@ -52,6 +70,14 @@ export default function PosHeader({ onOpenTransactions }: Props) {
       /* ignore */
     }
   }
+
+  const statusLabel = !online
+    ? "Offline"
+    : syncing
+      ? "Syncing…"
+      : pending > 0
+        ? `${pending} pending`
+        : null;
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 bg-gray-900 px-3 text-white sm:px-4">
@@ -102,6 +128,23 @@ export default function PosHeader({ onOpenTransactions }: Props) {
           </select>
           <ChevronDown size={14} className="pointer-events-none text-gray-400" />
         </div>
+
+        {statusLabel && (
+          <button
+            type="button"
+            onClick={() => void syncNow()}
+            disabled={!online || syncing}
+            className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium ${
+              !online
+                ? "bg-amber-500/20 text-amber-300"
+                : "bg-sky-500/20 text-sky-300"
+            }`}
+            title={online ? "Sync now" : "You are offline"}
+          >
+            {!online ? <CloudOff size={14} /> : <RefreshCw size={14} className={syncing ? "animate-spin" : ""} />}
+            <span className="hidden sm:inline">{statusLabel}</span>
+          </button>
+        )}
       </div>
 
       <button
@@ -111,9 +154,18 @@ export default function PosHeader({ onOpenTransactions }: Props) {
       >
         <ArrowLeftRight size={16} />
         <span className="hidden sm:inline">Transactions</span>
+        {pending > 0 && (
+          <span className="rounded-full bg-orange-500 px-1.5 text-[10px] font-bold leading-4">
+            {pending}
+          </span>
+        )}
       </button>
 
       <div className="flex items-center gap-1 sm:gap-2">
+        <ThemeToggle
+          variant="icon"
+          className="!h-9 !w-9 !rounded-md !border-transparent !bg-white/10 !text-gray-200 hover:!bg-white/15 dark:!border-transparent dark:!bg-white/10 dark:!text-gray-200 dark:hover:!bg-white/15"
+        />
         <button
           type="button"
           onClick={toggleFullscreen}

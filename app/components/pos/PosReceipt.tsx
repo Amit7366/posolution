@@ -107,7 +107,7 @@ export default function PosReceipt({ detail, store, mode = "screen" }: Props) {
     <div
       className={
         mode === "screen"
-          ? "mx-auto w-full max-w-[300px] bg-white px-3 py-4 font-mono text-[11px] leading-snug text-black shadow-sm ring-1 ring-gray-200"
+          ? "mx-auto w-full max-w-[300px] bg-white px-3 py-4 font-mono text-[11px] leading-snug text-black shadow-sm ring-1 ring-gray-200 dark:bg-white dark:text-black dark:ring-gray-600"
           : "pos-receipt"
       }
       style={

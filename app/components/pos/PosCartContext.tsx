@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -49,10 +50,79 @@ type PosCartContextValue = {
   grandTotal: number;
 };
 
+const STORAGE_KEY = "sohoj-pos-cart";
+
+const UNSELECTED_ID = "__unselected__";
+
+const UNSELECTED: PosCustomer = {
+  id: UNSELECTED_ID,
+  name: "Select a customer",
+};
+
 const WALKING: PosCustomer = {
   id: null,
   name: "Walking Customer",
 };
+
+export function isCustomerSelected(c: PosCustomer) {
+  return c.id !== UNSELECTED_ID;
+}
+
+type PersistedCart = {
+  items: PosCartItem[];
+  customer: PosCustomer;
+  cartDiscount: number;
+  vatPercent: number;
+};
+
+function isValidItem(v: unknown): v is PosCartItem {
+  if (!v || typeof v !== "object") return false;
+  const i = v as PosCartItem;
+  return (
+    typeof i.productId === "string" &&
+    typeof i.name === "string" &&
+    typeof i.price === "number" &&
+    typeof i.qty === "number" &&
+    typeof i.stock === "number" &&
+    i.qty > 0
+  );
+}
+
+function isValidCustomer(v: unknown): v is PosCustomer {
+  if (!v || typeof v !== "object") return false;
+  const c = v as PosCustomer;
+  return (
+    (c.id === null || typeof c.id === "string") &&
+    typeof c.name === "string" &&
+    c.name.length > 0
+  );
+}
+
+function loadPersistedCart(): PersistedCart {
+  if (typeof window === "undefined") {
+    return { items: [], customer: UNSELECTED, cartDiscount: 0, vatPercent: 0 };
+  }
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return { items: [], customer: UNSELECTED, cartDiscount: 0, vatPercent: 0 };
+    }
+    const parsed = JSON.parse(raw) as Partial<PersistedCart>;
+    const items = Array.isArray(parsed.items) ? parsed.items.filter(isValidItem) : [];
+    const customer = isValidCustomer(parsed.customer) ? parsed.customer : UNSELECTED;
+    const cartDiscount =
+      typeof parsed.cartDiscount === "number" && parsed.cartDiscount >= 0
+        ? parsed.cartDiscount
+        : 0;
+    const vatPercent =
+      typeof parsed.vatPercent === "number" && parsed.vatPercent >= 0
+        ? parsed.vatPercent
+        : 0;
+    return { items, customer, cartDiscount, vatPercent };
+  } catch {
+    return { items: [], customer: UNSELECTED, cartDiscount: 0, vatPercent: 0 };
+  }
+}
 
 const PosCartContext = createContext<PosCartContextValue | null>(null);
 
@@ -61,11 +131,36 @@ function roundMoney(n: number) {
 }
 
 export function PosCartProvider({ children }: { children: ReactNode }) {
+  const [hydrated, setHydrated] = useState(false);
   const [items, setItems] = useState<PosCartItem[]>([]);
-  const [customer, setCustomer] = useState<PosCustomer>(WALKING);
+  const [customer, setCustomer] = useState<PosCustomer>(UNSELECTED);
   const [cartDiscount, setCartDiscount] = useState(0);
   const [vatPercent, setVatPercent] = useState(0);
   const [detailsOpen, setDetailsOpen] = useState(false);
+
+  useEffect(() => {
+    const saved = loadPersistedCart();
+    setItems(saved.items);
+    setCustomer(saved.customer);
+    setCartDiscount(saved.cartDiscount);
+    setVatPercent(saved.vatPercent);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      const payload: PersistedCart = {
+        items,
+        customer,
+        cartDiscount,
+        vatPercent,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      /* ignore quota / private mode */
+    }
+  }, [hydrated, items, customer, cartDiscount, vatPercent]);
 
   const addItem = useCallback((item: Omit<PosCartItem, "qty"> & { qty?: number }) => {
     setItems((prev) => {
@@ -102,7 +197,7 @@ export function PosCartProvider({ children }: { children: ReactNode }) {
     setItems([]);
     setCartDiscount(0);
     setVatPercent(0);
-    setCustomer(WALKING);
+    setCustomer(UNSELECTED);
     setDetailsOpen(false);
   }, []);
 
@@ -154,4 +249,4 @@ export function usePosCart() {
   return ctx;
 }
 
-export { WALKING as WALKING_CUSTOMER };
+export { WALKING as WALKING_CUSTOMER, UNSELECTED as UNSELECTED_CUSTOMER };
