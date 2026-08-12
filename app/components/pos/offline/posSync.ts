@@ -197,11 +197,15 @@ async function syncInvoice(entry: OutboxEntry) {
   const tryPost = async (body: Record<string, unknown>) => apiPost("/invoice", body);
 
   try {
-    const body = { ...payload.body, clientSaleId: payload.clientSaleId };
+    const body: Record<string, unknown> = {
+      ...payload.body,
+      clientSaleId: payload.clientSaleId,
+    };
+    const customerId = body.customerId;
     if (
       payload.tempCustomerId ||
-      (typeof body.customerId === "string" &&
-        (body.customerId.startsWith("temp_") || body.customerId.startsWith("__")))
+      (typeof customerId === "string" &&
+        (customerId.startsWith("temp_") || customerId.startsWith("__")))
     ) {
       delete body.customerId;
     }
