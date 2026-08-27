@@ -1,6 +1,20 @@
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-brand-blue: #004af2;
+  --color-brand-blue-bright: #0051fc;
+  --color-brand-blue-deep: #0043cd;
+  --color-brand-cyan: #01a7bc;
+  --color-brand-teal: #03837f;
+  --color-brand-green: #04c609;
+  --color-brand-lime: #2ae562;
+  --color-brand-emerald: #02c64f;
+  --color-brand-leaf: #016256;
+  --color-brand-navy: #061433;
+  --color-brand-mist: #f3f7ff;
+}
+
 .input {
   @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-orange-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200;
 }
@@ -49,6 +63,21 @@
 
 .animate-scaleIn {
   animation: scaleIn 0.25s ease-out;
+}
+
+@keyframes brand-bar-rise {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.brand-preloader-bar {
+  transform-origin: bottom;
+  animation: brand-bar-rise 0.9s ease-in-out infinite;
 }
 html {
   scroll-behavior: smooth;

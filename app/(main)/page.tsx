@@ -9,7 +9,7 @@ export default function HomePage() {
   return (
     <main className="px-6 py-24 md:px-16">
       <section className="mx-auto max-w-5xl text-center">
-        <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-5xl font-bold leading-tight text-transparent md:text-7xl">
+        <h1 className="bg-linear-to-r from-brand-blue via-brand-cyan to-brand-green bg-clip-text text-5xl font-bold leading-tight text-transparent md:text-7xl">
           {t("home.heroTitle")}
         </h1>
         <p className="mt-6 text-lg text-slate-600 dark:text-slate-400">{t("home.heroSubtitle")}</p>
@@ -17,7 +17,7 @@ export default function HomePage() {
           <Link href="/register">
             <button
               type="button"
-              className="rounded-2xl bg-indigo-600 px-8 py-4 text-lg text-white shadow-xl transition-all hover:bg-indigo-700 hover:shadow-indigo-500/40"
+              className="rounded-2xl bg-brand-blue px-8 py-4 text-lg text-white shadow-xl transition-all hover:bg-brand-blue-bright hover:shadow-brand-cyan/40"
             >
               {t("home.getStarted")}
             </button>

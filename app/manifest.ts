@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Smart POS for sales, inventory, invoices, and reports — trusted by modern retail businesses.",
     start_url: "/",
     display: "standalone",
-    background_color: "#0d1b3e",
-    theme_color: "#2563EB",
+    background_color: "#FFFFFF",
+    theme_color: "#004AF2",
     icons: [
       {
         src: "/icon",

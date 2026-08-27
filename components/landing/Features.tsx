@@ -17,66 +17,66 @@ import { useTranslation } from "@/lib/i18n/useTranslation";
 const features = [
   {
     Icon: Zap,
-    gradient: "from-blue-500 to-indigo-500",
-    bg: "bg-blue-50 dark:bg-blue-950/30",
-    border: "hover:border-blue-300/60 dark:hover:border-blue-700/60",
-    glow: "group-hover:shadow-blue-500/20",
+    gradient: "from-brand-blue to-brand-cyan",
+    bg: "bg-brand-mist dark:bg-brand-blue/20",
+    border: "hover:border-brand-cyan/60 dark:hover:border-brand-cyan/40",
+    glow: "group-hover:shadow-brand-blue/20",
     key: 1,
   },
   {
     Icon: Package,
-    gradient: "from-emerald-500 to-teal-500",
-    bg: "bg-emerald-50 dark:bg-emerald-950/30",
-    border: "hover:border-emerald-300/60 dark:hover:border-emerald-700/60",
-    glow: "group-hover:shadow-emerald-500/20",
+    gradient: "from-brand-emerald to-brand-teal",
+    bg: "bg-brand-green/10 dark:bg-brand-emerald/20",
+    border: "hover:border-brand-emerald/60 dark:hover:border-brand-teal/40",
+    glow: "group-hover:shadow-brand-emerald/20",
     key: 2,
   },
   {
     Icon: QrCode,
-    gradient: "from-violet-500 to-purple-500",
-    bg: "bg-violet-50 dark:bg-violet-950/30",
-    border: "hover:border-violet-300/60 dark:hover:border-violet-700/60",
-    glow: "group-hover:shadow-violet-500/20",
+    gradient: "from-brand-cyan to-brand-teal",
+    bg: "bg-brand-cyan/10 dark:bg-brand-cyan/20",
+    border: "hover:border-brand-cyan/60 dark:hover:border-brand-teal/40",
+    glow: "group-hover:shadow-brand-cyan/20",
     key: 3,
   },
   {
     Icon: FileText,
-    gradient: "from-orange-500 to-amber-500",
-    bg: "bg-orange-50 dark:bg-orange-950/30",
-    border: "hover:border-orange-300/60 dark:hover:border-orange-700/60",
-    glow: "group-hover:shadow-orange-500/20",
+    gradient: "from-brand-green to-brand-lime",
+    bg: "bg-brand-green/10 dark:bg-brand-green/20",
+    border: "hover:border-brand-green/60 dark:hover:border-brand-lime/40",
+    glow: "group-hover:shadow-brand-green/20",
     key: 4,
   },
   {
     Icon: BarChart3,
-    gradient: "from-sky-500 to-cyan-500",
-    bg: "bg-sky-50 dark:bg-sky-950/30",
-    border: "hover:border-sky-300/60 dark:hover:border-sky-700/60",
-    glow: "group-hover:shadow-sky-500/20",
+    gradient: "from-brand-cyan to-brand-blue",
+    bg: "bg-brand-mist dark:bg-brand-cyan/20",
+    border: "hover:border-brand-cyan/60 dark:hover:border-brand-blue/40",
+    glow: "group-hover:shadow-brand-cyan/20",
     key: 5,
   },
   {
     Icon: Store,
-    gradient: "from-pink-500 to-rose-500",
-    bg: "bg-pink-50 dark:bg-pink-950/30",
-    border: "hover:border-pink-300/60 dark:hover:border-pink-700/60",
-    glow: "group-hover:shadow-pink-500/20",
+    gradient: "from-brand-teal to-brand-leaf",
+    bg: "bg-brand-teal/10 dark:bg-brand-leaf/30",
+    border: "hover:border-brand-teal/60 dark:hover:border-brand-leaf/40",
+    glow: "group-hover:shadow-brand-teal/20",
     key: 6,
   },
   {
     Icon: Users,
-    gradient: "from-indigo-500 to-blue-500",
-    bg: "bg-indigo-50 dark:bg-indigo-950/30",
-    border: "hover:border-indigo-300/60 dark:hover:border-indigo-700/60",
-    glow: "group-hover:shadow-indigo-500/20",
+    gradient: "from-brand-blue-deep to-brand-blue",
+    bg: "bg-brand-mist dark:bg-brand-blue/20",
+    border: "hover:border-brand-blue/60 dark:hover:border-brand-cyan/40",
+    glow: "group-hover:shadow-brand-blue/20",
     key: 7,
   },
   {
     Icon: ShieldCheck,
-    gradient: "from-slate-600 to-gray-700",
-    bg: "bg-slate-50 dark:bg-slate-900/50",
-    border: "hover:border-slate-300/60 dark:hover:border-slate-600/60",
-    glow: "group-hover:shadow-slate-500/20",
+    gradient: "from-brand-leaf to-brand-teal",
+    bg: "bg-brand-leaf/10 dark:bg-brand-leaf/30",
+    border: "hover:border-brand-leaf/40 dark:hover:border-brand-teal/40",
+    glow: "group-hover:shadow-brand-leaf/20",
     key: 8,
   },
 ];
@@ -87,7 +87,7 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="relative overflow-hidden bg-[#fafafa] py-28 dark:bg-[#070710]"
+      className="relative overflow-hidden bg-brand-mist py-28 dark:bg-brand-navy"
     >
       {/* Subtle grid bg */}
       <div
@@ -108,8 +108,8 @@ export default function Features() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-blue-200/60 bg-blue-50 px-4 py-1.5 text-sm font-semibold text-blue-700 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-blue-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand-blue/20 bg-brand-mist px-4 py-1.5 text-sm font-semibold text-brand-blue-deep dark:border-brand-cyan/40 dark:bg-brand-blue/20 dark:text-brand-cyan">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-blue dark:bg-brand-cyan" />
             {t("landing.features.badge")}
           </span>
           <h2 className="mt-5 text-4xl font-black tracking-tight text-gray-900 sm:text-5xl dark:text-white">

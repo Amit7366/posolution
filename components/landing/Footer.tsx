@@ -5,7 +5,8 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslation } from "@/lib/i18n/useTranslation";
-import { ShoppingCart, Twitter, Github, Linkedin, Facebook, Mail, Phone } from "lucide-react";
+import { Twitter, Github, Linkedin, Facebook, Mail, Phone } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -66,21 +67,14 @@ export default function Footer() {
   return (
     <footer
       ref={sectionRef}
-      className="border-t border-gray-200/60 bg-white dark:border-gray-800/60 dark:bg-[#060612]"
+      className="border-t border-gray-200/60 bg-white dark:border-gray-800/60 dark:bg-brand-navy"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="footer-content py-16">
           <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
             {/* Brand */}
             <div className="md:col-span-4">
-              <Link href="/" className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 shadow-sm">
-                  <ShoppingCart size={17} className="text-white" />
-                </div>
-                <span className="text-xl font-black bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  posulation
-                </span>
-              </Link>
+              <BrandLogo size="md" />
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                 {t("landing.footer.tagline")}
               </p>
@@ -104,7 +98,7 @@ export default function Footer() {
                     key={i}
                     href={href}
                     aria-label={label}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-400 transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 dark:border-gray-700 dark:hover:border-blue-700 dark:hover:bg-blue-950/30 dark:hover:text-blue-400"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-400 transition-all hover:border-brand-cyan/50 hover:bg-brand-mist hover:text-brand-blue dark:border-gray-700 dark:hover:border-brand-teal dark:hover:bg-brand-blue/20 dark:hover:text-brand-cyan"
                   >
                     <Icon size={15} />
                   </a>
@@ -124,7 +118,7 @@ export default function Footer() {
                       <li key={j}>
                         <Link
                           href={href}
-                          className="text-sm text-gray-500 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                          className="text-sm text-gray-500 transition-colors hover:text-brand-blue dark:text-gray-400 dark:hover:text-brand-cyan"
                         >
                           {label}
                         </Link>
@@ -143,13 +137,13 @@ export default function Footer() {
             {t("landing.footer.copyright")}
           </p>
           <div className="flex items-center gap-6">
-            <a href="#" className="text-xs text-gray-400 transition-colors hover:text-blue-600 dark:text-gray-500 dark:hover:text-blue-400">
+            <a href="#" className="text-xs text-gray-400 transition-colors hover:text-brand-blue dark:text-gray-500 dark:hover:text-brand-cyan">
               {t("landing.footer.privacyPolicy")}
             </a>
-            <a href="#" className="text-xs text-gray-400 transition-colors hover:text-blue-600 dark:text-gray-500 dark:hover:text-blue-400">
+            <a href="#" className="text-xs text-gray-400 transition-colors hover:text-brand-blue dark:text-gray-500 dark:hover:text-brand-cyan">
               {t("landing.footer.terms")}
             </a>
-            <a href="#" className="text-xs text-gray-400 transition-colors hover:text-blue-600 dark:text-gray-500 dark:hover:text-blue-400">
+            <a href="#" className="text-xs text-gray-400 transition-colors hover:text-brand-blue dark:text-gray-500 dark:hover:text-brand-cyan">
               Cookies
             </a>
           </div>

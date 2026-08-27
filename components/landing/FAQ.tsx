@@ -15,7 +15,7 @@ export default function FAQ() {
   }));
 
   return (
-    <section id="faq" className="bg-white py-20 dark:bg-[#060612]">
+    <section id="faq" className="bg-white py-20 dark:bg-brand-navy">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="mb-12 text-center"
@@ -42,7 +42,7 @@ export default function FAQ() {
               transition={{ duration: 0.4, delay: i * 0.04 }}
               className={`overflow-hidden rounded-xl border transition-all duration-200 ${
                 openIndex === i
-                  ? "border-blue-200/80 bg-gray-50 dark:border-blue-800/60 dark:bg-gray-900"
+                  ? "border-brand-cyan/40 bg-brand-mist dark:border-brand-cyan/40 dark:bg-brand-navy"
                   : "border-gray-200/60 bg-white dark:border-gray-800/50 dark:bg-gray-900/60"
               }`}
             >
@@ -57,7 +57,7 @@ export default function FAQ() {
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-200 ${
                     openIndex === i
-                      ? "bg-blue-600 text-white"
+                      ? "bg-brand-blue text-white"
                       : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
                   }`}
                 >

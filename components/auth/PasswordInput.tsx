@@ -22,7 +22,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           className={cn(
             "w-full rounded-lg border bg-white px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition",
             "dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500",
-            "focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+            "focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20",
             error
               ? "border-red-400 focus:border-red-500 focus:ring-red-500/20 dark:border-red-500"
               : "border-gray-200 dark:border-neutral-700",

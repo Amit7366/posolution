@@ -67,12 +67,12 @@ export default function Hero() {
     <section
       id="home"
       ref={scrollRef}
-      className="relative overflow-hidden bg-white pt-12 pb-16 dark:bg-[#060612]"
+      className="relative overflow-hidden bg-white pt-12 pb-16 dark:bg-brand-navy"
     >
       <div ref={glowRef} className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-48 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/15" />
-        <div className="absolute -right-32 top-20 h-[500px] w-[500px] rounded-full bg-purple-500/8 blur-[100px] dark:bg-purple-600/12" />
-        <div className="absolute -left-32 bottom-0 h-[400px] w-[400px] rounded-full bg-indigo-500/8 blur-[100px] dark:bg-indigo-600/10" />
+        <div className="absolute -top-48 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-brand-blue/10 blur-[120px] dark:bg-brand-blue/20" />
+        <div className="absolute -right-32 top-20 h-[500px] w-[500px] rounded-full bg-brand-green/10 blur-[100px] dark:bg-brand-green/15" />
+        <div className="absolute -left-32 bottom-0 h-[400px] w-[400px] rounded-full bg-brand-cyan/10 blur-[100px] dark:bg-brand-cyan/15" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -83,10 +83,10 @@ export default function Hero() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-blue-50/80 px-4 py-2 dark:border-blue-800/50 dark:bg-blue-950/40"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-blue/20 bg-brand-mist px-4 py-2 dark:border-brand-cyan/30 dark:bg-brand-blue/20"
             >
-              <Star size={14} className="text-blue-600 fill-blue-600 dark:text-blue-400 dark:fill-blue-400" />
-              <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+              <Star size={14} className="fill-brand-blue text-brand-blue dark:fill-brand-cyan dark:text-brand-cyan" />
+              <span className="text-sm font-semibold text-brand-blue-deep dark:text-brand-cyan">
                 {t("landing.hero.badgeTag")}
               </span>
             </motion.div>
@@ -103,7 +103,7 @@ export default function Hero() {
                 {t("landing.hero.titleLine2")}{" "}
                 <span className="text-gray-900 dark:text-white">{t("landing.hero.titleLine2Brand")}</span>
               </span>
-              <span className="mt-1 block bg-linear-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="mt-1 block bg-linear-to-r from-brand-blue via-brand-cyan to-brand-green bg-clip-text text-transparent">
                 {t("landing.hero.titleHighlight")}
               </span>
             </motion.h1>
@@ -127,7 +127,7 @@ export default function Hero() {
             >
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-blue-500/45 hover:scale-[1.02]"
+                className="inline-flex items-center justify-center rounded-full bg-linear-to-r from-brand-blue via-brand-cyan to-brand-green px-8 py-4 text-base font-bold text-white shadow-lg shadow-brand-blue/30 transition-all hover:shadow-brand-cyan/45 hover:scale-[1.02]"
               >
                 {t("landing.hero.cta")}
               </Link>
@@ -153,7 +153,7 @@ export default function Hero() {
                   { top: t("landing.hero.feature3Top"), bottom: t("landing.hero.feature3Bottom") },
                 ].map(({ top, bottom }, i) => (
                   <div key={i}>
-                    <p className="text-lg font-black text-blue-600 dark:text-blue-400">{top}</p>
+                    <p className="text-lg font-black text-brand-blue dark:text-brand-cyan">{top}</p>
                     <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{bottom}</p>
                   </div>
                 ))}
@@ -169,10 +169,10 @@ export default function Hero() {
             className="relative"
             style={{ perspective: 1200, transformStyle: "preserve-3d" }}
           >
-            <div className="absolute -inset-6 rounded-[40px] bg-linear-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 blur-3xl" />
+            <div className="absolute -inset-6 rounded-[40px] bg-linear-to-r from-brand-blue/20 via-brand-cyan/20 to-brand-green/20 blur-3xl" />
 
-            <div className="relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] dark:border-gray-700/50 dark:bg-[#0d0d1a] dark:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)]">
-              <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50/90 px-5 py-3 dark:border-gray-800 dark:bg-[#111125]">
+            <div className="relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] dark:border-gray-700/50 dark:bg-brand-navy dark:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)]">
+              <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50/90 px-5 py-3 dark:border-gray-800 dark:bg-brand-navy/80">
                 <div className="flex items-center gap-1.5">
                   <span className="h-3 w-3 rounded-full bg-red-400" />
                   <span className="h-3 w-3 rounded-full bg-yellow-400" />
@@ -186,15 +186,15 @@ export default function Hero() {
               </div>
 
               <div className="grid grid-cols-12">
-                <div className="col-span-3 hidden border-r border-gray-100 bg-gray-50/80 p-3 md:block dark:border-gray-800 dark:bg-[#0a0a18]">
+                <div className="col-span-3 hidden border-r border-gray-100 bg-gray-50/80 p-3 md:block dark:border-gray-800 dark:bg-brand-navy/70">
                   <div className="mb-4 flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-lg bg-linear-to-br from-blue-500 to-indigo-600" />
+                    <div className="h-6 w-6 rounded-lg bg-linear-to-br from-brand-blue to-brand-green" />
                     <div className="h-2 w-12 rounded-full bg-gray-300 dark:bg-gray-700" />
                   </div>
                   {[true, false, false, false, false].map((active, i) => (
                     <div
                       key={i}
-                      className={`mb-1.5 flex items-center gap-2 rounded-lg px-2 py-2 ${active ? "bg-blue-600" : ""}`}
+                      className={`mb-1.5 flex items-center gap-2 rounded-lg px-2 py-2 ${active ? "bg-brand-blue" : ""}`}
                     >
                       <div className={`h-2.5 w-2.5 rounded ${active ? "bg-white/80" : "bg-gray-300 dark:bg-gray-700"}`} />
                       <div className={`h-2 w-12 rounded ${active ? "bg-white/80" : "bg-gray-200 dark:bg-gray-700"}`} />
@@ -213,13 +213,13 @@ export default function Hero() {
                         key={i}
                         className={`rounded-xl border p-2.5 ${
                           color === "blue"
-                            ? "border-blue-100 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/30"
+                            ? "border-brand-blue/15 bg-brand-mist dark:border-brand-blue/30 dark:bg-brand-blue/15"
                             : color === "emerald"
-                            ? "border-emerald-100 bg-emerald-50 dark:border-emerald-900/40 dark:bg-emerald-950/30"
+                            ? "border-brand-emerald/20 bg-brand-green/5 dark:border-brand-emerald/30 dark:bg-brand-emerald/15"
                             : "border-orange-100 bg-orange-50 dark:border-orange-900/40 dark:bg-orange-950/30"
                         }`}
                       >
-                        <Icon size={13} className={color === "blue" ? "text-blue-600" : color === "emerald" ? "text-emerald-600" : "text-orange-600"} />
+                        <Icon size={13} className={color === "blue" ? "text-brand-blue" : color === "emerald" ? "text-brand-emerald" : "text-orange-600"} />
                         <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
                         <p className="text-xs font-bold text-gray-800 dark:text-gray-100">{val}</p>
                       </div>
@@ -232,7 +232,7 @@ export default function Hero() {
                       {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
                         <div
                           key={i}
-                          className="flex-1 rounded-t-sm bg-linear-to-t from-blue-500 to-indigo-400 opacity-80"
+                          className="flex-1 rounded-t-sm bg-linear-to-t from-brand-blue to-brand-cyan opacity-80"
                           style={{ height: `${h}%` }}
                         />
                       ))}
@@ -240,9 +240,9 @@ export default function Hero() {
                   </div>
                 </div>
 
-                <div className="col-span-3 hidden border-l border-gray-100 bg-gray-50/60 p-3 md:block dark:border-gray-800 dark:bg-[#0a0a18]">
+                <div className="col-span-3 hidden border-l border-gray-100 bg-gray-50/60 p-3 md:block dark:border-gray-800 dark:bg-brand-navy/70">
                   <div className="mb-2 flex items-center gap-2">
-                    <ShoppingCart size={12} className="text-blue-600" />
+                    <ShoppingCart size={12} className="text-brand-blue" />
                     <span className="text-[10px] font-semibold text-gray-700 dark:text-gray-300">Cart (3)</span>
                   </div>
                   {[1, 2, 3].map((i) => (
@@ -251,7 +251,7 @@ export default function Hero() {
                       <div className="h-2 w-12 flex-1 rounded-full bg-gray-200 dark:bg-gray-700" />
                     </div>
                   ))}
-                  <button className="mt-2 w-full rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 py-2.5">
+                  <button className="mt-2 w-full rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan py-2.5">
                     <div className="flex items-center justify-center gap-1">
                       <Zap size={10} className="text-white" fill="currentColor" />
                       <span className="text-[10px] font-bold text-white">Charge ৳850</span>
@@ -285,8 +285,8 @@ export default function Hero() {
               className="absolute -right-4 top-16 hidden rounded-xl border border-gray-200/80 bg-white px-3 py-2 shadow-xl dark:border-gray-700/50 dark:bg-gray-900 lg:block"
             >
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
-                  <BarChart3 size={14} className="text-blue-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-mist dark:bg-brand-blue/20">
+                  <BarChart3 size={14} className="text-brand-blue" />
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold text-gray-900 dark:text-white">156 Sales Today</p>

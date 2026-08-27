@@ -22,7 +22,7 @@ type RegisterData = {
 };
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500";
+  "mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500";
 
 export default function RegisterForm() {
   const { t } = useTranslation();
@@ -176,11 +176,11 @@ export default function RegisterForm() {
           <input
             type="checkbox"
             {...register("acceptTerms")}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-900"
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-brand-blue focus:ring-brand-blue dark:border-neutral-600 dark:bg-neutral-900"
           />
           <span className="text-sm text-gray-600 dark:text-neutral-400">
             {t("auth.registerForm.termsPrefix")}{" "}
-            <span className="font-medium text-blue-600 underline underline-offset-2 dark:text-blue-400">
+            <span className="font-medium text-brand-blue underline underline-offset-2 dark:text-brand-cyan">
               {t("auth.registerForm.termsLink")}
             </span>
           </span>
@@ -205,7 +205,7 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/25 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-400"
+        className="w-full rounded-lg bg-brand-blue py-3.5 text-sm font-semibold text-white shadow-sm shadow-brand-blue/25 transition hover:bg-brand-blue-bright disabled:cursor-not-allowed disabled:opacity-60 dark:bg-brand-blue dark:hover:bg-brand-cyan"
       >
         {submitting
           ? t("auth.registerForm.creatingAccount")
@@ -216,7 +216,7 @@ export default function RegisterForm() {
         {t("auth.alreadyHaveAccount")}{" "}
         <Link
           href="/login"
-          className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
+          className="font-semibold text-brand-blue hover:underline dark:text-brand-cyan"
         >
           {t("auth.logIn")}
         </Link>

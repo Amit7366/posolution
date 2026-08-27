@@ -30,7 +30,7 @@ export default function NavbarLanguageSwitcher({ variant = "navbar" }: { variant
           isCompact ? "min-w-[2.25rem]" : "min-w-[2.5rem]",
           language === "en"
             ? isCompact
-              ? "bg-blue-600 text-white"
+              ? "bg-brand-blue text-white"
               : "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white"
             : isCompact
               ? "text-neutral-400 hover:text-white"
@@ -48,7 +48,7 @@ export default function NavbarLanguageSwitcher({ variant = "navbar" }: { variant
           isCompact ? "min-w-[2.25rem]" : "min-w-[2.5rem]",
           language === "bn"
             ? isCompact
-              ? "bg-blue-600 text-white"
+              ? "bg-brand-blue text-white"
               : "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white"
             : isCompact
               ? "text-neutral-400 hover:text-white"

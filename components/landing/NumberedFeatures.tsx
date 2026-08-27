@@ -17,7 +17,7 @@ export default function NumberedFeatures() {
   ];
 
   return (
-    <section className="bg-[#fafafa] py-20 dark:bg-[#070710]">
+    <section className="bg-brand-mist py-20 dark:bg-brand-navy">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <motion.div
@@ -33,7 +33,7 @@ export default function NumberedFeatures() {
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {steps.map(({ num, title, desc }, i) => (
                 <div key={i} className="flex gap-3">
-                  <span className="text-lg font-black text-blue-600 dark:text-blue-400">{num}</span>
+                  <span className="text-lg font-black text-brand-blue dark:text-brand-cyan">{num}</span>
                   <div>
                     <h3 className="text-sm font-bold text-gray-900 dark:text-white">{title}</h3>
                     <p className="mt-1 text-xs leading-relaxed text-gray-500 dark:text-gray-400">{desc}</p>

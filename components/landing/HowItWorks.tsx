@@ -13,20 +13,20 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 const steps = [
   {
     icon: UserPlus,
-    gradient: "from-blue-500 to-indigo-600",
-    shadow: "shadow-blue-500/30",
+    gradient: "from-brand-blue to-brand-cyan",
+    shadow: "shadow-brand-blue/30",
     num: 1,
   },
   {
     icon: Package,
-    gradient: "from-indigo-500 to-violet-600",
-    shadow: "shadow-indigo-500/30",
+    gradient: "from-brand-cyan to-brand-teal",
+    shadow: "shadow-brand-cyan/30",
     num: 2,
   },
   {
     icon: Zap,
-    gradient: "from-violet-500 to-purple-600",
-    shadow: "shadow-purple-500/30",
+    gradient: "from-brand-teal to-brand-green",
+    shadow: "shadow-brand-green/30",
     num: 3,
   },
 ];
@@ -55,10 +55,10 @@ export default function HowItWorks() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-white py-28 dark:bg-[#060612]">
+    <section className="relative overflow-hidden bg-white py-28 dark:bg-brand-navy">
       {/* Bg glow */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-100/40 blur-[120px] dark:bg-indigo-900/10" />
+        <div className="absolute left-1/2 top-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-cyan/15 blur-[120px] dark:bg-brand-blue/15" />
       </div>
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -70,8 +70,8 @@ export default function HowItWorks() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200/60 bg-indigo-50 px-4 py-1.5 text-sm font-semibold text-indigo-700 dark:border-indigo-800/60 dark:bg-indigo-950/40 dark:text-indigo-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand-cyan/30 bg-brand-mist px-4 py-1.5 text-sm font-semibold text-brand-blue-deep dark:border-brand-cyan/40 dark:bg-brand-cyan/15 dark:text-brand-cyan">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-cyan dark:bg-brand-lime" />
             {t("landing.howItWorks.badge")}
           </span>
           <h2 className="mt-5 text-4xl font-black tracking-tight text-gray-900 sm:text-5xl dark:text-white">
@@ -87,7 +87,7 @@ export default function HowItWorks() {
           {/* Connector line */}
           <div
             ref={lineRef}
-            className="absolute left-[16.67%] right-[16.67%] top-14 hidden h-0.5 bg-linear-to-r from-blue-300 via-indigo-300 to-purple-300 dark:from-blue-800 dark:via-indigo-800 dark:to-purple-800 md:block"
+            className="absolute left-[16.67%] right-[16.67%] top-14 hidden h-0.5 bg-linear-to-r from-brand-blue via-brand-cyan to-brand-green dark:from-brand-blue-deep dark:via-brand-teal dark:to-brand-leaf md:block"
           />
 
           <div className="grid grid-cols-1 gap-10 md:grid-cols-3">

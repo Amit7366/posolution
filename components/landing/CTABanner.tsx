@@ -9,7 +9,7 @@ export default function CTABanner() {
   const { t } = useTranslation();
 
   return (
-    <section className="bg-gray-100 py-20 dark:bg-gray-900">
+    <section className="bg-brand-mist py-20 dark:bg-brand-navy">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -25,7 +25,7 @@ export default function CTABanner() {
           </p>
           <Link
             href="/register"
-            className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40 hover:scale-[1.03]"
+            className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-brand-blue via-brand-cyan to-brand-green px-8 py-4 text-base font-bold text-white shadow-lg shadow-brand-blue/25 transition-all hover:shadow-brand-cyan/40 hover:scale-[1.03]"
           >
             {t("landing.cta.btn")}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

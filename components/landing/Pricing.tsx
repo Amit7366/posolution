@@ -44,7 +44,7 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="relative overflow-hidden bg-[#fafafa] py-28 dark:bg-[#070710]"
+      className="relative overflow-hidden bg-brand-mist py-28 dark:bg-brand-navy"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.012] dark:opacity-[0.025]"
@@ -64,8 +64,8 @@ export default function Pricing() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-purple-200/60 bg-purple-50 px-4 py-1.5 text-sm font-semibold text-purple-700 dark:border-purple-800/60 dark:bg-purple-950/40 dark:text-purple-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-purple-600 dark:bg-purple-400" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand-green/30 bg-brand-green/10 px-4 py-1.5 text-sm font-semibold text-brand-leaf dark:border-brand-green/40 dark:bg-brand-green/15 dark:text-brand-lime">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-green dark:bg-brand-lime" />
             {t("landing.pricing.badge")}
           </span>
           <h2 className="mt-5 text-4xl font-black tracking-tight text-gray-900 sm:text-5xl dark:text-white">
@@ -87,7 +87,7 @@ export default function Pricing() {
               transition={{ duration: 0.5, delay: i * 0.12, ease: "easeOut" }}
               className={`relative flex flex-col overflow-hidden rounded-2xl transition-all duration-300 ${
                 plan.popular
-                  ? "bg-linear-to-br from-blue-600 via-indigo-600 to-violet-700 p-px shadow-2xl shadow-indigo-500/40"
+                  ? "bg-linear-to-br from-brand-blue via-brand-cyan to-brand-green p-px shadow-2xl shadow-brand-cyan/40"
                   : "border border-gray-200/70 bg-white shadow-sm hover:shadow-lg dark:border-gray-800/60 dark:bg-gray-900/70"
               }`}
             >
@@ -97,7 +97,7 @@ export default function Pricing() {
 
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 z-10 -translate-x-1/2">
-                  <span className="flex items-center gap-1.5 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-4 py-1.5 text-xs font-bold text-white shadow-lg shadow-blue-500/40">
+                  <span className="flex items-center gap-1.5 rounded-full bg-linear-to-r from-brand-blue to-brand-cyan px-4 py-1.5 text-xs font-bold text-white shadow-lg shadow-brand-blue/40">
                     <Zap size={11} fill="currentColor" />
                     {t("landing.pricing.popular")}
                   </span>
@@ -106,7 +106,7 @@ export default function Pricing() {
 
               <div
                 className={`flex h-full flex-col rounded-2xl p-8 ${
-                  plan.popular ? "bg-white dark:bg-[#0d0d1e]" : ""
+                  plan.popular ? "bg-white dark:bg-brand-navy" : ""
                 }`}
               >
                 {/* Plan header */}
@@ -119,7 +119,7 @@ export default function Pricing() {
                     <span
                       className={`text-5xl font-black ${
                         plan.popular
-                          ? "bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+                          ? "bg-linear-to-r from-brand-blue to-brand-green bg-clip-text text-transparent"
                           : "text-gray-900 dark:text-white"
                       }`}
                     >
@@ -136,7 +136,7 @@ export default function Pricing() {
                       <span
                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
                           plan.popular
-                            ? "bg-blue-100 dark:bg-blue-900/50"
+                            ? "bg-brand-mist dark:bg-brand-blue/20"
                             : "bg-gray-100 dark:bg-gray-800"
                         }`}
                       >
@@ -145,7 +145,7 @@ export default function Pricing() {
                           strokeWidth={3}
                           className={
                             plan.popular
-                              ? "text-blue-600 dark:text-blue-400"
+                              ? "text-brand-blue dark:text-brand-cyan"
                               : "text-gray-500 dark:text-gray-400"
                           }
                         />
@@ -160,7 +160,7 @@ export default function Pricing() {
                   href={plan.href}
                   className={`group flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold transition-all ${
                     plan.popular
-                      ? "bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-[1.02]"
+                      ? "bg-linear-to-r from-brand-blue via-brand-cyan to-brand-green text-white shadow-lg shadow-brand-blue/30 hover:shadow-brand-cyan/50 hover:scale-[1.02]"
                       : "border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-200 dark:hover:bg-gray-700/50"
                   }`}
                 >

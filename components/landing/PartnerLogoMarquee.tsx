@@ -54,11 +54,11 @@ export default function PartnerLogoMarquee() {
       onMouseLeave={() => setPaused(false)}
     >
       <div
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-linear-to-r from-white to-transparent dark:from-[#060612]"
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-linear-to-r from-white to-transparent dark:from-brand-navy"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-linear-to-l from-white to-transparent dark:from-[#060612]"
+        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-linear-to-l from-white to-transparent dark:from-brand-navy"
         aria-hidden
       />
 

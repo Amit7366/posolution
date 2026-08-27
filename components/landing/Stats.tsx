@@ -18,7 +18,7 @@ export default function Stats() {
   return (
     <section className="relative overflow-hidden py-24">
       {/* Full bleed gradient bg */}
-      <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-indigo-600 to-violet-700" />
+      <div className="absolute inset-0 bg-linear-to-br from-brand-blue via-brand-cyan to-brand-green" />
       {/* Noise texture */}
       <div
         className="absolute inset-0 opacity-[0.08]"
@@ -46,14 +46,14 @@ export default function Stats() {
                 <Icon size={24} className="text-white" />
               </div>
               <p className="text-4xl font-black text-white sm:text-5xl">{value}</p>
-              <p className="mt-2 text-sm font-medium text-blue-100">{label}</p>
+              <p className="mt-2 text-sm font-medium text-white/80">{label}</p>
             </motion.div>
           ))}
         </div>
 
         {/* Bottom quote */}
         <div className="mt-16 border-t border-white/20 pt-10 text-center">
-          <p className="mx-auto max-w-xl text-base font-medium text-blue-100">
+          <p className="mx-auto max-w-xl text-base font-medium text-white/80">
             &ldquo;posulation is the fastest-growing retail management platform in Bangladesh — trusted by shops, restaurants, pharmacies, and wholesalers.&rdquo;
           </p>
         </div>

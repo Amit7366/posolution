@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import PageTransition from "@/components/PageTransition";
+import BrandPreloader from "@/components/BrandPreloader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { StoreProvider } from "@/components/StoreProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
@@ -72,8 +73,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#2563EB" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d1b3e" },
+    { media: "(prefers-color-scheme: light)", color: "#004AF2" },
+    { media: "(prefers-color-scheme: dark)", color: "#061433" },
   ],
   colorScheme: "light dark",
   width: "device-width",
@@ -92,6 +93,7 @@ export default function RootLayout({
           <ThemeProvider>
             <LanguageProvider>
               <LanguageHtmlLang>
+                <BrandPreloader />
                 <PageTransition>{children}</PageTransition>
               </LanguageHtmlLang>
             </LanguageProvider>

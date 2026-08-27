@@ -22,7 +22,7 @@ export default function IndustryGallery() {
   }));
 
   return (
-    <section id="industry" className="bg-white py-20 dark:bg-[#060612]">
+    <section id="industry" className="bg-white py-20 dark:bg-brand-navy">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="mb-12 text-center"

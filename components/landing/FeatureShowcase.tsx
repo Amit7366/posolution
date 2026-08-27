@@ -17,7 +17,7 @@ export default function FeatureShowcase() {
   }));
 
   return (
-    <section className="bg-white py-20 dark:bg-[#060612]">
+    <section className="bg-white py-20 dark:bg-brand-navy">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <motion.div
@@ -52,8 +52,8 @@ export default function FeatureShowcase() {
                   key={i}
                   className="rounded-xl border border-gray-200/60 bg-gray-50/50 p-4 dark:border-gray-800/50 dark:bg-gray-900/40"
                 >
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-950/50">
-                    <Icon size={18} className="text-blue-600 dark:text-blue-400" />
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-brand-mist dark:bg-brand-blue/20">
+                    <Icon size={18} className="text-brand-blue dark:text-brand-cyan" />
                   </div>
                   <h3 className="text-sm font-bold text-gray-900 dark:text-white">{title}</h3>
                   <p className="mt-1 text-xs leading-relaxed text-gray-500 dark:text-gray-400">{desc}</p>

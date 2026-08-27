@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingCart, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronRight } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import NavbarLanguageSwitcher from "./NavbarLanguageSwitcher";
+import BrandLogo from "./BrandLogo";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export default function Navbar() {
@@ -44,19 +45,14 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-gray-200/80 bg-white transition-colors dark:border-gray-800/80 dark:bg-gray-950 ${
-        isOpen ? "bg-white dark:bg-gray-950" : "bg-white/95 backdrop-blur-md dark:bg-gray-950/95"
+      className={`sticky top-0 z-50 border-b border-gray-200/80 bg-white transition-colors dark:border-gray-800/80 dark:bg-brand-navy ${
+        isOpen ? "bg-white dark:bg-brand-navy" : "bg-white/95 backdrop-blur-md dark:bg-brand-navy/95"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5" onClick={() => setActiveHref("#home")}>
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-indigo-600 shadow-sm shadow-blue-500/30">
-            <ShoppingCart size={15} className="text-white" />
-          </div>
-          <span className="text-lg font-black bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            posulation
-          </span>
-        </Link>
+        <span onClick={() => setActiveHref("#home")}>
+          <BrandLogo size="sm" priority />
+        </span>
 
         <nav className="hidden items-center gap-1 lg:flex">
           {desktopLinks.map(({ href, label }) => (
@@ -81,7 +77,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/register"
-            className="flex items-center gap-1.5 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-md shadow-blue-500/25 transition-all hover:shadow-blue-500/40 hover:scale-[1.03]"
+            className="flex items-center gap-1.5 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan px-4 py-2 text-sm font-bold text-white shadow-md shadow-brand-blue/25 transition-all hover:shadow-brand-cyan/40 hover:scale-[1.03]"
           >
             {t("marketing.register")}
             <ChevronRight size={14} />
@@ -129,7 +125,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className="absolute inset-x-3 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-900/10 lg:hidden dark:border-gray-800 dark:bg-gray-950 dark:shadow-black/40"
+              className="absolute inset-x-3 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-900/10 lg:hidden dark:border-gray-800 dark:bg-brand-navy dark:shadow-black/40"
             >
               <motion.nav
                 className="flex flex-col items-center gap-1 px-6 pb-2 pt-8"
@@ -166,7 +162,7 @@ export default function Navbar() {
                         {active && (
                           <motion.span
                             layoutId="mobileNavActive"
-                            className="mt-1 h-1 w-8 rounded-full bg-blue-600 dark:bg-blue-500"
+                            className="mt-1 h-1 w-8 rounded-full bg-brand-blue dark:bg-brand-cyan"
                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                           />
                         )}
@@ -197,14 +193,14 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={closeMenu}
-                  className="text-sm font-semibold text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
+                  className="text-sm font-semibold text-gray-700 transition-colors hover:text-brand-blue dark:text-gray-300 dark:hover:text-brand-cyan"
                 >
                   {t("marketing.login")}
                 </Link>
                 <Link
                   href="/register"
                   onClick={closeMenu}
-                  className="rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-500/25 transition-transform hover:scale-[1.03]"
+                  className="rounded-full bg-linear-to-r from-brand-blue to-brand-cyan px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-brand-blue/25 transition-transform hover:scale-[1.03]"
                 >
                   {t("marketing.startFreeTrial")}
                 </Link>

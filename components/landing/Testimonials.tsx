@@ -5,15 +5,15 @@ import { Star, Quote } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 
 const avatarGradients = [
-  "from-blue-500 to-indigo-600",
-  "from-violet-500 to-purple-600",
-  "from-emerald-500 to-teal-600",
+  "from-brand-blue to-brand-cyan",
+  "from-brand-cyan to-brand-green",
+  "from-brand-emerald to-brand-teal",
 ];
 
 const cardAccents = [
-  "hover:border-blue-300/50 dark:hover:border-blue-700/50",
-  "hover:border-violet-300/50 dark:hover:border-violet-700/50",
-  "hover:border-emerald-300/50 dark:hover:border-emerald-700/50",
+  "hover:border-brand-blue/50 dark:hover:border-brand-cyan/50",
+  "hover:border-brand-cyan/50 dark:hover:border-brand-green/50",
+  "hover:border-brand-emerald/50 dark:hover:border-brand-teal/50",
 ];
 
 const industries = ["Grocery & Retail", "Fashion & Boutique", "Wholesale Distribution"];
@@ -34,10 +34,10 @@ export default function Testimonials() {
   }));
 
   return (
-    <section className="relative overflow-hidden bg-white py-28 dark:bg-[#060612]">
+    <section className="relative overflow-hidden bg-white py-28 dark:bg-brand-navy">
       {/* Background glow */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-80 w-[800px] -translate-x-1/2 rounded-full bg-amber-100/50 blur-[100px] dark:bg-amber-900/8" />
+        <div className="absolute left-1/2 top-0 h-80 w-[800px] -translate-x-1/2 rounded-full bg-brand-cyan/15 blur-[100px] dark:bg-brand-green/10" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -49,8 +49,8 @@ export default function Testimonials() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber-200/60 bg-amber-50 px-4 py-1.5 text-sm font-semibold text-amber-700 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand-green/30 bg-brand-green/10 px-4 py-1.5 text-sm font-semibold text-brand-leaf dark:border-brand-green/40 dark:bg-brand-green/15 dark:text-brand-lime">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-green" />
             {t("landing.testimonials.badge")}
           </span>
           <h2 className="mt-5 text-4xl font-black tracking-tight text-gray-900 sm:text-5xl dark:text-white">
@@ -63,7 +63,7 @@ export default function Testimonials() {
           <div className="mt-6 flex items-center justify-center gap-2">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={16} className="text-amber-400" fill="currentColor" />
+                <Star key={i} size={16} className="text-brand-green" fill="currentColor" />
               ))}
             </div>
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">4.9/5</span>
@@ -93,7 +93,7 @@ export default function Testimonials() {
               {/* Stars */}
               <div className="mb-4 flex gap-0.5">
                 {[...Array(5)].map((_, j) => (
-                  <Star key={j} size={13} className="text-amber-400" fill="currentColor" />
+                  <Star key={j} size={13} className="text-brand-green" fill="currentColor" />
                 ))}
               </div>
 

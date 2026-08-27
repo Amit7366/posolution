@@ -1,9 +1,13 @@
 import { ImageResponse } from "next/og";
+import { getBrandIconDataUri } from "@/lib/brand-icon";
 
+export const runtime = "nodejs";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-export default function AppleIcon() {
+export default async function AppleIcon() {
+  const src = await getBrandIconDataUri();
+
   return new ImageResponse(
     (
       <div
@@ -13,24 +17,11 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          background: "white",
           borderRadius: 40,
-          background: "linear-gradient(135deg, #2563EB 0%, #4F46E5 100%)",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "white",
-            fontSize: 96,
-            fontWeight: 800,
-            letterSpacing: -4,
-            fontFamily: "system-ui, sans-serif",
-          }}
-        >
-          P
-        </div>
+        <img src={src} width={156} height={156} alt="" style={{ objectFit: "contain" }} />
       </div>
     ),
     { ...size }

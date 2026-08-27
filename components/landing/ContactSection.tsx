@@ -15,7 +15,7 @@ export default function ContactSection() {
   ];
 
   return (
-    <section id="contact" className="bg-[#fafafa] py-20 dark:bg-[#070710]">
+    <section id="contact" className="bg-brand-mist py-20 dark:bg-brand-navy">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="mb-12 text-center"
@@ -47,11 +47,11 @@ export default function ContactSection() {
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
               <span className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
-                <Headphones size={16} className="text-blue-600 dark:text-blue-400" />
+                <Headphones size={16} className="text-brand-blue dark:text-brand-cyan" />
                 {t("landing.contact.support247")}
               </span>
               <span className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
-                <ShieldCheck size={16} className="text-blue-600 dark:text-blue-400" />
+                <ShieldCheck size={16} className="text-brand-blue dark:text-brand-cyan" />
                 {t("landing.contact.secureData")}
               </span>
             </div>
@@ -70,7 +70,7 @@ export default function ContactSection() {
                   key={i}
                   className="rounded-xl border border-gray-200/60 bg-white p-4 dark:border-gray-800/50 dark:bg-gray-900/60"
                 >
-                  <Icon size={20} className="text-blue-600 dark:text-blue-400" />
+                  <Icon size={20} className="text-brand-blue dark:text-brand-cyan" />
                   <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-400">{label}</p>
                   <p className="mt-1 text-sm font-medium text-gray-900 dark:text-white">{value}</p>
                 </div>

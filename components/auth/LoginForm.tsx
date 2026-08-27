@@ -23,7 +23,7 @@ type LoginData = {
 };
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500";
+  "mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500";
 
 export default function LoginForm() {
   const { t } = useTranslation();
@@ -163,7 +163,7 @@ export default function LoginForm() {
               <button
                 type="button"
                 onClick={() => setIdentifierType(opt.type)}
-                className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
+                className="font-medium text-brand-blue underline-offset-2 hover:underline dark:text-brand-cyan"
               >
                 {opt.type === "email"
                   ? t("auth.loginForm.emailLabel").toLowerCase()
@@ -194,7 +194,7 @@ export default function LoginForm() {
       <div className="flex justify-end">
         <button
           type="button"
-          className="text-xs font-medium text-gray-500 transition hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400"
+          className="text-xs font-medium text-gray-500 transition hover:text-brand-blue dark:text-neutral-400 dark:hover:text-brand-cyan"
         >
           {t("auth.loginForm.forgotPassword")}
         </button>
@@ -209,7 +209,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-blue-600/25 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-400"
+        className="w-full rounded-lg bg-brand-blue py-3.5 text-sm font-semibold text-white shadow-sm shadow-brand-blue/25 transition hover:bg-brand-blue-bright disabled:cursor-not-allowed disabled:opacity-60 dark:bg-brand-blue dark:hover:bg-brand-cyan"
       >
         {submitting ? t("auth.loginForm.signingIn") : t("auth.loginForm.signIn")}
       </button>
@@ -218,7 +218,7 @@ export default function LoginForm() {
         {t("auth.noAccount")}{" "}
         <Link
           href="/register"
-          className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
+          className="font-semibold text-brand-blue hover:underline dark:text-brand-cyan"
         >
           {t("auth.signUp")}
         </Link>

@@ -1,9 +1,13 @@
 import { ImageResponse } from "next/og";
+import { getBrandIconDataUri } from "@/lib/brand-icon";
 
+export const runtime = "nodejs";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-export default function Icon() {
+export default async function Icon() {
+  const src = await getBrandIconDataUri();
+
   return new ImageResponse(
     (
       <div
@@ -13,24 +17,11 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          background: "white",
           borderRadius: 8,
-          background: "linear-gradient(135deg, #2563EB 0%, #4F46E5 100%)",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "white",
-            fontSize: 18,
-            fontWeight: 800,
-            letterSpacing: -1,
-            fontFamily: "system-ui, sans-serif",
-          }}
-        >
-          P
-        </div>
+        <img src={src} width={28} height={28} alt="" style={{ objectFit: "contain" }} />
       </div>
     ),
     { ...size }

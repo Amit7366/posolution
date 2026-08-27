@@ -21,7 +21,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
       <div
         className={cn(
           "mt-2 flex overflow-hidden rounded-lg border bg-white transition dark:bg-neutral-900",
-          "focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20",
+          "focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/20",
           error
             ? "border-red-400 dark:border-red-500"
             : "border-gray-200 dark:border-neutral-700"

@@ -16,7 +16,7 @@ export default function CoreFeatures() {
   }));
 
   return (
-    <section id="features" className="bg-[#fafafa] py-20 dark:bg-[#070710]">
+    <section id="features" className="bg-brand-mist py-20 dark:bg-brand-navy">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="mb-12 text-center"
@@ -43,8 +43,8 @@ export default function CoreFeatures() {
               transition={{ duration: 0.5, delay: i * 0.08 }}
               className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800/50 dark:bg-gray-900/60"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/50">
-                <Icon size={22} className="text-blue-600 dark:text-blue-400" />
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-mist dark:bg-brand-blue/20">
+                <Icon size={22} className="text-brand-blue dark:text-brand-cyan" />
               </div>
               <h3 className="text-base font-bold text-gray-900 dark:text-white">{title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">{desc}</p>

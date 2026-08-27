@@ -25,7 +25,7 @@ export default function AuthTabs() {
             href={tab.href}
             className={`relative pb-3 text-sm font-semibold transition ${
               active
-                ? "text-blue-600 dark:text-blue-400"
+                ? "text-brand-blue dark:text-brand-cyan"
                 : "text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300"
             }`}
           >
@@ -34,7 +34,7 @@ export default function AuthTabs() {
             {active && (
               <motion.span
                 layoutId="authTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-blue-600 dark:bg-blue-400"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-brand-blue dark:bg-brand-cyan"
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
               />
             )}
